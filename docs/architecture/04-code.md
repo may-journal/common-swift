@@ -104,6 +104,47 @@ classDiagram
 | I   | A theme holds its radii. | One set of corners per app. |
 | J   | Each step of the scale is a `TypeStep`. | Apps set sizes, styles follow. |
 
+## ScreenStates
+
+The `ScreenStates` target lives under `Sources/ScreenStates/`. It imports SwiftUI and `Theme`.
+
+```mermaid
+classDiagram
+    class LoadState["15 LoadState"]
+    class LoadStateView["16 LoadStateView"]
+    class StatusView["17 StatusView"]
+    class StatusAction["18 StatusAction"]
+    class FailureView["19 FailureView"]
+    class StatusPill["20 StatusPill"]
+
+    LoadStateView --> LoadState : K
+    LoadStateView --> FailureView : L
+    FailureView --> StatusView : M
+    StatusView --> StatusAction : N
+    FailureView --> StatusAction : O
+
+    style LoadState fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style LoadStateView fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style StatusView fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style StatusAction fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style FailureView fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style StatusPill fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+```
+
+| #   | Description | Why |
+| --- | --- | --- |
+| 15  | [`LoadState`](../../Sources/ScreenStates/LoadState.swift) is loading, failed with a message, or loaded. | One value says where data stands. |
+| 16  | [`LoadStateView`](../../Sources/ScreenStates/LoadStateView.swift) switches a screen over its load state. | Each screen stops writing the switch. |
+| 17  | [`StatusView`](../../Sources/ScreenStates/StatusView.swift) is a symbol tile, title, message and button. | Empty and failed screens share it. |
+| 18  | [`StatusAction`](../../Sources/ScreenStates/StatusView.swift) is the button's title and what it runs. | An empty screen offers a way on. |
+| 19  | [`FailureView`](../../Sources/ScreenStates/StatusView.swift) shows a failure with Try Again. | A failure is never a dead end. |
+| 20  | [`StatusPill`](../../Sources/ScreenStates/StatusPill.swift) is a spinner and a label in a capsule. | A slow task shows it runs. Its sibling, [`loadingPlaceholder`](../../Sources/ScreenStates/Placeholder.swift), redacts sample content. |
+| K   | The view reads the state it shows. | The model owns the state. |
+| L   | A failed state shows the failure. | Try Again calls the caller's retry. |
+| M   | A failure is a status with a warning symbol. | One layout for both. |
+| N   | A status may carry one action. | At most one button. |
+| O   | A failure builds its Try Again action. | Retry runs the caller's closure. |
+
 ## Platforms
 
 iOS 27 and macOS 27 and later, matching the apps' deployment targets, built with Swift tools 6.0 in the Swift 6 language mode.

@@ -21,6 +21,7 @@ Targets never depend on each other unless the dependency is stated in `Package.s
 
 - `Navigation`: a router for a stack's path, deep-link tables, cold-launch requests and a guard for unsaved work. See [Navigation lessons](docs/architecture/navigation-lessons.md).
 - `Theme`: the app's colors, type scale, spacing and radii, handed to shared views through the environment. See [Theme lessons](docs/architecture/theme-lessons.md).
+- `ScreenStates`: loading, empty and failed screens, a placeholder and a status pill, drawn in the app's `Theme`. See [Screen states lessons](docs/architecture/screen-states-lessons.md).
 
 ## Using a package in an app
 

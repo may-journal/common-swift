@@ -42,6 +42,9 @@ flowchart TB
     look(10 Open a screen in light or dark<br/>Req 0005):::action
     theme[(11 Theme hands in the app's tokens<br/>Req 0005)]:::system
     themed[12 Shared views in the app's colors<br/>Req 0005]:::screen
+    load(13 Open a screen that loads<br/>Req 0006):::action
+    states[(14 Load state picks what to show<br/>Req 0006)]:::system
+    shown[15 Loading, content, empty or Try Again<br/>Req 0006]:::screen
 
     user --> tap
     user --> link
@@ -56,6 +59,10 @@ flowchart TB
     user --> look
     look --> theme
     theme --> themed
+    user --> load
+    load --> states
+    states --> shown
+    shown --> load
 
     classDef persona fill:#eef2ff,stroke:#6366f1,color:#312e81,stroke-width:2px
     classDef screen fill:#f8fafc,stroke:#64748b,color:#1e293b,stroke-width:2px
@@ -79,3 +86,6 @@ Numbers match the callout table.
 | 10  | Opens any screen, in the appearance they chose. | Action | Colors follow light and dark. |
 | 11  | Reads the theme the app set at its root, or the standard one. | System | No shared view names app colors. |
 | 12  | Draws in the app's colors, spacing and radii. | Screen | Shared views look native to each app. |
+| 13  | Opens a list or taps Try Again. | Action | Every load can fail or come back empty. |
+| 14  | Picks loading, failed, empty or loaded. | System | One switch for every screen. |
+| 15  | Shows a spinner, the content, an empty state or the failure. | Screen | Never a blank page. |

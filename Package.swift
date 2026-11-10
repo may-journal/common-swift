@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .library(name: "Navigation", targets: ["Navigation"]),
         .library(name: "Theme", targets: ["Theme"]),
+        .library(name: "ScreenStates", targets: ["ScreenStates"]),
     ],
     dependencies: [
         // Test targets only: requirement tests drive a rendered screen as a person would.
@@ -28,6 +29,15 @@ let package = Package(
             name: "ThemeTests",
             dependencies: [
                 "Theme",
+                .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
+            ]
+        ),
+        // Draws in the app's theme, so it links Theme and nothing else.
+        .target(name: "ScreenStates", dependencies: ["Theme"]),
+        .testTarget(
+            name: "ScreenStatesTests",
+            dependencies: [
+                "ScreenStates",
                 .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
             ]
         ),

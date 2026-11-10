@@ -14,6 +14,8 @@ C4Component
         Component(manifest, "5 Package manifest", "Swift", "Package.swift")
         Component(theme, "7 Theme", "Swift", "Sources/Theme")
         Component(themeTests, "8 ThemeTests", "Swift", "Tests/ThemeTests")
+        Component(states, "9 ScreenStates", "Swift", "Sources/ScreenStates")
+        Component(statesTests, "10 ScreenStatesTests", "Swift", "Tests/ScreenStatesTests")
     }
 
     System_Ext(library, "6 apple-ui-testing-library")
@@ -24,6 +26,8 @@ C4Component
     Rel(manifest, navigation, "D")
     Rel(developer, theme, "E")
     Rel(themeTests, theme, "F")
+    Rel(states, theme, "G")
+    Rel(statesTests, states, "H")
 
     UpdateElementStyle(developer, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(navigation, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
@@ -31,6 +35,8 @@ C4Component
     UpdateElementStyle(manifest, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(theme, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(themeTests, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
+    UpdateElementStyle(states, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
+    UpdateElementStyle(statesTests, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(library, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
 ```
 
@@ -61,9 +67,13 @@ Numbers on nodes and letters on arrows match the callout table.
 | 6   | Renders a screen and acts as a person would. | Tests drive the package the way an app uses it. |
 | 7   | The `Theme` product: palette roles, type scale, spacing and radii. | Shared views draw in the app's tokens. |
 | 8   | Requirement tests that render themed views. | Each acceptance has one test. |
+| 9   | The `ScreenStates` product: loading, empty and failed screens, a placeholder and a pill. | Every loading screen says where it stands. |
+| 10  | Requirement tests that render a list screen in each state. | Each acceptance has one test. |
 | A   | Imports `Navigation` and binds a stack. | The app keeps its own routes. |
 | B   | Drives the package through an example app. | Tests use only the public surface. |
 | C   | Renders the example app and taps it. | Test targets only; apps never ship it. |
 | D   | Builds the library from its sources. | One product per target. |
 | E   | Sets its theme once at the root. | No shared view names an app color. |
 | F   | Renders views in each appearance and reads their colors. | Tests use only the public surface. |
+| G   | Reads colors, sizes and radii from the theme. | It names no app color. |
+| H   | Renders a list screen and taps Try Again. | Tests use only the public surface. |
