@@ -63,6 +63,47 @@ Numbers on classes and letters on relationships match the callout table. See [02
 | D   | `Router.resolve` reads a URL through a table; `open` also shows it. | One door for every link. |
 | E   | `Router.resolve` returns a `LinkOpening`. | The caller decides how to say "Not Found". |
 
+## Theme
+
+The `Theme` target lives under `Sources/Theme/`. It imports SwiftUI, and UIKit or AppKit for colors that follow the appearance.
+
+```mermaid
+classDiagram
+    class Theme["9 Theme"]
+    class Palette["10 Palette"]
+    class TypeScale["11 TypeScale"]
+    class Spacing["12 Spacing"]
+    class Radii["13 Radii"]
+    class TypeStep["14 TypeStep"]
+
+    Theme --> Palette : F
+    Theme --> TypeScale : G
+    Theme --> Spacing : H
+    Theme --> Radii : I
+    TypeScale --> TypeStep : J
+
+    style Theme fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style Palette fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style TypeScale fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style Spacing fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style Radii fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style TypeStep fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+```
+
+| #   | Description | Why |
+| --- | --- | --- |
+| 9   | [`Theme`](../../Sources/Theme/Theme.swift) is the app's tokens, read from the environment. | Shared views never name app colors. |
+| 10  | [`Palette`](../../Sources/Theme/Palette.swift) is ten color roles, standard from system colors. | Apps fill it with `Color(light:dark:)` or `Color(hex:)` from [Color+Hex](../../Sources/Theme/Color+Hex.swift). |
+| 11  | [`TypeScale`](../../Sources/Theme/TypeScale.swift) is four steps that grow with text size. | No view types a point size. |
+| 12  | [`Spacing`](../../Sources/Theme/Metrics.swift) is the spacing scale, margins and readable width. | Layout reads one set of sizes. |
+| 13  | [`Radii`](../../Sources/Theme/Metrics.swift) is the corner radii. | Every card rounds alike. |
+| 14  | [`TypeStep`](../../Sources/Theme/TypeScale.swift) is one size and the text style it grows with. | A Mac draws it at one size. |
+| F   | A theme holds its palette. | Roles, not names. |
+| G   | A theme holds its type scale. | One scale per app. |
+| H   | A theme holds its spacing. | One set of sizes per app. |
+| I   | A theme holds its radii. | One set of corners per app. |
+| J   | Each step of the scale is a `TypeStep`. | Apps set sizes, styles follow. |
+
 ## Platforms
 
 iOS 27 and macOS 27 and later, matching the apps' deployment targets, built with Swift tools 6.0 in the Swift 6 language mode.

@@ -20,6 +20,7 @@ Targets never depend on each other unless the dependency is stated in `Package.s
 ## Packages
 
 - `Navigation`: a router for a stack's path, deep-link tables, cold-launch requests and a guard for unsaved work. See [Navigation lessons](docs/architecture/navigation-lessons.md).
+- `Theme`: the app's colors, type scale, spacing and radii, handed to shared views through the environment. See [Theme lessons](docs/architecture/theme-lessons.md).
 
 ## Using a package in an app
 

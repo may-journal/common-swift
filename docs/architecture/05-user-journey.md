@@ -39,6 +39,9 @@ flowchart TB
     gate[(7 Leave guard asks first<br/>Req 0004)]:::system
     screen[8 The named screen, or Not Found<br/>Req 0001 Req 0002]:::screen
     prompt[9 Save, Discard or Cancel<br/>Req 0004]:::screen
+    look(10 Open a screen in light or dark<br/>Req 0005):::action
+    theme[(11 Theme hands in the app's tokens<br/>Req 0005)]:::system
+    themed[12 Shared views in the app's colors<br/>Req 0005]:::screen
 
     user --> tap
     user --> link
@@ -50,6 +53,9 @@ flowchart TB
     leave --> gate
     gate --> prompt
     prompt --> router
+    user --> look
+    look --> theme
+    theme --> themed
 
     classDef persona fill:#eef2ff,stroke:#6366f1,color:#312e81,stroke-width:2px
     classDef screen fill:#f8fafc,stroke:#64748b,color:#1e293b,stroke-width:2px
@@ -70,3 +76,6 @@ Numbers match the callout table.
 | 7   | Parks the exit while work is unsaved. | System | One gate for every exit. |
 | 8   | Shows the route, or "Not Found" for gone content. | Screen | Never a blank screen. |
 | 9   | Asks before leaving unsaved work. | Screen | Save leaves only once it lands. |
+| 10  | Opens any screen, in the appearance they chose. | Action | Colors follow light and dark. |
+| 11  | Reads the theme the app set at its root, or the standard one. | System | No shared view names app colors. |
+| 12  | Draws in the app's colors, spacing and radii. | Screen | Shared views look native to each app. |

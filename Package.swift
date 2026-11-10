@@ -7,7 +7,8 @@ let package = Package(
     name: "common-swift",
     platforms: [.iOS("27.0"), .macOS("27.0")],
     products: [
-        .library(name: "Navigation", targets: ["Navigation"])
+        .library(name: "Navigation", targets: ["Navigation"]),
+        .library(name: "Theme", targets: ["Theme"]),
     ],
     dependencies: [
         // Test targets only: requirement tests drive a rendered screen as a person would.
@@ -19,6 +20,14 @@ let package = Package(
             name: "NavigationTests",
             dependencies: [
                 "Navigation",
+                .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
+            ]
+        ),
+        .target(name: "Theme"),
+        .testTarget(
+            name: "ThemeTests",
+            dependencies: [
+                "Theme",
                 .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
             ]
         ),
