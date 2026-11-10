@@ -1,0 +1,18 @@
+{
+  "useGitignore": true,
+  "version": "0.2",
+  "words": [
+    "discardable",
+    "exclamationmark",
+    "fileprivate",
+    "fitnessrc",
+    "jasonvanderslice",
+    "Subrange",
+    "swiftlint",
+    "swiftpm",
+    "totalist",
+    "typealias",
+    "uniquing",
+    "xcodeproj"
+  ]
+}
