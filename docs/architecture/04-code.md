@@ -60,8 +60,8 @@ Numbers on classes and letters on relationships match the callout table. See [02
 | A   | `RoutedStack` binds to the router's path. | Views never own the path. |
 | B   | `DeepLinkTable` reads a `DeepLink` from a URL. | Each parser sees host, path and query. |
 | C   | A `Linkable` route prints a `DeepLink`. | One format both ways. |
-| D   | `Router.open` reads a URL through a table. | One door for every link. |
-| E   | `Router.open` returns a `LinkOpening`. | The caller decides how to say "Not Found". |
+| D   | `Router.resolve` reads a URL through a table; `open` also shows it. | One door for every link. |
+| E   | `Router.resolve` returns a `LinkOpening`. | The caller decides how to say "Not Found". |
 
 ## Platforms
 

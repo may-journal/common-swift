@@ -37,4 +37,8 @@ leaves requested from an editing screen
 - 0004.6
   - Given User sees the Save, Discard or Cancel prompt
     - When User taps Save and the save fails
-      - Then the screen stays with the draft
+      - Then the screen says so and stays with the draft
+- 0004.7
+  - Given User has an unsaved draft
+    - When User opens a link to another screen
+      - Then the prompt asks first

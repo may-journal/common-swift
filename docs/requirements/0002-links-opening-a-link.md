@@ -30,3 +30,7 @@ links the app receives
   - Given User shares a screen's link
     - When User opens that link
       - Then the same screen opens
+- 0002.5
+  - Given User opens a link with capitals in its host
+    - When the app handles it
+      - Then the named screen opens

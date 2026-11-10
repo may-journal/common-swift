@@ -27,6 +27,12 @@ enum ExampleRoute: Hashable, Linkable {
     )
 }
 
+/// Where the entry screen was asked to go: back, or to a route a link or request named.
+enum Exit: Equatable {
+    case back
+    case open(ExampleRoute)
+}
+
 /// The example app's state: its router, its held requests, and the entry being written.
 @Observable
 @MainActor
@@ -41,21 +47,29 @@ final class Diary {
     var draft: String?
     var saved: String?
     var saveFails = false
-    @ObservationIgnored lazy var leaving = LeaveGuard<Bool>(
+    var saveError: Error?
+    @ObservationIgnored lazy var leaving = LeaveGuard<Exit>(
         hasUnsavedWork: { [unowned self] in draft != nil },
-        perform: { [unowned self] _ in router.pop() })
+        perform: { [unowned self] exit in
+            switch exit {
+            case .back: router.pop()
+            case .open(let route): router.show(route)
+            }
+        })
 
     init(path: [ExampleRoute] = []) {
         router = Router(path: path)
     }
 
-    /// What `onOpenURL` calls: the link opens, or says its content is gone.
+    /// What `onOpenURL` calls: through the leave guard, or "Not Found" for gone content.
     func open(_ url: URL) {
-        let opening = router.open(url, with: ExampleRoute.links) { [deleted] route in
+        let opening = router.resolve(url, with: ExampleRoute.links) { [deleted] route in
             !deleted.contains(route)
         }
-        if case .notFound(let route) = opening {
-            missing = route
+        switch opening {
+        case .opened(let route): leaving.request(.open(route))
+        case .notFound(let route): missing = route
+        case .notOurs: break
         }
     }
 
@@ -63,5 +77,14 @@ final class Diary {
         if saveFails { throw SaveFailed() }
         saved = draft
         draft = nil
+    }
+
+    /// The prompt's Save: a failure stays on the entry and says so.
+    func saveThenLeave() async {
+        do {
+            try await leaving.saveThenLeave { try save() }
+        } catch {
+            saveError = error
+        }
     }
 }

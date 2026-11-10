@@ -1,12 +1,14 @@
 import Observation
 
-/// The one gate every exit from an editing screen goes through. With unsaved work it parks
-/// the request in `pending`, and the screen asks Save, Discard or Cancel.
+/// The one gate for every exit from an editing screen: it parks a leave while work is unsaved.
+/// Hide the stack's own back button meanwhile, since its swipe skips the gate.
 @Observable
 @MainActor
 public final class LeaveGuard<Leave: Equatable> {
     /// Where the user asked to go while work was unsaved. Non-nil shows the prompt.
     public private(set) var pending: Leave?
+    /// A save from the prompt is running; new requests wait until it ends.
+    public private(set) var isSaving = false
 
     @ObservationIgnored private let hasUnsavedWork: @MainActor () -> Bool
     @ObservationIgnored private let perform: @MainActor (Leave) -> Void
@@ -22,6 +24,7 @@ public final class LeaveGuard<Leave: Equatable> {
 
     /// Leaves now, or parks `leave` behind the prompt when work is unsaved.
     public func request(_ leave: Leave) {
+        guard !isSaving else { return }
         if hasUnsavedWork() {
             pending = leave
         } else {
@@ -31,26 +34,31 @@ public final class LeaveGuard<Leave: Equatable> {
 
     /// Cancel: stay, with the work intact.
     public func cancel() {
+        guard !isSaving else { return }
         pending = nil
     }
 
     /// Discard: go without saving.
     public func discard() {
-        guard let leave = pending else { return }
+        guard !isSaving, let leave = pending else { return }
         pending = nil
         perform(leave)
     }
 
-    /// Save, then go, only once the work really saved. A failed save stays put with the work.
-    public func saveThenLeave(_ save: @MainActor () async throws -> Void) async {
-        guard let leave = pending else { return }
-        pending = nil
+    /// Save, then go once the work really saved; work still unsaved afterwards asks again.
+    /// A failed save closes the prompt and rethrows, so the screen can say why.
+    public func saveThenLeave(_ save: @MainActor () async throws -> Void) async throws {
+        guard !isSaving, let leave = pending else { return }
+        isSaving = true
+        defer { isSaving = false }
         do {
             try await save()
         } catch {
-            return
+            pending = nil
+            throw error
         }
         guard !hasUnsavedWork() else { return }
+        pending = nil
         perform(leave)
     }
 

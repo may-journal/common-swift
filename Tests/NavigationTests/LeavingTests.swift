@@ -61,9 +61,22 @@ extension NavigationTests {
             diary.saveFails = true
             let (screen, user) = try await leave(diary)
             try await user.taps(.button("Save"))
+            try await user.sees(.text("Save failed"))
             try await user.sees(.text("Lunch by the river"))
             #expect(diary.router.path.count == 1)
             try screen.close()
+        }
+
+        @Test func test0004_7() async throws {
+            let diary = entry()
+            let session = try Session(diary)
+            try await session.user.taps(.button("Write"))
+            diary.open(try #require(ExampleRoute.links.url(for: .settings)))
+            try await session.user.sees(.text("Unsaved entry"))
+            try await session.user.doesNotSee(.text("Preferences"))
+            try await session.user.taps(.button("Discard"))
+            try await session.user.sees(.text("Preferences"))
+            try session.screen.close()
         }
     }
 }

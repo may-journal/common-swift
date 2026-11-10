@@ -2,7 +2,7 @@ import Navigation
 import SwiftUI
 import UITestingLibrary
 
-/// The example app's root: one routed stack, which takes a held request once it loads.
+/// The example app's root: one routed stack, which takes each held request once it is ready.
 struct DiaryApp: View {
     let diary: Diary
 
@@ -14,11 +14,11 @@ struct DiaryApp: View {
                 Button("Open day") { diary.router.push(.day("2026-11-09")) }
                 Button("Back") { diary.router.pop() }
             }
-            .task {
-                if let request = diary.requests.take() { diary.router.show(request) }
-            }
         } destination: { route in
             DiaryPage(diary: diary, route: route)
+        }
+        .onChange(of: diary.requests.pending, initial: true) {
+            if let request = diary.requests.take() { diary.leaving.request(.open(request)) }
         }
         .overlay(alignment: .bottom) {
             if diary.missing != nil { Text("Not Found") }
@@ -53,23 +53,24 @@ struct DiaryPage: View {
 /// An editing screen whose every exit goes through the leave guard.
 struct EntryPage: View {
     let diary: Diary
-    let leaving: LeaveGuard<Bool>
+    let leaving: LeaveGuard<Exit>
 
     var body: some View {
         VStack {
             Text("Entry")
             if let draft = diary.draft { Text(draft) }
+            if diary.saveError != nil { Text("Save failed") }
             Button("Write") { diary.draft = "Lunch by the river" }
-            Button("Close") { leaving.request(true) }
+            Button("Close") { leaving.request(.back) }
             if leaving.pending != nil {
                 Text("Unsaved entry")
-                Button("Save") {
-                    Task { await leaving.saveThenLeave { try diary.save() } }
-                }
+                Button("Save") { Task { await diary.saveThenLeave() } }
                 Button("Discard") { leaving.discard() }
                 Button("Cancel") { leaving.cancel() }
             }
         }
+        // The stack's back swipe skips the guard, so it hides while a draft is unsaved.
+        .navigationBarBackButtonHidden(diary.draft != nil)
     }
 }
 

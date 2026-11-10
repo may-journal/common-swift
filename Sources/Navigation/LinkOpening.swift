@@ -1,27 +1,38 @@
 import Foundation
 
-/// What opening a link did.
+/// What a link names.
 public enum LinkOpening<Route: Hashable>: Equatable {
-    /// The link named this route, and the router shows it.
+    /// The link names this route, whose content exists.
     case opened(Route)
-    /// The link named a route whose content is gone; show a "Not Found" sheet, not a blank screen.
+    /// The link names a route whose content is gone; show "Not Found", not a blank screen.
     case notFound(Route)
     /// The link is not the app's to open.
     case notOurs
 }
 
 extension Router {
-    /// Opens `url` through `table`: a route whose content `exists` says is gone opens nothing.
-    /// The one door for `onOpenURL`, handoff and widget taps, so they all land the same way.
+    /// Reads `url` through `table` without moving: the app decides how to go there.
+    /// An editing screen sends `.opened` through its `LeaveGuard`, so a link never drops a draft.
+    public func resolve(
+        _ url: URL,
+        with table: DeepLinkTable<Route>,
+        exists: (Route) -> Bool = { _ in true }
+    ) -> LinkOpening<Route> {
+        guard let route = table.route(from: url) else { return .notOurs }
+        return exists(route) ? .opened(route) : .notFound(route)
+    }
+
+    /// Reads `url` and shows the route it names, for a stack with no unsaved work to guard.
     @discardableResult
     public func open(
         _ url: URL,
         with table: DeepLinkTable<Route>,
         exists: (Route) -> Bool = { _ in true }
     ) -> LinkOpening<Route> {
-        guard let route = table.route(from: url) else { return .notOurs }
-        guard exists(route) else { return .notFound(route) }
-        show(route)
-        return .opened(route)
+        let opening = resolve(url, with: table, exists: exists)
+        if case .opened(let route) = opening {
+            show(route)
+        }
+        return opening
     }
 }

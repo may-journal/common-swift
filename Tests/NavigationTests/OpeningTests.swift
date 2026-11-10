@@ -38,8 +38,15 @@ extension NavigationTests {
         }
 
         @Test func test0002_4() async throws {
-            let shared = try #require(ExampleRoute.links.url(for: .day("2026-11-09")))
+            // A slash inside a segment survives the round trip.
+            let shared = try #require(ExampleRoute.links.url(for: .day("2026/11/09")))
             let session = try open(shared.absoluteString)
+            try await session.user.sees(.text("Day 2026/11/09"))
+            try session.screen.close()
+        }
+
+        @Test func test0002_5() async throws {
+            let session = try open("Example://DAY/2026-11-09")
             try await session.user.sees(.text("Day 2026-11-09"))
             try session.screen.close()
         }

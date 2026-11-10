@@ -36,7 +36,7 @@ may-photos does the same for widget taps with `OpenDay` in `src/Shared/OpenDay.s
 
 may-journals checks that a route's record still exists before showing it, in `src/ViewModels/NavigationCoordinator.swift`. A missing record shows a "Not Found" sheet, never a blank screen.
 
-`Router.open` answers `.notFound` and leaves the stack alone.
+`Router.resolve` answers `.notFound` and leaves the stack alone. An editing screen sends `.opened` through its `LeaveGuard`.
 
 ## A cold launch hears the link early
 
