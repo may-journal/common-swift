@@ -10,6 +10,7 @@ let package = Package(
         .library(name: "Navigation", targets: ["Navigation"]),
         .library(name: "Theme", targets: ["Theme"]),
         .library(name: "ScreenStates", targets: ["ScreenStates"]),
+        .library(name: "AdaptiveLayout", targets: ["AdaptiveLayout"]),
     ],
     dependencies: [
         // Test targets only: requirement tests drive a rendered screen as a person would.
@@ -38,6 +39,16 @@ let package = Package(
             name: "ScreenStatesTests",
             dependencies: [
                 "ScreenStates",
+                .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
+            ]
+        ),
+        // Sizes its margins, gaps and cards from the app's theme, so it links Theme alone.
+        .target(name: "AdaptiveLayout", dependencies: ["Theme"]),
+        .testTarget(
+            name: "AdaptiveLayoutTests",
+            dependencies: [
+                "AdaptiveLayout",
+                "Theme",
                 .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
             ]
         ),

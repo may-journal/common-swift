@@ -45,6 +45,9 @@ flowchart TB
     load(13 Open a screen that loads<br/>Req 0006):::action
     states[(14 Load state picks what to show<br/>Req 0006)]:::system
     shown[15 Loading, content, empty or Try Again<br/>Req 0006]:::screen
+    width(16 Open a screen on a phone, pad or Mac<br/>Req 0007):::action
+    fit[(17 Layout reads the width<br/>Req 0007)]:::system
+    fitted[18 Split or stacked, in a readable column<br/>Req 0007]:::screen
 
     user --> tap
     user --> link
@@ -63,6 +66,9 @@ flowchart TB
     load --> states
     states --> shown
     shown --> load
+    user --> width
+    width --> fit
+    fit --> fitted
 
     classDef persona fill:#eef2ff,stroke:#6366f1,color:#312e81,stroke-width:2px
     classDef screen fill:#f8fafc,stroke:#64748b,color:#1e293b,stroke-width:2px
@@ -89,3 +95,6 @@ Numbers match the callout table.
 | 13  | Opens a list or taps Try Again. | Action | Every load can fail or come back empty. |
 | 14  | Picks loading, failed, empty or loaded. | System | One switch for every screen. |
 | 15  | Shows a spinner, the content, an empty state or the failure. | Screen | Never a blank page. |
+| 16  | Opens any screen on whatever device they hold. | Action | One app runs on phone, pad and Mac. |
+| 17  | Measures the width and picks split or stack, margins and columns. | System | A Mac window has no size class. |
+| 18  | Shows panes side by side or pushed, text at a readable width. | Screen | Nothing stretches or crowds. |

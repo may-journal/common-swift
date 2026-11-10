@@ -16,6 +16,8 @@ C4Component
         Component(themeTests, "8 ThemeTests", "Swift", "Tests/ThemeTests")
         Component(states, "9 ScreenStates", "Swift", "Sources/ScreenStates")
         Component(statesTests, "10 ScreenStatesTests", "Swift", "Tests/ScreenStatesTests")
+        Component(layout, "11 AdaptiveLayout", "Swift", "Sources/AdaptiveLayout")
+        Component(layoutTests, "12 AdaptiveLayoutTests", "Swift", "Tests/AdaptiveLayoutTests")
     }
 
     System_Ext(library, "6 apple-ui-testing-library")
@@ -28,6 +30,8 @@ C4Component
     Rel(themeTests, theme, "F")
     Rel(states, theme, "G")
     Rel(statesTests, states, "H")
+    Rel(layout, theme, "I")
+    Rel(layoutTests, layout, "J")
 
     UpdateElementStyle(developer, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(navigation, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
@@ -37,6 +41,8 @@ C4Component
     UpdateElementStyle(themeTests, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(states, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(statesTests, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
+    UpdateElementStyle(layout, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
+    UpdateElementStyle(layoutTests, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(library, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
 ```
 
@@ -69,6 +75,8 @@ Numbers on nodes and letters on arrows match the callout table.
 | 8   | Requirement tests that render themed views. | Each acceptance has one test. |
 | 9   | The `ScreenStates` product: loading, empty and failed screens, a placeholder and a pill. | Every loading screen says where it stands. |
 | 10  | Requirement tests that render a list screen in each state. | Each acceptance has one test. |
+| 11  | The `AdaptiveLayout` product: split or stack, readable column, adaptive grid and card. | Each screen fits its width. |
+| 12  | Requirement tests that render at phone and pad widths. | Each acceptance has one test. |
 | A   | Imports `Navigation` and binds a stack. | The app keeps its own routes. |
 | B   | Drives the package through an example app. | Tests use only the public surface. |
 | C   | Renders the example app and taps it. | Test targets only; apps never ship it. |
@@ -77,3 +85,5 @@ Numbers on nodes and letters on arrows match the callout table.
 | F   | Renders views in each appearance and reads their colors. | Tests use only the public surface. |
 | G   | Reads colors, sizes and radii from the theme. | It names no app color. |
 | H   | Renders a list screen and taps Try Again. | Tests use only the public surface. |
+| I   | Reads margins, gaps, radii and surface colors from the theme. | It names no app size. |
+| J   | Renders screens at phone and pad sizes and reads their widths. | Tests use only the public surface. |

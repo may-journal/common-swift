@@ -145,6 +145,30 @@ classDiagram
 | N   | A status may carry one action. | At most one button. |
 | O   | A failure builds its Try Again action. | Retry runs the caller's closure. |
 
+## AdaptiveLayout
+
+The `AdaptiveLayout` target lives under `Sources/AdaptiveLayout/`. It imports SwiftUI and `Theme`; `readableColumn` and `card` are view modifiers in [ReadableColumn](../../Sources/AdaptiveLayout/ReadableColumn.swift).
+
+```mermaid
+classDiagram
+    class WidthClass["21 WidthClass"]
+    class SplitOrStack["22 SplitOrStack"]
+    class AdaptiveGrid["23 AdaptiveGrid"]
+
+    SplitOrStack --> WidthClass : P
+
+    style WidthClass fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style SplitOrStack fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style AdaptiveGrid fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+```
+
+| #   | Description | Why |
+| --- | --- | --- |
+| 21  | [`WidthClass`](../../Sources/AdaptiveLayout/WidthClass.swift) is narrow or wide, from a measured width. | A Mac window has no size class. |
+| 22  | [`SplitOrStack`](../../Sources/AdaptiveLayout/SplitOrStack.swift) shows two panes when wide and pushes when narrow. | The apps each wrote this switch. |
+| 23  | [`AdaptiveGrid`](../../Sources/AdaptiveLayout/AdaptiveGrid.swift) fills rows with tiles no narrower than a minimum. | Gaps come from the theme. |
+| P   | The split picks its layout by width class. | It waits for the width before pushing. |
+
 ## Platforms
 
 iOS 27 and macOS 27 and later, matching the apps' deployment targets, built with Swift tools 6.0 in the Swift 6 language mode.
