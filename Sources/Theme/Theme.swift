@@ -2,7 +2,7 @@ import SwiftUI
 
 /// An app's design tokens: its colors, type scale, spacing and radii.
 /// Shared views read the theme from the environment, so they never name an app's colors.
-public struct Theme: Sendable, Equatable {
+public struct Theme: Sendable {
     public var palette: Palette
     public var type: TypeScale
     public var spacing: Spacing

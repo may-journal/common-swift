@@ -1,9 +1,5 @@
 import SwiftUI
 
-#if canImport(UIKit)
-import UIKit
-#endif
-
 /// One step of a type scale: a point size and the text style it grows with.
 public struct TypeStep: Sendable, Equatable {
     /// The size at the standard text size, in points.
@@ -14,16 +10,6 @@ public struct TypeStep: Sendable, Equatable {
     public init(size: CGFloat, style: Font.TextStyle) {
         self.size = size
         self.style = style
-    }
-
-    /// This step as a system font, grown by the person's text size on iOS.
-    public func font(weight: Font.Weight = .regular, design: Font.Design = .default) -> Font {
-        #if canImport(UIKit)
-        let metrics = UIFontMetrics(forTextStyle: style.uiTextStyle)
-        return .system(size: metrics.scaledValue(for: size), weight: weight, design: design)
-        #else
-        return .system(size: size, weight: weight, design: design)
-        #endif
     }
 }
 
@@ -45,28 +31,40 @@ public struct TypeScale: Sendable, Equatable {
         self.title = title
     }
 
-    /// The system's sizes for each text style.
+    /// The platform's own sizes for each text style, which are smaller on the Mac.
+    #if os(macOS)
+    public static let standard = TypeScale(
+        caption: TypeStep(size: 10, style: .caption), body: TypeStep(size: 13, style: .body),
+        headline: TypeStep(size: 13, style: .headline), title: TypeStep(size: 22, style: .title))
+    #else
     public static let standard = TypeScale(
         caption: TypeStep(size: 12, style: .caption), body: TypeStep(size: 17, style: .body),
         headline: TypeStep(size: 17, style: .headline), title: TypeStep(size: 28, style: .title))
+    #endif
 }
 
-#if canImport(UIKit)
-extension Font.TextStyle {
-    fileprivate var uiTextStyle: UIFont.TextStyle {
-        switch self {
-        case .largeTitle: .largeTitle
-        case .title: .title1
-        case .title2: .title2
-        case .title3: .title3
-        case .headline: .headline
-        case .subheadline: .subheadline
-        case .callout: .callout
-        case .footnote: .footnote
-        case .caption: .caption1
-        case .caption2: .caption2
-        default: .body
-        }
+extension View {
+    /// Sets this view's text in `step`, grown by the text size its environment holds.
+    /// A Mac draws one size whatever the setting.
+    public func font(
+        _ step: TypeStep, weight: Font.Weight = .regular, design: Font.Design = .default
+    ) -> some View {
+        modifier(StepFont(step: step, weight: weight, design: design))
     }
 }
-#endif
+
+private struct StepFont: ViewModifier {
+    let weight: Font.Weight
+    let design: Font.Design
+    @ScaledMetric private var size: CGFloat
+
+    init(step: TypeStep, weight: Font.Weight, design: Font.Design) {
+        self.weight = weight
+        self.design = design
+        _size = ScaledMetric(wrappedValue: step.size, relativeTo: step.style)
+    }
+
+    func body(content: Content) -> some View {
+        content.font(.system(size: size, weight: weight, design: design))
+    }
+}

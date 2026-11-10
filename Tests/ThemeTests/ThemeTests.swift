@@ -17,6 +17,7 @@ struct Badge: View {
             Swatch(name: "\(name) accent", color: theme.palette.accent)
             Text("\(name) gap \(Int(theme.spacing.medium))")
             Text("\(name) corner \(Int(theme.radii.large))")
+            Text("\(name) body \(Int(theme.type.body.size))").font(theme.type.body)
         }
     }
 }

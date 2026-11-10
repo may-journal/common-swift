@@ -37,7 +37,7 @@ public struct Spacing: Sendable, Equatable {
     public static let standard = Spacing()
 }
 
-/// The corner radii, smallest first. Shapes draw them as continuous corners.
+/// The corner radii, smallest first. Draw them with `.continuous` corners, as the shared views do.
 public struct Radii: Sendable, Equatable {
     /// The radius of tags, chips and small tiles.
     public var small: CGFloat

@@ -7,8 +7,9 @@ import AppKit
 #endif
 
 extension Color {
-    /// A color from a 24-bit `0xRRGGBB` value in sRGB.
+    /// A color from a 24-bit `0xRRGGBB` value in sRGB, with opacity apart from the value.
     public init(rgb: UInt32, opacity: Double = 1) {
+        assert(rgb <= 0xFF_FFFF, "Color(rgb:) takes 0xRRGGBB; pass opacity separately")
         self.init(
             .sRGB, red: Self.channel(rgb, 16), green: Self.channel(rgb, 8),
             blue: Self.channel(rgb, 0), opacity: opacity)
@@ -16,6 +17,7 @@ extension Color {
 
     /// A color that draws `light` in light appearance and `dark` in dark appearance.
     public init(light: UInt32, dark: UInt32, lightOpacity: Double = 1, darkOpacity: Double = 1) {
+        assert(light <= 0xFF_FFFF && dark <= 0xFF_FFFF, "Color(light:dark:) takes 0xRRGGBB values")
         let light = PlatformColor.make(light, opacity: lightOpacity)
         let dark = PlatformColor.make(dark, opacity: darkOpacity)
         #if canImport(UIKit)

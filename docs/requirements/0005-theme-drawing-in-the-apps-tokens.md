@@ -21,7 +21,7 @@ shared views an app draws
 - 0005.2
   - Given User is in an app with no theme
     - When User opens a screen with a shared view
-      - Then the view draws in the standard spacing and radii
+      - Then the view draws in the platform's standard spacing, radii and type
 - 0005.3
   - Given User sees a color with a light and a dark value
     - When User has chosen dark appearance

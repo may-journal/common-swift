@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The color roles shared views draw with. Each role is one color that follows the appearance.
-public struct Palette: Sendable, Equatable {
+public struct Palette: Sendable {
     /// The screen behind everything.
     public var background: Color
     /// A card or row, which must differ from `background` in dark mode.

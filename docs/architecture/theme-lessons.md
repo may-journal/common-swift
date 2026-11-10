@@ -30,4 +30,4 @@ may-journals, photo-portal and secret-gifts each carry a hex parser for colors s
 
 ## Type grows with the person's text size
 
-may-calendar picks a step of its scale, never a literal size, and scales it with the step's text style. `TypeStep.font` does the same; a Mac draws one size.
+may-calendar picks a step of its scale, never a literal size, and scales it with the step's text style. `.font(_:)` with a `TypeStep` does the same, reading the text size from the environment. A Mac draws one size, from its own smaller scale.

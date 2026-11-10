@@ -28,6 +28,11 @@ extension ThemeTests {
             let (screen, user) = try render { Badge(name: "Card") }
             try await user.sees(.text("Card gap 12"))
             try await user.sees(.text("Card corner 20"))
+            #if os(macOS)
+            try await user.sees(.text("Card body 13"))
+            #else
+            try await user.sees(.text("Card body 17"))
+            #endif
             try screen.close()
         }
 
