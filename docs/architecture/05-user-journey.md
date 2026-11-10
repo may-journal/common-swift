@@ -28,11 +28,30 @@ Numbers match the callout table.
 
 ## Journey
 
-No package behavior exists yet, so no step names a requirement. Each package adds its steps with its first requirement.
+The root journey runs from a commit to an app update. Each package adds its own steps with its first requirement.
 
 ```mermaid
 flowchart TB
     contributor((1 Contributor)):::persona
+    commit(2 Commit a change<br/>Req 0004):::action
+    open(3 Open a pull request<br/>Req 0003):::action
+    checks[(4 pr-check and Fitness suite<br/>Req 0003, 0004, 0005)]:::system
+    merge(5 Merge into main<br/>Req 0001):::action
+    releasePR[6 Release pull request<br/>Req 0001, 0003]:::screen
+    release(7 Merge the release pull request<br/>Req 0002):::action
+    tag[(8 Version, tag and CHANGELOG.md<br/>Req 0002)]:::system
+    maintainer((9 App maintainer)):::persona
+    update(10 Move the app to the new tag<br/>Req 0002):::action
+
+    contributor --> commit
+    commit --> open
+    open --> checks
+    checks --> merge
+    merge --> releasePR
+    releasePR --> release
+    release --> tag
+    maintainer --> update
+    tag --> update
 
     classDef persona fill:#eef2ff,stroke:#6366f1,color:#312e81,stroke-width:2px
     classDef screen fill:#f8fafc,stroke:#64748b,color:#1e293b,stroke-width:2px
@@ -45,3 +64,12 @@ Numbers match the callout table.
 | #   | Description | Type | Why |
 | --- | --- | --- | --- |
 | 1   | A developer or an agent who changes the repo. | Persona | Same person as the system context. |
+| 2   | Commits with a conventional subject and a `changelog/` entry. | Action | The commit hook refuses a red commit. |
+| 3   | Opens a pull request with a conventional title that links the entry. | Action | pr-check reads the title and the link. |
+| 4   | pr-check, then the Fitness suite with the tests, run on the pull request. | System | A red check blocks the merge. |
+| 5   | Merges the green pull request into main. | Action | The push starts only Release Please. |
+| 6   | Release Please opens or updates the one release pull request. | Screen | It passes pr-check with no entry file. |
+| 7   | Merges the release pull request. | Action | This is the one step that releases. |
+| 8   | Release Please writes the version, the `vX.Y.Z` tag and `CHANGELOG.md`. | System | No other workflow writes them. |
+| 9   | A developer who keeps a may-* app current. | Persona | Same person as the system context. |
+| 10  | Moves the app's package dependency to the new tag. | Action | The app takes the release by version. |
