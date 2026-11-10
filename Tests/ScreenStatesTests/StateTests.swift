@@ -11,6 +11,8 @@ extension ScreenStatesTests {
             let session = try Session { GroceryScreen(groceries: Groceries(.loading)) }
             try await session.user.sees(.text("Loading"))
             try await session.user.doesNotSee(.text("Milk"))
+            try await session.user.doesNotSee(.text("Nothing to buy"))
+            try await session.user.doesNotSee(.button("Try Again"))
             try session.screen.close()
         }
 
@@ -55,18 +57,20 @@ extension ScreenStatesTests {
             try session.screen.close()
         }
 
-        @Test func test0006_7() async throws {
-            let session = try Session {
-                Text("Sample grocery row").loadingPlaceholder(label: "Loading groceries")
-            }
-            try await session.user.sees(.text("Loading groceries"))
-            try await session.user.doesNotSee(.text("Sample grocery row"))
-            try session.screen.close()
-        }
-
         @Test func test0006_8() async throws {
             let session = try Session { StatusPill("Syncing") }
             try await session.user.sees(.text("Syncing, in progress"))
+            try session.screen.close()
+        }
+
+        @Test func test0006_7() async throws {
+            let session = try Session { RefreshingRow() }
+            try await session.user.taps(.button("Count"))
+            try await session.user.taps(.button("Refresh"))
+            try await session.user.sees(.text("Loading row"))
+            try await session.user.doesNotSee(.text("Count 1"))
+            try await session.user.taps(.button("Done"))
+            try await session.user.sees(.text("Count 1"))
             try session.screen.close()
         }
     }

@@ -9,6 +9,7 @@ extension View {
     }
 }
 
+/// Every modifier applies whether or not it is active, so toggling keeps the content's state.
 private struct LoadingPlaceholder: ViewModifier {
     let active: Bool
     let label: String
@@ -16,19 +17,20 @@ private struct LoadingPlaceholder: ViewModifier {
     @State private var dim = false
 
     func body(content: Content) -> some View {
-        if active {
-            content
-                .redacted(reason: .placeholder)
-                .opacity(dim ? 0.4 : 1)
-                .allowsHitTesting(false)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(label)
-                .onAppear {
-                    guard !reduceMotion else { return }
-                    withAnimation(.easeInOut(duration: 0.9).repeatForever()) { dim = true }
+        let breathing = active && !reduceMotion
+        content
+            .redacted(reason: active ? .placeholder : [])
+            .opacity(dim ? 0.4 : 1)
+            .allowsHitTesting(!active)
+            .accessibilityHidden(active)
+            .overlay {
+                if active {
+                    Rectangle().fill(.clear)
+                        .accessibilityElement()
+                        .accessibilityLabel(label)
                 }
-        } else {
-            content
-        }
+            }
+            .animation(breathing ? .easeInOut(duration: 0.9).repeatForever() : .default, value: dim)
+            .onChange(of: breathing, initial: true) { dim = breathing }
     }
 }

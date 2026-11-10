@@ -39,9 +39,9 @@ loading screens an app shows
     - When User looks at the screen
       - Then the items show with no status
 - 0006.7
-  - Given User sees a placeholder where content is loading
-    - When User reads the screen aloud
-      - Then it reads the loading label, not the sample
+  - Given User changed a row that then shows as a placeholder
+    - When the load lands and the placeholder lifts
+      - Then the row reads the loading label, then keeps the change
 - 0006.8
   - Given User started a slow task
     - When User looks at the status pill

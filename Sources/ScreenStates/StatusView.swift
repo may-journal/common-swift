@@ -10,6 +10,7 @@ public struct StatusView: View {
     let tint: Color?
     let action: StatusAction?
     @Environment(\.theme) private var theme
+    @ScaledMetric(relativeTo: .title) private var tileSize: CGFloat = 76
 
     /// A status with `symbol` drawn in `tint`, or in the theme's faint ink when `tint` is nil.
     public init(
@@ -45,10 +46,10 @@ public struct StatusView: View {
         let shape = RoundedRectangle(cornerRadius: theme.radii.large, style: .continuous)
         return shape.fill(theme.palette.sunken)
             .overlay { shape.strokeBorder(theme.palette.line, lineWidth: 1) }
-            .frame(width: 76, height: 76)
+            .frame(width: tileSize, height: tileSize)
             .overlay {
                 Image(systemName: symbol)
-                    .font(.system(size: 28))
+                    .font(theme.type.title)
                     .foregroundStyle(tint ?? theme.palette.faintInk)
             }
             .accessibilityHidden(true)
@@ -65,7 +66,14 @@ public struct StatusView: View {
                     theme.palette.accent,
                     in: RoundedRectangle(cornerRadius: theme.radii.medium, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressDims())
+    }
+}
+
+/// Dims a filled button while it is held, so a tap shows it landed.
+private struct PressDims: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.opacity(configuration.isPressed ? 0.7 : 1)
     }
 }
 
@@ -81,23 +89,27 @@ public struct StatusAction {
 }
 
 /// A failed load: its message and, when the caller can retry, a Try Again button.
+/// Pass `title` and `retryTitle` in the app's language; the defaults are English.
 public struct FailureView: View {
     let title: String
     let message: String
+    let retryTitle: String
     let retry: (() -> Void)?
     @Environment(\.theme) private var theme
 
     public init(
-        title: String = "Something went wrong", message: String, retry: (() -> Void)? = nil
+        title: String = "Something went wrong", message: String,
+        retryTitle: String = "Try Again", retry: (() -> Void)? = nil
     ) {
         self.title = title
         self.message = message
+        self.retryTitle = retryTitle
         self.retry = retry
     }
 
     public var body: some View {
         StatusView(
             symbol: "exclamationmark.triangle", title: title, message: message,
-            tint: theme.palette.danger, action: retry.map { StatusAction("Try Again", run: $0) })
+            tint: theme.palette.danger, action: retry.map { StatusAction(retryTitle, run: $0) })
     }
 }

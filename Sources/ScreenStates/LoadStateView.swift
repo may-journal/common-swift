@@ -34,7 +34,8 @@ public struct LoadStateView<Value, Empty: View, Content: View>: View {
         case .loaded(let value) where isEmpty(value):
             empty().frame(maxWidth: .infinity, maxHeight: .infinity)
         case .loaded(let value):
-            content(value)
+            // It fills like the other states, so the screen keeps its size as the state changes.
+            content(value).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
     }
 }

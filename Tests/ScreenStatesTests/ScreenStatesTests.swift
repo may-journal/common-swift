@@ -53,3 +53,28 @@ struct Session {
         user = User(screen)
     }
 }
+
+/// A row with state of its own that shows as a placeholder while it refreshes.
+struct RefreshingRow: View {
+    @State private var refreshing = false
+
+    var body: some View {
+        VStack {
+            Counter().loadingPlaceholder(refreshing, label: "Loading row")
+            Button("Refresh") { refreshing = true }
+            Button("Done") { refreshing = false }
+        }
+    }
+}
+
+/// A count the row keeps in its own state.
+struct Counter: View {
+    @State private var count = 0
+
+    var body: some View {
+        VStack {
+            Button("Count") { count += 1 }
+            Text("Count \(count)")
+        }
+    }
+}
