@@ -25,18 +25,26 @@ struct Measured: View {
 
 /// The example app's list and detail, as a notes app would split them.
 struct NotesScreen: View {
-    @State var showsDetail: Bool
+    @State private var showsDetail = false
+    @State private var starred = false
+    /// The window's width, which Widen grows past the breakpoint as a person drags it.
+    @State var width: CGFloat
 
     var body: some View {
-        NavigationStack {
-            SplitOrStack(showsDetail: $showsDetail) {
-                VStack {
-                    Text("All notes")
-                    Button("Groceries") { showsDetail = true }
+        VStack {
+            Button("Widen") { width = 1000 }
+            NavigationStack {
+                SplitOrStack(showsDetail: $showsDetail) {
+                    VStack {
+                        Text("All notes")
+                        Button("Groceries") { showsDetail = true }
+                        Button(starred ? "Starred" : "Star") { starred = true }
+                    }
+                } detail: {
+                    Text("Milk and eggs")
                 }
-            } detail: {
-                Text("Milk and eggs")
             }
+            .frame(width: width)
         }
     }
 }

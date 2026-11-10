@@ -16,10 +16,12 @@ public enum WidthClass: Sendable, Equatable {
 }
 
 extension View {
-    /// Calls `action` with this view's width whenever it changes.
-    func onWidthChange(_ action: @escaping (CGFloat) -> Void) -> some View {
-        onGeometryChange(for: CGFloat.self) {
-            $0.size.width
+    /// Calls `action` with this view's width class, only when it flips at `breakpoint`.
+    func onWidthClassChange(
+        breakpoint: CGFloat, _ action: @escaping (WidthClass) -> Void
+    ) -> some View {
+        onGeometryChange(for: WidthClass.self) {
+            WidthClass(width: $0.size.width, breakpoint: breakpoint)
         } action: {
             action($0)
         }

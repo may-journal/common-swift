@@ -10,7 +10,7 @@ public struct SplitOrStack<Primary: View, Detail: View>: View {
     let detailFraction: CGFloat
     let primary: Primary
     let detail: Detail
-    @State private var width: CGFloat?
+    @State private var widthClass: WidthClass?
     @Environment(\.theme) private var theme
 
     /// Splits at `breakpoint` points, giving the detail `detailFraction` of a wide container.
@@ -26,28 +26,24 @@ public struct SplitOrStack<Primary: View, Detail: View>: View {
         self.detail = detail()
     }
 
+    /// One structure for both widths, so `primary` keeps its state across the breakpoint.
     public var body: some View {
-        Group {
-            if let width, WidthClass(width: width, breakpoint: breakpoint) == .wide {
-                split(width)
-            } else if width != nil {
-                primary.navigationDestination(isPresented: $showsDetail) { detail }
-            } else {
-                // Nothing pushes before the width is known, so a wide screen never starts stacked.
-                Color.clear
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onWidthChange { width = $0 }
-    }
-
-    private func split(_ width: CGFloat) -> some View {
         HStack(spacing: 0) {
             primary.frame(maxWidth: .infinity, maxHeight: .infinity)
-            if showsDetail {
+            if widthClass == .wide, showsDetail {
                 Rectangle().fill(theme.palette.line).frame(width: 1)
-                detail.frame(width: width * detailFraction).frame(maxHeight: .infinity)
+                detail
+                    .containerRelativeFrame(.horizontal) { width, _ in width * detailFraction }
+                    .frame(maxHeight: .infinity)
             }
         }
+        // Only a narrow container pushes, and only once its width is known. A wide one pops a
+        // pushed detail into its pane without writing `false` to `showsDetail`.
+        .navigationDestination(isPresented: pushes) { detail }
+        .onWidthClassChange(breakpoint: breakpoint) { widthClass = $0 }
+    }
+
+    private var pushes: Binding<Bool> {
+        widthClass == .narrow ? $showsDetail : .constant(false)
     }
 }

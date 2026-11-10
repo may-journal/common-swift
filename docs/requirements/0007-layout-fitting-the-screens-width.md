@@ -19,13 +19,13 @@ screens an app shows on a phone, a pad and a Mac
     - When User opens a note from the list
       - Then the list and the note show side by side
 - 0007.2
-  - Given User is on a narrow screen
-    - When User opens the notes screen
-      - Then only the list shows
-- 0007.3
-  - Given User sees the list on a narrow screen
+  - Given User sees only the list on a narrow screen
     - When User taps a note
       - Then the note pushes over the list
+- 0007.3
+  - Given User has a note pushed on a narrow window
+    - When User widens the window
+      - Then the list, as left, and the note show side by side
 - 0007.4
   - Given User is on a wide screen
     - When User reads a column of text

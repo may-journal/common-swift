@@ -15,24 +15,32 @@ extension AdaptiveLayoutTests {
         }
 
         @Test func test0007_1() async throws {
-            let session = try Session(.pad) { NotesScreen(showsDetail: true) }
+            let session = try Session(.pad) { NotesScreen(width: 1000) }
+            try await session.user.doesNotSee(.text("Milk and eggs"))
+            try await session.user.taps(.button("Groceries"))
             try await session.user.sees(.text("All notes"))
             try await session.user.sees(.text("Milk and eggs"))
             try session.screen.close()
         }
 
         @Test func test0007_2() async throws {
-            let session = try Session(.phone) { NotesScreen(showsDetail: false) }
+            let session = try Session(.phone) { NotesScreen(width: 400) }
             try await session.user.sees(.text("All notes"))
             try await session.user.doesNotSee(.text("Milk and eggs"))
+            try await session.user.taps(.button("Groceries"))
+            try await session.user.sees(.text("Milk and eggs"))
+            try await session.user.doesNotSee(.text("All notes"))
             try session.screen.close()
         }
 
         @Test func test0007_3() async throws {
-            let session = try Session(.phone) { NotesScreen(showsDetail: false) }
+            let session = try Session(.pad) { NotesScreen(width: 400) }
+            try await session.user.taps(.button("Star"))
             try await session.user.taps(.button("Groceries"))
-            try await session.user.sees(.text("Milk and eggs"))
             try await session.user.doesNotSee(.text("All notes"))
+            try await session.user.taps(.button("Widen"))
+            try await session.user.sees(.button("Starred"))
+            try await session.user.sees(.text("Milk and eggs"))
             try session.screen.close()
         }
 

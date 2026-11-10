@@ -6,7 +6,7 @@ What the may-journal iOS apps learned about wide and narrow screens, and where `
 
 may-journals' `HalfSplitView` in `src/UI/Shared/HalfSplitView.swift` lays out a list and a detail pane side by side. On a phone the detail pushes onto the enclosing stack, so Back writes `false` to the binding. may-photos switches between `LibraryShellView` and `LibrarySplitView` the same way.
 
-`SplitOrStack` keeps both halves. It reads the measured width, not the size class, because a Mac window has no size class. It draws nothing until the width is known, so a wide screen never starts stacked.
+`SplitOrStack` keeps both halves. It reads the measured width, not the size class, because a Mac window has no size class. It pushes nothing until the width is known, so a wide screen never starts stacked. One layout serves both widths, so the list keeps its state on a resize.
 
 ## Text stops at a readable width
 

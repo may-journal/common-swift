@@ -147,7 +147,7 @@ classDiagram
 
 ## AdaptiveLayout
 
-The `AdaptiveLayout` target lives under `Sources/AdaptiveLayout/`. It imports SwiftUI and `Theme`; `readableColumn` and `card` are view modifiers in [ReadableColumn](../../Sources/AdaptiveLayout/ReadableColumn.swift).
+The `AdaptiveLayout` target lives under `Sources/AdaptiveLayout/`. It imports SwiftUI and `Theme`; `readableColumn` and `card` are view modifiers in [ReadableColumn](../../Sources/AdaptiveLayout/ReadableColumn.swift) and [Card](../../Sources/AdaptiveLayout/Card.swift).
 
 ```mermaid
 classDiagram
@@ -165,7 +165,7 @@ classDiagram
 | #   | Description | Why |
 | --- | --- | --- |
 | 21  | [`WidthClass`](../../Sources/AdaptiveLayout/WidthClass.swift) is narrow or wide, from a measured width. | A Mac window has no size class. |
-| 22  | [`SplitOrStack`](../../Sources/AdaptiveLayout/SplitOrStack.swift) shows two panes when wide and pushes when narrow. | The apps each wrote this switch. |
+| 22  | [`SplitOrStack`](../../Sources/AdaptiveLayout/SplitOrStack.swift) shows two panes when wide and pushes when narrow. | The list keeps its state on a resize. |
 | 23  | [`AdaptiveGrid`](../../Sources/AdaptiveLayout/AdaptiveGrid.swift) fills rows with tiles no narrower than a minimum. | Gaps come from the theme. |
 | P   | The split picks its layout by width class. | It waits for the width before pushing. |
 
