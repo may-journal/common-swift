@@ -78,5 +78,25 @@ extension NavigationTests {
             try await session.user.sees(.text("Preferences"))
             try session.screen.close()
         }
+
+        @Test func test0004_8() async throws {
+            let entry = Draft()
+            var left: [Exit] = []
+            let leaving = LeaveGuard<Exit>(
+                hasUnsavedWork: { entry.unsaved }, perform: { left.append($0) })
+            leaving.request(.back)
+            try await leaving.saveThenLeave {
+                leaving.reset()
+                entry.unsaved = false
+            }
+            #expect(left.isEmpty)
+            #expect(leaving.pending == nil)
+        }
     }
+}
+
+/// A draft whose saved state the guard reads.
+@MainActor
+private final class Draft {
+    var unsaved = true
 }

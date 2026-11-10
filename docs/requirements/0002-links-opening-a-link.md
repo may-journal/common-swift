@@ -34,3 +34,7 @@ links the app receives
   - Given User opens a link with capitals in its host
     - When the app handles it
       - Then the named screen opens
+- 0002.6
+  - Given User has an app that keys a parser with capitals
+    - When User opens a link to that host
+      - Then the named screen opens

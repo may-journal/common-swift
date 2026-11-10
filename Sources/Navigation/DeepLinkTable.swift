@@ -11,7 +11,10 @@ public struct DeepLinkTable<Route>: Sendable {
 
     public init(scheme: String, parsers: [String: Parser]) {
         self.scheme = scheme
-        self.parsers = parsers
+        // `DeepLink` lowercases the host, so the keys must match it.
+        self.parsers = Dictionary(
+            parsers.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { first, _ in first }
+        )
     }
 
     /// The route `url` names, or nil when it is another scheme, an unknown host or a bad path.

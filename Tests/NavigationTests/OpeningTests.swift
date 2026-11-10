@@ -50,5 +50,13 @@ extension NavigationTests {
             try await session.user.sees(.text("Day 2026-11-09"))
             try session.screen.close()
         }
+
+        @Test func test0002_6() throws {
+            let table = DeepLinkTable<ExampleRoute>(
+                scheme: "example",
+                parsers: ["dayView": { link in link.path.first.map(ExampleRoute.day) }])
+            let url = try #require(URL(string: "example://dayView/2026-11-09"))
+            #expect(table.route(from: url) == .day("2026-11-09"))
+        }
     }
 }

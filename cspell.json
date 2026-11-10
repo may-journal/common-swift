@@ -9,6 +9,7 @@
     "swiftlint",
     "swiftpm",
     "typealias",
+    "uniquing",
     "xcodeproj"
   ]
 }

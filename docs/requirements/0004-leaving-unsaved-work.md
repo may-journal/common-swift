@@ -42,3 +42,7 @@ leaves requested from an editing screen
   - Given User has an unsaved draft
     - When User opens a link to another screen
       - Then the prompt asks first
+- 0004.8
+  - Given User taps Save and the entry is deleted mid-save
+    - When the save lands
+      - Then the screen does not leave for the gone entry

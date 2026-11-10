@@ -57,7 +57,8 @@ public final class LeaveGuard<Leave: Equatable> {
             pending = nil
             throw error
         }
-        guard !hasUnsavedWork() else { return }
+        // A reset during the save dropped the leave, so it must not run now.
+        guard pending == leave, !hasUnsavedWork() else { return }
         pending = nil
         perform(leave)
     }
