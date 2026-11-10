@@ -2,9 +2,10 @@ package requirements
 
 import (
 	"os"
-	"path"
 	"path/filepath"
+	"regexp"
 	"slices"
+	"strings"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -26,18 +27,21 @@ type job struct {
 	Permissions any    `yaml:"permissions"`
 }
 
-// workflows reads every workflow GitHub runs in repo, keyed by file name.
+// workflows reads every workflow GitHub runs in repo, keyed by file name:
+// each .yml or .yaml file directly in .github/workflows.
 func workflows(t *testing.T, repo string) map[string]workflow {
 	t.Helper()
-	files, err := filepath.Glob(filepath.Join(repo, ".github", "workflows", "*.yml"))
-	mustDo(t, err)
 	found := map[string]workflow{}
-	for _, file := range files {
-		raw, err := os.ReadFile(file)
+	for _, ext := range []string{"*.yml", "*.yaml"} {
+		files, err := filepath.Glob(filepath.Join(repo, ".github", "workflows", ext))
 		mustDo(t, err)
-		w := workflow{file: filepath.Base(file)}
-		mustDo(t, yaml.Unmarshal(raw, &w))
-		found[w.file] = w
+		for _, file := range files {
+			raw, err := os.ReadFile(file)
+			mustDo(t, err)
+			w := workflow{file: filepath.Base(file)}
+			mustDo(t, yaml.Unmarshal(raw, &w))
+			found[w.file] = w
+		}
 	}
 	return found
 }
@@ -71,26 +75,40 @@ func pushes(on any, branch string) bool {
 	return false
 }
 
-// branchMatches applies a push trigger's branches and branches-ignore
-// filters to branch. A trigger with only tag filters never runs for a branch.
+// branchMatches applies the branch filters of a push trigger to branch. Tag
+// filters alone never match; a paths filter is ignored, as some merge fits.
 func branchMatches(push any, branch string) bool {
 	filters, _ := push.(map[string]any)
 	if ignore, ok := filters["branches-ignore"]; ok {
-		return !anyMatch(ignore, branch)
+		return !filterMatches(ignore, branch)
 	}
 	if only, ok := filters["branches"]; ok {
-		return anyMatch(only, branch)
+		return filterMatches(only, branch)
 	}
 	_, tags := filters["tags"]
 	return !tags
 }
 
-// anyMatch reports whether one of a filter's glob patterns matches branch.
-func anyMatch(patterns any, branch string) bool {
+// filterMatches applies patterns to branch in order, as GitHub does. A match
+// selects it, and a later matching `!` pattern drops it.
+func filterMatches(patterns any, branch string) bool {
 	list, _ := patterns.([]any)
-	return slices.ContainsFunc(list, func(p any) bool {
+	selected := false
+	for _, p := range list {
 		pattern, _ := p.(string)
-		ok, _ := path.Match(pattern, branch)
-		return ok
-	})
+		negated := strings.HasPrefix(pattern, "!")
+		if glob(strings.TrimPrefix(pattern, "!")).MatchString(branch) {
+			selected = !negated
+		}
+	}
+	return selected
+}
+
+// glob compiles a GitHub filter pattern: `**` matches any characters, `*`
+// any but `/`, and every other character itself.
+func glob(pattern string) *regexp.Regexp {
+	quoted := regexp.QuoteMeta(pattern)
+	quoted = strings.ReplaceAll(quoted, `\*\*`, "\x00")
+	quoted = strings.ReplaceAll(quoted, `\*`, "[^/]*")
+	return regexp.MustCompile("^" + strings.ReplaceAll(quoted, "\x00", ".*") + "$")
 }

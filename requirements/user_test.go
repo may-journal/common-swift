@@ -98,11 +98,12 @@ func resolveFitness() (string, error) {
 		return exec.LookPath("fitness")
 	}
 	out, err := exec.Command(installer, "--version", "latest", "--install-only").Output()
-	lines := strings.Fields(string(out))
-	if err != nil || len(lines) == 0 {
-		return "", fmt.Errorf("%s --install-only printed no folder: %v", installer, err)
+	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
+	bin := filepath.Join(lines[len(lines)-1], "fitness")
+	if _, statErr := os.Stat(bin); err != nil || statErr != nil {
+		return "", fmt.Errorf("%s --install-only named no folder holding fitness: %v %v", installer, err, statErr)
 	}
-	return filepath.Join(lines[len(lines)-1], "fitness"), nil
+	return bin, nil
 }
 
 // checkout copies this repo's tracked files into a fresh repo on main and
@@ -120,33 +121,22 @@ func checkoutWithTests(t *testing.T) string {
 	return clone(t, true)
 }
 
-// clone copies the tracked files, the requirement tests only when tests is
-// set, and commits them on main.
+// clone writes the tracked files as git's index holds them, the content a
+// commit takes, and commits them on main. It keeps the requirement tests
+// only when tests is set.
 func clone(t *testing.T, tests bool) string {
 	t.Helper()
 	repo := t.TempDir()
-	out, err := exec.Command("git", "-C", "..", "ls-files", "-z").Output()
-	mustDo(t, err)
-	for _, name := range strings.Split(strings.TrimRight(string(out), "\x00"), "\x00") {
-		if tests || !strings.HasPrefix(name, "requirements/") {
-			copyFile(t, filepath.Join("..", name), filepath.Join(repo, name))
-		}
+	if out, err := exec.Command("git", "-C", "..", "checkout-index", "-a", "--prefix="+repo+"/").CombinedOutput(); err != nil {
+		t.Fatalf("git checkout-index: %v\n%s", err, out)
+	}
+	if !tests {
+		mustDo(t, os.RemoveAll(filepath.Join(repo, "requirements")))
 	}
 	git(t, repo, "init", "-q", "-b", "main")
 	git(t, repo, "add", "-A")
 	git(t, repo, "commit", "-q", "-m", "docs(readme): start from main")
 	return repo
-}
-
-// copyFile copies one file, keeping its mode, so the hooks stay executable.
-func copyFile(t *testing.T, from, to string) {
-	t.Helper()
-	info, err := os.Stat(from)
-	mustDo(t, err)
-	data, err := os.ReadFile(from)
-	mustDo(t, err)
-	mustDo(t, os.MkdirAll(filepath.Dir(to), 0o755))
-	mustDo(t, os.WriteFile(to, data, info.Mode().Perm()))
 }
 
 // write puts each file into repo, creating folders as needed.

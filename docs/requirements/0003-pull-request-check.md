@@ -23,6 +23,6 @@ merged pull requests
     - When pr-check judges it
       - Then it fails asking for the link
 - 0003.3
-  - Given Contributor sees the release pull request, which adds no entry file
+  - Given Contributor sees the release pull request, which changes `CHANGELOG.md` and adds no entry
     - When pr-check judges it
       - Then it passes

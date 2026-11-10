@@ -25,4 +25,4 @@ releases
 - 0002.3
   - Given Contributor has every other workflow in the repo
     - When GitHub runs one
-      - Then it cannot write the version, the tag or `CHANGELOG.md`
+      - Then it writes no file, at most merging a pull request the owner approved

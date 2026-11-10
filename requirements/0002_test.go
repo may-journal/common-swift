@@ -62,14 +62,15 @@ func Test0002_2(t *testing.T) {
 
 func Test0002_3(t *testing.T) {
 	t.Parallel()
-	want := []string{"release-please.yml release"}
+	// The shared auto-merge only merges a pull request the owner approved.
+	want := []string{"auto-merge-on-ready.yml auto-merge", "release-please.yml release"}
 	if got := writers(t, checkout(t)); !slices.Equal(got, want) {
 		t.Errorf("jobs that can write the version, the tag or CHANGELOG.md: %q, want only %q", got, want)
 	}
 }
 
-// writers names each workflow job in repo, as "file job", whose token can
-// write the repo or that calls the shared Release Please.
+// writers names each workflow job in repo, as "file job", that can write
+// the repo.
 func writers(t *testing.T, repo string) []string {
 	t.Helper()
 	var found []string
@@ -85,13 +86,14 @@ func writers(t *testing.T, repo string) []string {
 }
 
 // canWrite reports whether job j of w can write the repo. It can when it
-// calls Release Please, or its permissions are unset or grant writes.
+// hands over secrets, which can mint a writing token, or its permissions are
+// unset or grant writes.
 func (w workflow) canWrite(j job) bool {
 	grants := j.Permissions
 	if grants == nil {
 		grants = w.Permissions
 	}
-	return grants == nil || writes(grants) || j.Uses == releaseCaller
+	return grants == nil || writes(grants) || j.Secrets != nil
 }
 
 // writes reports whether a permissions value lets the token write contents:

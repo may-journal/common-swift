@@ -54,6 +54,11 @@ func releasePR(t *testing.T, repo string) pullRequest {
 		number: 23,
 		title:  "chore(main): release 1.0.0",
 		body:   root.Header + "\n---\n\n\n" + notes + "\n---\n" + root.Footer + "\n\nCloses #24.",
+		files: []changedFile{
+			{Filename: "CHANGELOG.md", Status: "added", Patch: "@@ -0,0 +1,3 @@\n+# Changelog\n+\n+" + notes},
+			{Filename: "version.txt", Status: "modified", Patch: "@@ -1 +1 @@\n-0.0.0\n+1.0.0"},
+			{Filename: ".release-please-manifest.json", Status: "modified", Patch: "@@ -1 +1 @@\n-{}\n+{\".\": \"1.0.0\"}"},
+		},
 		closes: map[int]issue{trackingIssue: {Body: "Release Please owns the version and notes in #23."}},
 	}
 }
