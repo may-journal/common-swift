@@ -1,0 +1,450 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "count.pages" : {
+      "comment" : "Count: preview pages under a component's name in the Storybook grid",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Page"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Pages"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "name.allPages" : {
+      "comment" : "Name: the Storybook sidebar row that shows every page of a component",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Pages"
+          }
+        }
+      }
+    },
+    "name.autoDevice" : {
+      "comment" : "Name: the Storybook device choice that draws on this screen, unframed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto, This Screen"
+          }
+        }
+      }
+    },
+    "name.dark" : {
+      "comment" : "Name: the dark appearance, as the Storybook appearance button's value",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
+          }
+        }
+      }
+    },
+    "name.defaultText" : {
+      "comment" : "Name: the previews draw at the device's own text size",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default text"
+          }
+        }
+      }
+    },
+    "name.device.auto" : {
+      "comment" : "Name: the Storybook device choice that draws on this screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto"
+          }
+        }
+      }
+    },
+    "name.device.iPad" : {
+      "comment" : "Name: the iPad device frame in Storybook",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPad"
+          }
+        }
+      }
+    },
+    "name.device.iPhone" : {
+      "comment" : "Name: the iPhone device frame in Storybook",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone"
+          }
+        }
+      }
+    },
+    "name.device.iPhoneDuo" : {
+      "comment" : "Name: the open iPhone Duo device frame in Storybook",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone Duo"
+          }
+        }
+      }
+    },
+    "name.device.mac" : {
+      "comment" : "Name: the Mac window frame in Storybook",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac"
+          }
+        }
+      }
+    },
+    "name.emptyData" : {
+      "comment" : "Name: the previews show no sample data",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty data"
+          }
+        }
+      }
+    },
+    "name.landscape" : {
+      "comment" : "Name: the device frame held on its side",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Landscape"
+          }
+        }
+      }
+    },
+    "name.largestText" : {
+      "comment" : "Name: the previews draw at the largest accessibility text size",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Largest text"
+          }
+        }
+      }
+    },
+    "name.largeText" : {
+      "comment" : "Name: the previews draw at a large text size",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Large text"
+          }
+        }
+      }
+    },
+    "name.light" : {
+      "comment" : "Name: the light appearance, as the Storybook appearance button's value",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "name.longData" : {
+      "comment" : "Name: the previews show long sample data",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long data"
+          }
+        }
+      }
+    },
+    "name.portrait" : {
+      "comment" : "Name: the device frame held upright",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Portrait"
+          }
+        }
+      }
+    },
+    "name.shortData" : {
+      "comment" : "Name: the previews show short sample data",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short data"
+          }
+        }
+      }
+    },
+    "name.storybook" : {
+      "comment" : "Name: the Debug and TestFlight catalog of every preview, as its title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storybook"
+          }
+        }
+      }
+    },
+    "noun.appearance" : {
+      "comment" : "Noun: the Storybook header button that flips light and dark",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        }
+      }
+    },
+    "noun.dataLength" : {
+      "comment" : "Noun: the Storybook header button that picks how much sample data shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data length"
+          }
+        }
+      }
+    },
+    "noun.device" : {
+      "comment" : "Noun: the Storybook header button that picks the device frame",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device"
+          }
+        }
+      }
+    },
+    "noun.pages" : {
+      "comment" : "Noun: a component's preview pages in the Storybook catalog",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages"
+          }
+        }
+      }
+    },
+    "noun.textSize" : {
+      "comment" : "Noun: the Storybook header button that picks the previews' text size",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text size"
+          }
+        }
+      }
+    },
+    "noun.version" : {
+      "comment" : "Noun: the Settings row that shows the app's version and build",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "sentence.manyPages" : {
+      "comment" : "Sentence: a Storybook launch named a page that several previews share",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Several previews are named “%1$@”: %2$@. Add --storybook-file and --storybook-line."
+          }
+        }
+      }
+    },
+    "sentence.noPage" : {
+      "comment" : "Sentence: a Storybook launch named a page that does not exist",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No single preview or component is named “%@”."
+          }
+        }
+      }
+    },
+    "sentence.pickPage" : {
+      "comment" : "Sentence: under the Storybook detail pane's empty title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a page from the list."
+          }
+        }
+      }
+    },
+    "sentence.settings.storybook" : {
+      "comment" : "Settings footer under the row that opens the Storybook catalog",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For developers and testers only."
+          }
+        }
+      }
+    },
+    "title.choosePreview" : {
+      "comment" : "Title: the Storybook detail pane before a page is picked",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a preview"
+          }
+        }
+      }
+    },
+    "title.noPreviewOpened" : {
+      "comment" : "Title: the page a Storybook launch named does not exist",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No preview opened"
+          }
+        }
+      }
+    },
+    "verb.done" : {
+      "comment" : "Verb: the button that closes the Storybook catalog",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "verb.next" : {
+      "comment" : "Verb: the Storybook button that opens the page after this one",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "verb.previous" : {
+      "comment" : "Verb: the Storybook button that opens the page before this one",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous"
+          }
+        }
+      }
+    },
+    "verb.rotate" : {
+      "comment" : "Verb: the Storybook button that turns the device frame",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate"
+          }
+        }
+      }
+    },
+    "verb.search" : {
+      "comment" : "Verb: the prompt in the Storybook sidebar's search field",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
