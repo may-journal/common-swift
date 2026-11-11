@@ -24,7 +24,6 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 - Views inside read `\.shellLayout` to tell a pane beside the sidebar from a phone's stack.
 - `ShellLayout.fitting(_:)` is the rule the shell uses, for a modifier the app adds only where it splits.
 - An app with no sidebar yet picks the stack-only shell, `AdaptiveShell(path:root:page:)`, on every screen.
-- Read state that changes often in the sidebar, pane or page views. Read in the shell's host, it redraws the whole shell.
 - A Mac-only app may use `ShellSplit` alone.
 
 ## Split
