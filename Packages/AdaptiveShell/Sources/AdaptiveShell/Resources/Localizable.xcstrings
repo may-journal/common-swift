@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.hideSidebar" : {
+      "comment" : "Action: the rail button that hides the sidebar column",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide Sidebar"
+          }
+        }
+      }
+    },
+    "action.showSidebar" : {
+      "comment" : "Action: the rail button that brings back the hidden sidebar column",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Sidebar"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
