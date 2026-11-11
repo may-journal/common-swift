@@ -35,6 +35,6 @@ testers who open Settings
     - When I scroll to the end of Settings
       - Then the Storybook row is there with no taps
 - 0006.6
-  - Given App maintainer runs a Debug build with a Version row of its own
-    - When I scroll to the end of Settings
-      - Then the Storybook row is there with no taps
+  - Given App maintainer ships a TestFlight build with a Version row of its own
+    - When I tap that Version seven times
+      - Then the Storybook row appears

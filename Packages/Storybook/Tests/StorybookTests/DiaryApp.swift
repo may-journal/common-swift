@@ -28,15 +28,27 @@ struct DiaryApp: View {
     var body: some View {
         Form {
             if ownsVersion {
-                Section { LabeledContent(StorybookWords.version, value: storybook.configuration.version) }
+                Section { ownVersion }
                 StorybookRowSection(storybook)
             } else {
                 StorybookSettingsSection(storybook)
             }
         }
         .formStyle(.grouped)
-        .task { await storybook.resolve() }
+        // An app that owns its Version row asks the gate itself, as the README says.
+        .task { if ownsVersion { await storybook.resolve() } }
         .storybookEntry(storybook)
+    }
+
+    /// The app's own Version row, which counts taps toward the switch once the gate allows.
+    @ViewBuilder private var ownVersion: some View {
+        let row = LabeledContent(StorybookWords.version, value: storybook.configuration.version)
+        if storybook.isBuildAllowed {
+            Button { storybook.tapsVersion() } label: { row }
+                .accessibilityLabel(StorybookWords.version)
+        } else {
+            row
+        }
     }
 
     /// The app's diary card, showing the sample the header's data length picks. StorybookKit's

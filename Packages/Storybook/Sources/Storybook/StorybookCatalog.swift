@@ -34,15 +34,9 @@ struct StorybookCatalog {
     let pages: [BookPage]
 
     init(pages added: [BookPage]) {
-        store = BookStore(
-            book: Book(title: StorybookWords.name) {
-                if let nodes = Book.allBookPreviews() {
-                    nodes
-                }
-                added
-            }
-        )
-        let hosts = Self.pages(in: store.book.contents).filter(Self.isHosts)
+        // The store holds only the host's pages, so a launch can never select a hidden one.
+        let hosts = (Self.pages(in: Book.allBookPreviews() ?? []) + added).filter(Self.isHosts)
+        store = BookStore(book: Book(title: StorybookWords.name) { hosts })
         groups = Dictionary(grouping: hosts, by: Self.component)
             .sorted { $0.key.localizedStandardCompare($1.key) == .orderedAscending }
             .map { Group(id: $0.key, pages: $0.value.sorted(by: Self.sourceOrder)) }
