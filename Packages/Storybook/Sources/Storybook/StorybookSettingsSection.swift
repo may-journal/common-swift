@@ -17,7 +17,7 @@ public struct StorybookSettingsSection: View {
         }
         // The catalog row waits on the gate's answer, asked here since an absent row can't.
         .task { await availability.resolve() }
-        if availability.isEnabled { storybookSection }
+        StorybookRowSection(availability)
     }
 
     @ViewBuilder private var versionRow: some View {
@@ -41,28 +41,5 @@ public struct StorybookSettingsSection: View {
 
     private var versionContent: some View {
         LabeledContent(configuration.labels.version, value: configuration.version)
-    }
-
-    private var storybookSection: some View {
-        Section {
-            // It opens the root cover, since a lazy Form row would drop a cover of its own.
-            Button {
-                availability.presentsCatalog()
-            } label: {
-                HStack {
-                    Text(configuration.labels.storybook)
-                        .foregroundStyle(Color.primary)
-                    Spacer()
-                    Image(systemName: "chevron.forward")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.tertiary)
-                        .accessibilityHidden(true)
-                }
-                .contentShape(.rect)
-            }
-            .accessibilityIdentifier(configuration.identifiers.storybookRow)
-        } footer: {
-            Text(configuration.labels.footer)
-        }
     }
 }

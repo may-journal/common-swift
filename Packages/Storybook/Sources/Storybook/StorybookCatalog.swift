@@ -42,7 +42,8 @@ struct StorybookCatalog {
                 added
             }
         )
-        groups = Dictionary(grouping: Self.pages(in: store.book.contents), by: Self.component)
+        let hosts = Self.pages(in: store.book.contents).filter(Self.isHosts)
+        groups = Dictionary(grouping: hosts, by: Self.component)
             .sorted { $0.key.localizedStandardCompare($1.key) == .orderedAscending }
             .map { Group(id: $0.key, pages: $0.value.sorted(by: Self.sourceOrder)) }
         pages = groups.flatMap(\.pages)
@@ -107,6 +108,11 @@ struct StorybookCatalog {
     private static func componentSeparator(in page: BookPage) -> Range<String.Index>? {
         guard page.title.hasPrefix("line: ") == false else { return nil }
         return page.title.range(of: ": ")
+    }
+
+    /// Whether the host declares `page`, unlike the demo `#Preview` StorybookKit ships.
+    private static func isHosts(_ page: BookPage) -> Bool {
+        !page.descriptor.fileID.hasPrefix("StorybookKit/")
     }
 
     private static func pages(in nodes: [Book.Node]) -> [BookPage] {

@@ -30,3 +30,7 @@ ways in a build allows
   - Given App maintainer adds a page of the app's own
     - When I open the catalog
       - Then the page is listed under its component
+- 0007.5
+  - Given App maintainer links StorybookKit, which ships a demo preview of its own
+    - When I open the catalog
+      - Then it lists only the app's pages

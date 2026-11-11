@@ -41,5 +41,13 @@ extension StorybookTests {
             try await launch.user.sees(.text("sample"))
             try launch.quits()
         }
+
+        @Test func test0007_5() async throws {
+            let launch = try Launch(.debug)
+            try await launch.opensStorybook()
+            try await launch.user.sees(.text("DiaryCard"))
+            try await launch.user.doesNotSee(.text(DiaryApp.demoComponent))
+            try launch.quits()
+        }
     }
 }

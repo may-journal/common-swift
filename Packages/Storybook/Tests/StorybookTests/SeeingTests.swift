@@ -46,5 +46,11 @@ extension StorybookTests {
             try await launch.user.sees(.button(StorybookWords.name))
             try launch.quits()
         }
+
+        @Test func test0006_6() async throws {
+            let launch = try Launch(.debug, ownsVersion: true)
+            try await launch.user.sees(.button(StorybookWords.name))
+            try launch.quits()
+        }
     }
 }
