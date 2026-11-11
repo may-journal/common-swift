@@ -35,7 +35,7 @@ On iOS the system's sidebar toggle moves to the rail on the right, labelled Show
 
 ## Links
 
-`PendingOpen` reads each link into the app's own request type and holds it. `opensRequests(_:perform:)` takes the links the system opens and hands each held request over once. Put it on a view that shows only once the app can open a request.
+`PendingOpen` reads each link into the app's own request type and holds it. `opensRequests(_:perform:)` takes the links the system opens and hands each held request over once. Put it on the window's root view, which hears links from launch.
 
 ```swift
 let requests = PendingOpen<OpenDay>(read: OpenDay.init(link:))

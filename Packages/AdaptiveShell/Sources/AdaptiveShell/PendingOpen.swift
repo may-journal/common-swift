@@ -23,7 +23,7 @@ public final class PendingOpen<Request: Equatable> {
 
 extension View {
     /// Hands each held request to `perform` once, on a cold launch too, and takes the links the
-    /// system opens. Put it on a view that shows once the app can open a request.
+    /// system opens. Put it on the window's root view, which hears links from launch.
     public func opensRequests<Request: Equatable>(
         _ requests: PendingOpen<Request>, perform: @escaping (Request) -> Void
     ) -> some View {
