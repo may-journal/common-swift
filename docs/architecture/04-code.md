@@ -51,7 +51,7 @@ Numbers on classes and letters on relationships match the callout table. See [02
 | 1   | A pull request that changes the repo. | Every change takes the same path. |
 | 2   | A fitness, build or test check on the change. | Checks judge the change, not the person. |
 | 3   | The changelog entry file a change adds. | Each change records itself once. |
-| 4   | A version delivered to the apps. | An app updates by version. |
+| 4   | One repo-wide version delivered to the apps. | An app updates by version. |
 | A   | The change is judged by its checks. | Red checks stop it. |
 | B   | The change adds its entry. | The entry feeds the release. |
 | C   | The entry names what a release holds. | The release notes come from entries. |
@@ -60,3 +60,5 @@ Numbers on classes and letters on relationships match the callout table. See [02
 ## Tests
 
 Each package runs `swift test` in its own folder, so a package proves its requirements alone.
+
+The root requirements in `docs/requirements` have one Go test each in `requirements/`. Run them with `go -C requirements test ./...`; the Fitness suite runs them too. Each test copies the repo, runs git and fitness there as a contributor does, and replays GitHub's answers.
