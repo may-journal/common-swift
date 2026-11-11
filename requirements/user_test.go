@@ -114,8 +114,8 @@ func checkout(t *testing.T) string {
 	return clone(t, false)
 }
 
-// checkoutWithTests is checkout with the requirement tests copied too, for
-// a check that reads them without running them.
+// checkoutWithTests is checkout that keeps the requirement tests, the
+// packages and the root manifest. A check reads the tests; an app builds them.
 func checkoutWithTests(t *testing.T) string {
 	t.Helper()
 	return clone(t, true)

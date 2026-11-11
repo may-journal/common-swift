@@ -60,12 +60,22 @@ func Test0009_2(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("the app did not build, exit code %d:\n%s", code, out)
 	}
+	if links := linked(t, app); strings.Contains(links, "StoreKit") {
+		t.Errorf("an app that picks only Storybook links StoreKit:\n%s", links)
+	}
+}
+
+// linked lists the frameworks the app's built library links, as otool prints
+// them. Every Swift library links Foundation, so a list without it is no list.
+func linked(t *testing.T, app string) string {
+	t.Helper()
 	library := filepath.Join(app, ".build", "debug", "libDiaryKit.dylib")
 	if _, err := os.Stat(library); err != nil {
 		t.Fatalf("the build left no app library: %v", err)
 	}
-	links, _ := run(t, app, nil, "otool", "-L", library)
-	if strings.Contains(links, "StoreKit") {
-		t.Errorf("an app that picks only Storybook links StoreKit:\n%s", links)
+	links, code := run(t, app, nil, "otool", "-L", library)
+	if code != 0 || !strings.Contains(links, "Foundation") {
+		t.Fatalf("otool listed no linked frameworks, exit code %d:\n%s", code, links)
 	}
+	return links
 }

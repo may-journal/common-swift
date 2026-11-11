@@ -21,4 +21,4 @@ apps that depend on common-swift
 - 0009.2
   - Given App maintainer picks only the Storybook product
     - When the app builds
-      - Then it links no StoreKit
+      - Then the app's own library links no StoreKit
