@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/may-journal/common-swift/compare/v1.1.0...v1.2.0) (2026-11-11)
+
+
+### Features
+
+* **package:** expose each package's products from a root manifest ([#20](https://github.com/may-journal/common-swift/issues/20)) ([43b70eb](https://github.com/may-journal/common-swift/commit/43b70ebd1f4985178a3114e097a13e18d4ed0c6d))
+
 ## [1.1.0](https://github.com/may-journal/common-swift/compare/v1.0.0...v1.1.0) (2026-11-11)
 
 
