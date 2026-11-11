@@ -1,0 +1,6 @@
+# per-checkout SwiftPM build output when agents build in parallel
+.build/
+# SwiftPM's local package state
+.swiftpm/
+# a library leaves dependency pins to the app that links it
+Package.resolved

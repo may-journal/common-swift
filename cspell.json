@@ -1,0 +1,17 @@
+{
+  "version": "0.2",
+  "useGitignore": true,
+  "words": [
+    "alignleft",
+    "devicectl",
+    "discardable",
+    "laptopcomputer",
+    "magnifyingglass",
+    "simctl",
+    "subheadline",
+    "swiftpm",
+    "xcrun",
+    "xmark",
+    "xcstrings"
+  ]
+}

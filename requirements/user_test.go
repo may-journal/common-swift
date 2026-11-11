@@ -108,7 +108,7 @@ func resolveFitness() (string, error) {
 
 // checkout copies this repo's tracked files into a fresh repo on main and
 // commits them, as a contributor's clone holds them. The requirement tests
-// stay out of the copy, so a fitness run there never starts them again.
+// and the packages, whose tests would need them, stay out of the copy.
 func checkout(t *testing.T) string {
 	t.Helper()
 	return clone(t, false)
@@ -123,7 +123,7 @@ func checkoutWithTests(t *testing.T) string {
 
 // clone writes the tracked files as git's index holds them, the content a
 // commit takes, and commits them on main. It keeps the requirement tests
-// only when tests is set.
+// and the packages only when tests is set.
 func clone(t *testing.T, tests bool) string {
 	t.Helper()
 	repo := t.TempDir()
@@ -132,6 +132,7 @@ func clone(t *testing.T, tests bool) string {
 	}
 	if !tests {
 		mustDo(t, os.RemoveAll(filepath.Join(repo, "requirements")))
+		mustDo(t, os.RemoveAll(filepath.Join(repo, "Packages")))
 	}
 	git(t, repo, "init", "-q", "-b", "main")
 	git(t, repo, "add", "-A")

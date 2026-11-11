@@ -16,6 +16,9 @@ C4Component
     }
 
     System_Ext(github, "7 GitHub")
+    Container_Boundary(packages, "8 Packages folder") {
+        Component(sources, "9 Package sources", "Swift", "Every folder under Packages/, each with its own manifest and views")
+    }
 
     Rel(contributor, github, "A")
     Rel(github, find, "B")
@@ -23,6 +26,7 @@ C4Component
     Rel(build, test, "D")
     Rel(test, report, "E")
     Rel(report, github, "F")
+    Rel(build, sources, "G")
 
     UpdateElementStyle(contributor, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(find, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
@@ -30,6 +34,7 @@ C4Component
     UpdateElementStyle(test, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(report, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(github, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
+    UpdateElementStyle(sources, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
 ```
 
 ```mermaid
@@ -58,9 +63,12 @@ Numbers on nodes and letters on arrows match the callout table.
 | 5   | Runs the package's tests. | A package proves its own requirements. |
 | 6   | Posts the result as a check. | The result gates the merge. |
 | 7   | Hosts the pull request and the checks. | It is the one door for every change. |
+| 8   | The `Packages/` folder, one package per subfolder. | Packages sit apart from the root build files. |
+| 9   | The sources in `Packages/` the steps build. | Each package draws its own components. |
 | A   | Pushes the change to a pull request. | The push starts the flow. |
 | B   | Starts the workflow. | No manual build step. |
 | C   | Hands over the package list. | Each package is built in turn. |
 | D   | Hands over the built package. | Tests run on what was built. |
 | E   | Hands over the test result. | The check reflects the tests. |
 | F   | Posts the check. | Reviewers see one result. |
+| G   | Compiles each package from its sources. | The build reads no other folder. |
