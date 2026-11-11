@@ -41,7 +41,7 @@ flowchart TB
     release(7 Merge the release pull request<br/>Req 0002):::action
     tag[(8 Version, tag and CHANGELOG.md<br/>Req 0002)]:::system
     maintainer((9 App maintainer)):::persona
-    update(10 Move the app to the new tag<br/>Req 0002):::action
+    update(10 Move the app to the new tag<br/>Req 0002, 0009):::action
     adopt(11 Use a package's features in the app<br/>Req 0006, 0007, 0008):::action
 
     contributor --> commit
@@ -74,5 +74,5 @@ Numbers match the callout table.
 | 7   | Merges the release pull request. | Action | This is the one step that releases. |
 | 8   | Release Please writes the version, the `vX.Y.Z` tag and `CHANGELOG.md`. | System | No other workflow writes them. |
 | 9   | A developer who keeps a may-* app current. | Persona | Same person as the system context. |
-| 10  | Moves the app's package dependency to the new tag. | Action | The app takes the release by version. |
+| 10  | Moves the app's dependency on the repo URL to the new tag. | Action | The app takes the release by version, with only the products it picks. |
 | 11  | Uses what a package promises; its own journey draws the steps. | Action | Fitness reads every requirement doc here only. |

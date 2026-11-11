@@ -4,7 +4,7 @@ The in-app catalog of every SwiftUI `#Preview`, for the may-* apps on iOS and th
 
 ## Adopt
 
-Add the package by path or by the repo's release tag, and link the `Storybook` product. Link `StorybookSandbox` as well for the TestFlight rule.
+Depend on common-swift as the [root README](../../README.md#depend-on-it) says, and link the `Storybook` product. Link `StorybookSandbox` as well for the TestFlight rule.
 
 ```swift
 import Storybook

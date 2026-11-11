@@ -121,9 +121,9 @@ func checkoutWithTests(t *testing.T) string {
 	return clone(t, true)
 }
 
-// clone writes the tracked files as git's index holds them, the content a
-// commit takes, and commits them on main. It keeps the requirement tests
-// and the packages only when tests is set.
+// clone commits the tracked files on main as git's index holds them, the
+// content a commit takes. It keeps the requirement tests, the packages and
+// the root manifest that points into them only when tests is set.
 func clone(t *testing.T, tests bool) string {
 	t.Helper()
 	repo := t.TempDir()
@@ -131,8 +131,9 @@ func clone(t *testing.T, tests bool) string {
 		t.Fatalf("git checkout-index: %v\n%s", err, out)
 	}
 	if !tests {
-		mustDo(t, os.RemoveAll(filepath.Join(repo, "requirements")))
-		mustDo(t, os.RemoveAll(filepath.Join(repo, "Packages")))
+		for _, path := range []string{"requirements", "Packages", "Package.swift"} {
+			mustDo(t, os.RemoveAll(filepath.Join(repo, path)))
+		}
 	}
 	git(t, repo, "init", "-q", "-b", "main")
 	git(t, repo, "add", "-A")
