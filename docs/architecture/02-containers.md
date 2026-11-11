@@ -45,4 +45,4 @@ Numbers on nodes and letters on arrows match the callout table.
 | B   | Delivers each package as a Swift package. | The app takes it through its manifest. |
 | C   | Links the frameworks the packages name. | A package adds no framework the app did not choose. |
 
-Release Please runs in manifest mode with only the root `.` component, so one `vX.Y.Z` tag versions every package. SwiftPM reads versions only from repo-wide tags of a root manifest, and the `release-changelog` check binds the root version to `version.txt`. So may-journal/.github syncs its shared release template here unchanged.
+Release Please runs in manifest mode with only the root `.` component, so one `vX.Y.Z` tag versions every package. SwiftPM reads versions only from repo-wide tags of a root manifest, and the `release-changelog` check binds the root version to `version.txt`. So may-journal/.github syncs its shared release template here unchanged. The root `Package.swift` lists every package's products by `path:`, since an app's URL dependency reads only that manifest.

@@ -1,4 +1,4 @@
-# per-checkout SwiftPM build output when agents build in parallel
+# per-checkout SwiftPM build output of the root manifest
 .build/
 # SwiftPM's local package state
 .swiftpm/

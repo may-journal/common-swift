@@ -19,6 +19,9 @@ C4Component
     Container_Boundary(packages, "8 Packages folder") {
         Component(sources, "9 Package sources", "Swift", "Every folder under Packages/, each with its own manifest and views")
     }
+    Container_Boundary(top, "10 Repo root") {
+        Component(root, "11 Root manifest", "Swift", "Lists every package's products by path")
+    }
 
     Rel(contributor, github, "A")
     Rel(github, find, "B")
@@ -27,6 +30,7 @@ C4Component
     Rel(test, report, "E")
     Rel(report, github, "F")
     Rel(build, sources, "G")
+    Rel(root, sources, "H")
 
     UpdateElementStyle(contributor, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(find, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
@@ -35,6 +39,7 @@ C4Component
     UpdateElementStyle(report, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(github, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
     UpdateElementStyle(sources, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
+    UpdateElementStyle(root, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
 ```
 
 ```mermaid
@@ -65,6 +70,8 @@ Numbers on nodes and letters on arrows match the callout table.
 | 7   | Hosts the pull request and the checks. | It is the one door for every change. |
 | 8   | The `Packages/` folder, one package per subfolder. | Packages sit apart from the root build files. |
 | 9   | The sources in `Packages/` the steps build. | Each package draws its own components. |
+| 10  | The files at the top of the repo, beside the packages. | The build files sit apart from the packages. |
+| 11  | The root `Package.swift`. | An app's URL dependency reads only this manifest. |
 | A   | Pushes the change to a pull request. | The push starts the flow. |
 | B   | Starts the workflow. | No manual build step. |
 | C   | Hands over the package list. | Each package is built in turn. |
@@ -72,3 +79,4 @@ Numbers on nodes and letters on arrows match the callout table.
 | E   | Hands over the test result. | The check reflects the tests. |
 | F   | Posts the check. | Reviewers see one result. |
 | G   | Compiles each package from its sources. | The build reads no other folder. |
+| H   | Names each package's targets by `path:`. | No source is copied. |
