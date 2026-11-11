@@ -22,6 +22,8 @@ Form {
 
 The app holds one `StorybookAvailability` and hands it to both. `storybookEntry(_:)` holds the one cover every way in opens, so put it on one window's root only. `StorybookSettingsSection` is the version row and the Storybook row.
 
+An app with a Version row of its own calls `tapsVersion()` from it, adds `StorybookRowSection` instead, and asks `resolve()` as Settings appear.
+
 ## Gate
 
 - `.debugOnly` is the default, so adopting the package never ships the catalog by accident.

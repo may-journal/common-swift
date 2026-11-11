@@ -22,25 +22,52 @@ enum Build {
 /// section in its Form, the entry at its root and one page of its own.
 struct DiaryApp: View {
     let storybook: StorybookAvailability
+    /// Whether the app keeps a Version row of its own and adds only the Storybook row.
+    var ownsVersion = false
 
     var body: some View {
         Form {
-            StorybookSettingsSection(storybook)
+            if ownsVersion {
+                Section { ownVersion }
+                StorybookRowSection(storybook)
+            } else {
+                StorybookSettingsSection(storybook)
+            }
         }
         .formStyle(.grouped)
+        // An app that owns its Version row asks the gate itself, as the README says.
+        .task { if ownsVersion { await storybook.resolve() } }
         .storybookEntry(storybook)
     }
 
-    /// The app's own page: a diary card that shows the sample the header's data length picks.
+    /// The app's own Version row, which counts taps toward the switch once the gate allows.
+    @ViewBuilder private var ownVersion: some View {
+        let row = LabeledContent(StorybookWords.version, value: storybook.configuration.version)
+        if storybook.isBuildAllowed {
+            Button { storybook.tapsVersion() } label: { row }
+                .accessibilityLabel(StorybookWords.version)
+        } else {
+            row
+        }
+    }
+
+    /// The app's diary card, showing the sample the header's data length picks. StorybookKit's
+    /// demo `#Preview` is replayed, since a test bundle's catalog finds no previews.
     static var pages: [BookPage] {
         [
             BookPage(title: "DiaryCard: sample") {
                 PreviewSample { length in
                     Text(length.pick(empty: emptySample, short: shortSample, long: longSample))
                 }
+            },
+            BookPage("StorybookKit/\(demoComponent).swift", 593, title: "line: 593") {
+                Color.purple
             }
         ]
     }
+
+    /// The file StorybookKit's unnamed demo preview sits in, which would name its component.
+    static let demoComponent = "StorybookDisplayRootView"
 
     static let emptySample = "No entries yet"
     static let shortSample = "Kites"
@@ -59,7 +86,9 @@ struct Launch {
     static let suite = "storybook.tests"
 
     /// Opens the app; a relaunch keeps the switch the launch before turned on.
-    init(_ build: Build, arguments: [String] = [], relaunch: Bool = false) throws {
+    init(
+        _ build: Build, arguments: [String] = [], relaunch: Bool = false, ownsVersion: Bool = false
+    ) throws {
         if !relaunch { Self.forgetsSettings() }
         let configuration = StorybookConfiguration(
             version: "1.0 (7)", pages: { DiaryApp.pages }, arguments: arguments)
@@ -67,7 +96,7 @@ struct Launch {
             gate: build.gate, configuration: configuration,
             defaults: UserDefaults(suiteName: Self.suite) ?? .standard)
         let storybook = storybook
-        screen = try Screen.render { DiaryApp(storybook: storybook) }
+        screen = try Screen.render { DiaryApp(storybook: storybook, ownsVersion: ownsVersion) }
         user = User(screen)
     }
 

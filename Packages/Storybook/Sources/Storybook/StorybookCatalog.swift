@@ -34,15 +34,10 @@ struct StorybookCatalog {
     let pages: [BookPage]
 
     init(pages added: [BookPage]) {
-        store = BookStore(
-            book: Book(title: StorybookWords.name) {
-                if let nodes = Book.allBookPreviews() {
-                    nodes
-                }
-                added
-            }
-        )
-        groups = Dictionary(grouping: Self.pages(in: store.book.contents), by: Self.component)
+        // The store holds only the host's pages, so a launch can never select a hidden one.
+        let hosts = (Self.pages(in: Book.allBookPreviews() ?? []) + added).filter(Self.isHosts)
+        store = BookStore(book: Book(title: StorybookWords.name) { hosts })
+        groups = Dictionary(grouping: hosts, by: Self.component)
             .sorted { $0.key.localizedStandardCompare($1.key) == .orderedAscending }
             .map { Group(id: $0.key, pages: $0.value.sorted(by: Self.sourceOrder)) }
         pages = groups.flatMap(\.pages)
@@ -107,6 +102,11 @@ struct StorybookCatalog {
     private static func componentSeparator(in page: BookPage) -> Range<String.Index>? {
         guard page.title.hasPrefix("line: ") == false else { return nil }
         return page.title.range(of: ": ")
+    }
+
+    /// Whether the host declares `page`, unlike the demo `#Preview` StorybookKit ships.
+    private static func isHosts(_ page: BookPage) -> Bool {
+        !page.descriptor.fileID.hasPrefix("StorybookKit/")
     }
 
     private static func pages(in nodes: [Book.Node]) -> [BookPage] {
