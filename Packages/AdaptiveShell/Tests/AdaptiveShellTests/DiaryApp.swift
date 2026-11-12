@@ -4,27 +4,28 @@ import SwiftUI
 import UITestingLibrary
 
 /// A small diary app that adopts the shell as an app maintainer does. Its entries fill the
-/// sidebar, a prompt fills the pane, and it routes to a Settings page.
+/// sidebar, the picked entry or a prompt fills the pane, and it routes to a Settings page.
 struct DiaryApp: View {
     enum Page: Hashable { case settings }
 
     /// Whether the app picks the stack-only shell.
     var stackOnly = false
     @State private var path: [Page] = []
+    @State private var picked: String?
 
     var body: some View {
         if stackOnly {
             AdaptiveShell(path: $path) { entries } page: { page($0) }
         } else {
             AdaptiveShell(path: $path) { _ in entries } pane: {
-                Text(Self.prompt)
+                ShellPane(selection: picked) { Text(Self.opened($0)) } empty: { Text(Self.prompt) }
             } page: { page($0) }
         }
     }
 
     private var entries: some View {
         List {
-            Text(Self.entry)
+            Button(Self.entry) { picked = Self.entry }
             Button(Self.settings) { path.append(.settings) }
         }
     }
@@ -40,6 +41,7 @@ struct DiaryApp: View {
 
     static let entry = "Kites over the dunes"
     static let prompt = "Pick an entry"
+    static func opened(_ entry: String) -> String { "Reading \(entry)" }
     static let settings = "Settings"
     static let done = "Done"
     static let settingsPage = "Reminders at nine"

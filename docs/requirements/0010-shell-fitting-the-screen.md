@@ -34,3 +34,11 @@ screen sizes the app runs on
   - Given App maintainer picks the stack-only shell
     - When I open a page on an iPad
       - Then the page covers the first screen
+- 0010.6
+  - Given App maintainer runs the shell on an iPad with nothing picked
+    - When I look at the pane
+      - Then the app's prompt shows there
+- 0010.7
+  - Given App maintainer runs the shell on an iPad
+    - When I pick an entry in the sidebar
+      - Then the pane shows that entry

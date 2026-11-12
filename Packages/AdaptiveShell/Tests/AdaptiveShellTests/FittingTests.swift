@@ -41,5 +41,19 @@ extension AdaptiveShellTests {
             try await launch.user.doesNotSee(.text(DiaryApp.entry))
             try launch.quits()
         }
+
+        @Test func test0010_6() async throws {
+            let launch = try Launch(.pad)
+            try await launch.user.sees(.text(DiaryApp.prompt))
+            try launch.quits()
+        }
+
+        @Test func test0010_7() async throws {
+            let launch = try Launch(.pad)
+            try await launch.user.taps(.button(DiaryApp.entry))
+            try await launch.user.sees(.text(DiaryApp.opened(DiaryApp.entry)))
+            try await launch.user.doesNotSee(.text(DiaryApp.prompt))
+            try launch.quits()
+        }
     }
 }

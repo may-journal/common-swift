@@ -12,7 +12,11 @@ import AdaptiveShell
 AdaptiveShell(path: $state.pages) { layout in
     EntryList()
 } pane: {
-    EntryDetail()
+    ShellPane(selection: state.picked) { entry in
+        EntryDetail(entry)
+    } empty: {
+        PickPrompt()
+    }
 } page: { page in
     PageView(page)
 }
@@ -25,6 +29,9 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 - `ShellLayout.fitting(_:)` is the rule the shell uses, for a modifier the app adds only where it splits.
 - An app with no sidebar yet picks the stack-only shell, `AdaptiveShell(path:root:page:)`, on every screen.
 - A Mac-only app may use `ShellSplit` alone.
+- `ShellPane` fills the pane with the picked item's detail, or the app's prompt while nothing is picked.
+- The detail keeps its identity as the pick changes, so it can move between items. Add `.id(item)` to start each item afresh.
+- A phone draws no pane. Its sidebar pushes the detail itself in the `.stack` layout.
 
 ## Split
 
