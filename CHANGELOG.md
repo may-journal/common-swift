@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/may-journal/common-swift/compare/v1.2.0...v1.3.0) (2026-11-12)
+
+
+### Features
+
+* **adaptive-shell:** add an AdaptiveShell package lifted from may-photos ([#28](https://github.com/may-journal/common-swift/issues/28)) ([393b76e](https://github.com/may-journal/common-swift/commit/393b76e165e5299ea6fcae901cdf25b5bd70ce9d))
+
 ## [1.2.0](https://github.com/may-journal/common-swift/compare/v1.1.0...v1.2.0) (2026-11-11)
 
 
