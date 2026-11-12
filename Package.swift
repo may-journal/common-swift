@@ -9,6 +9,7 @@ let package = Package(
     // The may-* apps' deployment targets.
     platforms: [.iOS("27.0"), .macOS("27.0")],
     products: [
+        .library(name: "AdaptiveShell", targets: ["AdaptiveShell"]),
         .library(name: "Storybook", targets: ["Storybook"]),
         .library(name: "StorybookSandbox", targets: ["StorybookSandbox"])
     ],
@@ -16,6 +17,11 @@ let package = Package(
         .package(url: "https://github.com/eure/swift-storybook", from: "3.3.0")
     ],
     targets: [
+        .target(
+            name: "AdaptiveShell",
+            path: "Packages/AdaptiveShell/Sources/AdaptiveShell",
+            resources: [.process("Resources")]
+        ),
         .target(
             name: "Storybook",
             dependencies: [.product(name: "StorybookKit", package: "swift-storybook")],
