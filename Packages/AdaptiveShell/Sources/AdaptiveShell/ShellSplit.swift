@@ -10,8 +10,10 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
     private let page: (Page) -> PageView
 
     @State private var columnVisibility = NavigationSplitViewVisibility.doubleColumn
-    /// The window's width, which says whether the sidebar sits beside the pane or floats over it.
+    /// The whole window's width, a side rail included: the sidebar may take its fraction of it.
     @State private var width: CGFloat = 0
+    /// The width inside the safe area, which the pane's narrowest fits within.
+    @State private var insetWidth: CGFloat = 0
     /// The sidebar's place before a page moved it aside, restored on Back.
     @State private var visibilityBeforePage: NavigationSplitViewVisibility?
 
@@ -30,14 +32,16 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
     }
 
     public var body: some View {
-        let widths = configuration.sidebarWidth
+        let widths = configuration.sidebarColumn(in: width)
         NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebar()
-                .navigationSplitViewColumnWidth(min: widths.min, ideal: widths.ideal, max: widths.max)
                 #if os(iOS)
                     // The toggle sits in the rail on the right, as the Duo's apps keep it.
                     .toolbar(removing: .sidebarToggle)
                 #endif
+                .overlay(alignment: .trailing) { SidebarBorderLine(border: configuration.sidebarBorder) }
+                // Outermost, so the system reads the widths; under the toolbar removal it drew 320.
+                .navigationSplitViewColumnWidth(min: widths.min, ideal: widths.ideal, max: widths.max)
         } detail: {
             // Pages push over the pane with Back, which shows the pane as it was; the sidebar stays.
             NavigationStack(path: $path) {
@@ -56,18 +60,20 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
             #if os(iOS)
                 // No background behind the Duo's side rail.
                 .containerBackground(.clear, for: .navigation)
+                // The pane's own narrowest, or the system keeps one that stops the sidebar short.
+                .navigationSplitViewColumnWidth(
+                    min: Swift.max(insetWidth - widths.max, 0), ideal: Swift.max(width - widths.ideal, 0))
             #endif
         }
         .environment(\.shellLayout, .split)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onGeometryChange(for: CGFloat.self) {
-            $0.size.width
-        } action: {
-            width = $0
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: {
+            insetWidth = $0
+            width = Self.windowWidth(atLeast: $0)
         }
-        // Pages always land in the pane. Where the sidebar floats over it, it steps aside until Back.
+        // Pages always land in the pane. Below the host's width the sidebar steps aside until Back.
         .onChange(of: path.isEmpty) { _, closed in
-            if !closed, width < configuration.sidebarFloatsBelow, columnVisibility != .detailOnly {
+            if !closed, width < configuration.pageHidesSidebarBelow, columnVisibility != .detailOnly {
                 visibilityBeforePage = columnVisibility
                 columnVisibility = .detailOnly
             } else if closed, let before = visibilityBeforePage {
@@ -75,6 +81,18 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
                 columnVisibility = before
             }
         }
+    }
+
+    /// The whole width of the narrowest app window the split fits in, its own, side rail included.
+    /// The Mac has no rail, so it uses the split's width.
+    private static func windowWidth(atLeast splitWidth: CGFloat) -> CGFloat {
+        #if os(iOS)
+            let widths = UIApplication.shared.connectedScenes
+                .compactMap { ($0 as? UIWindowScene)?.coordinateSpace.bounds.width }
+            return ShellConfiguration.windowWidth(fitting: splitWidth, among: widths)
+        #else
+            return splitWidth
+        #endif
     }
 
     /// Shows or hides the sidebar from the top of the rail. A Mac keeps its window toolbar's own

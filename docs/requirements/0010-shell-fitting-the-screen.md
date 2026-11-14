@@ -25,10 +25,10 @@ screen sizes the app runs on
 - 0010.3
   - Given App maintainer runs the shell in a narrow split, as on the Duo held upright
     - When I open a page from the sidebar
-      - Then the sidebar steps aside for the page
+      - Then the page opens beside the sidebar
 - 0010.4
-  - Given App maintainer runs the shell in a narrow split
-    - When I open a page, then close it
+  - Given App maintainer sets a width below which a page hides the sidebar
+    - When I open a page on a narrower screen, then close it
       - Then the sidebar comes back
 - 0010.5
   - Given App maintainer picks the stack-only shell
@@ -42,3 +42,7 @@ screen sizes the app runs on
   - Given App maintainer runs the shell on an iPad
     - When I pick an entry in the sidebar
       - Then the pane shows that entry
+- 0010.8
+  - Given App maintainer sets a width below which a page hides the sidebar
+    - When I open a page on a narrower screen
+      - Then the sidebar steps aside for the page
