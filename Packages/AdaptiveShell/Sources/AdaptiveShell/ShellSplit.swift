@@ -83,13 +83,13 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
         }
     }
 
-    /// The window's whole width, a side rail included, which the safe area leaves out of the
-    /// split's own frame. The Mac has no rail, so its split's width is the window's.
+    /// The whole width of the narrowest app window the split fits in, its own, side rail included.
+    /// The Mac has no rail, so it uses the split's width.
     private static func windowWidth(atLeast splitWidth: CGFloat) -> CGFloat {
         #if os(iOS)
-            let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-            let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
-            return Swift.max(scene?.coordinateSpace.bounds.width ?? 0, splitWidth)
+            let widths = UIApplication.shared.connectedScenes
+                .compactMap { ($0 as? UIWindowScene)?.coordinateSpace.bounds.width }
+            return ShellConfiguration.windowWidth(fitting: splitWidth, among: widths)
         #else
             return splitWidth
         #endif

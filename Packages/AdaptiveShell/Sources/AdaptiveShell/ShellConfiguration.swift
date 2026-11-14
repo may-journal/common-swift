@@ -39,6 +39,12 @@ public struct ShellConfiguration: Sendable {
         set { pageHidesSidebarBelow = newValue }
     }
 
+    /// The split's own window among the app's `windowWidths`: the narrowest holding `splitWidth`.
+    /// With none, it is `splitWidth` itself.
+    public static func windowWidth(fitting splitWidth: CGFloat, among windowWidths: [CGFloat]) -> CGFloat {
+        windowWidths.filter { $0 >= splitWidth }.min() ?? splitWidth
+    }
+
     /// The widths the shell hands the system in a split `splitWidth` points wide, or the ideal
     /// as the widest before it is measured. Neither the narrowest nor the ideal passes the widest.
     public func sidebarColumn(in splitWidth: CGFloat) -> ColumnWidth {

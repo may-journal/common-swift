@@ -42,8 +42,11 @@ extension AdaptiveShellTests {
         }
 
         @Test func test0013_8() {
-            // The Duo's whole inner screen, with its 55-point side rail outside the safe area.
-            let column = ShellConfiguration().sidebarColumn(in: 669)
+            // A 614-point split in the Duo's 669-point window, its 55-point rail outside the safe
+            // area, beside a 1194-point window.
+            let own = ShellConfiguration.windowWidth(fitting: 614, among: [1194, 669])
+            #expect(own == 669, "the shell measured a \(own)-point window, not its own")
+            let column = ShellConfiguration().sidebarColumn(in: own)
             #expect(column.max == 334.5, "the sidebar may go to \(column.max), not the middle")
         }
 
