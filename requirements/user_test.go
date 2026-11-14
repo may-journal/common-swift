@@ -107,23 +107,24 @@ func resolveFitness() (string, error) {
 }
 
 // checkout copies this repo's tracked files into a fresh repo on main and
-// commits them, as a contributor's clone holds them. The requirement tests
-// and the packages, whose tests would need them, stay out of the copy.
+// commits them, as a contributor's clone holds them. The requirement tests,
+// the packages and the demo, whose tests would need them, stay out of the copy.
 func checkout(t *testing.T) string {
 	t.Helper()
 	return clone(t, false)
 }
 
 // checkoutWithTests is checkout that keeps the requirement tests, the
-// packages and the root manifest. A check reads the tests; an app builds them.
+// packages, the demo and the root manifest. A check reads the tests; an app
+// builds them.
 func checkoutWithTests(t *testing.T) string {
 	t.Helper()
 	return clone(t, true)
 }
 
 // clone commits the tracked files on main as git's index holds them, the
-// content a commit takes. It keeps the requirement tests, the packages and
-// the root manifest that points into them only when tests is set.
+// content a commit takes. It keeps the requirement tests, the packages, the
+// demo and the root manifest that points into them only when tests is set.
 func clone(t *testing.T, tests bool) string {
 	t.Helper()
 	repo := t.TempDir()
@@ -131,7 +132,7 @@ func clone(t *testing.T, tests bool) string {
 		t.Fatalf("git checkout-index: %v\n%s", err, out)
 	}
 	if !tests {
-		for _, path := range []string{"requirements", "Packages", "Package.swift"} {
+		for _, path := range []string{"requirements", "Packages", "Examples", "Package.swift"} {
 			mustDo(t, os.RemoveAll(filepath.Join(repo, path)))
 		}
 	}
