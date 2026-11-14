@@ -5,6 +5,13 @@ public enum DemoPackage: String, CaseIterable, Identifiable, Hashable, Sendable 
 
     public var id: String { rawValue }
 
+    /// The package `--demo-package <name>` names among the launch arguments, if any.
+    public init?(arguments: [String]) {
+        guard let flag = arguments.firstIndex(of: "--demo-package"), flag + 1 < arguments.count
+        else { return nil }
+        self.init(rawValue: arguments[flag + 1])
+    }
+
     /// The package's name, as its folder and product spell it.
     public var name: String { rawValue }
 
@@ -17,8 +24,7 @@ public enum DemoPackage: String, CaseIterable, Identifiable, Hashable, Sendable 
     }
 }
 
-/// A page the demo routes to by value: a package pushed on a phone, or Settings.
+/// A page the demo routes to by value.
 public enum DemoPage: Hashable, Sendable {
-    case package(DemoPackage)
     case settings
 }

@@ -1,14 +1,38 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "action.openSettings" : {
-      "comment" : "Action: opens the demo's Settings page from the Storybook package",
+    "action.openAgain" : {
+      "comment" : "Action: opens the picked package at work again, after it was closed",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Settings"
+            "value" : "Open Again"
+          }
+        }
+      }
+    },
+    "noun.about" : {
+      "comment" : "Noun: the sample diary's page that says what AdaptiveShell gives an app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        }
+      }
+    },
+    "noun.diary" : {
+      "comment" : "Noun: the title of the sample diary drawn by AdaptiveShell",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diary"
           }
         }
       }
@@ -33,6 +57,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        }
+      }
+    },
+    "sample.dunes" : {
+      "comment" : "A sample diary entry's title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A walk on the dunes"
+          }
+        }
+      }
+    },
+    "sample.kites" : {
+      "comment" : "A sample diary entry's title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kites over the dunes"
+          }
+        }
+      }
+    },
+    "sample.tea" : {
+      "comment" : "A sample diary entry's title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tea after the walk"
           }
         }
       }
@@ -73,6 +133,18 @@
         }
       }
     },
+    "sentence.pickEntry" : {
+      "comment" : "The sample diary's pane prompt while no entry is picked",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick an entry."
+          }
+        }
+      }
+    },
     "sentence.prompt" : {
       "comment" : "The pane's prompt while no package is picked",
       "extractionState" : "manual",
@@ -93,6 +165,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The catalog of every preview."
+          }
+        }
+      }
+    },
+    "verb.done" : {
+      "comment" : "Verb: closes the sample diary and returns to the list of packages",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
           }
         }
       }

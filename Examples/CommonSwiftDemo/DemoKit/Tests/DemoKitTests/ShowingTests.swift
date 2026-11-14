@@ -9,17 +9,17 @@ extension DemoKitTests {
     @Suite struct Showing {
         @Test func test0012_1() async throws {
             let launch = try Launch(.pad)
-            try await launch.picks(.adaptiveShell)
+            try await launch.opensDiaryEntry()
             try await launch.user.sees(.text(DemoWords.inPane))
-            try await launch.user.sees(.button(DemoPackage.storybook.name))
+            try await launch.user.sees(.button(DemoWords.kites))
             try launch.quits()
         }
 
         @Test func test0012_2() async throws {
             let launch = try Launch(.phone)
-            try await launch.picks(.adaptiveShell)
+            try await launch.opensDiaryEntry()
             try await launch.user.sees(.text(DemoWords.onStack))
-            try await launch.user.doesNotSee(.button(DemoPackage.storybook.name))
+            try await launch.user.doesNotSee(.button(DemoWords.kites))
             try launch.quits()
         }
 

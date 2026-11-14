@@ -2,7 +2,8 @@ import AdaptiveShell
 import Storybook
 import SwiftUI
 
-/// The demo's window: its one Storybook availability, and the root drawn with it.
+/// The demo's window: its one Storybook availability, and the root drawn with it. Launch with
+/// `--demo-package <name>` to open that package straight away.
 public struct DemoWindow: View {
     @State private var storybook = StorybookAvailability(
         gate: .debugOnly, configuration: DemoStorybook.configuration())
@@ -10,50 +11,52 @@ public struct DemoWindow: View {
     public init() {}
 
     public var body: some View {
-        DemoRoot(storybook: storybook)
+        DemoRoot(storybook: storybook, opening: DemoPackage(arguments: ProcessInfo.processInfo.arguments))
     }
 }
 
-/// The demo's root, drawn by AdaptiveShell. The packages fill the sidebar, and ShellPane shows the
-/// picked one beside it; a phone pushes it over the list instead.
+/// The demo's root, drawn by AdaptiveShell with the packages in the sidebar. Picking one opens the
+/// package itself at work: the diary drawn by AdaptiveShell, or the Storybook catalog.
 public struct DemoRoot: View {
     private let storybook: StorybookAvailability
+    private let opening: DemoPackage?
     @State private var path: [DemoPage] = []
     @State private var picked: DemoPackage?
+    @State private var isShellSampleOpen = false
 
-    public init(storybook: StorybookAvailability) {
+    public init(storybook: StorybookAvailability, opening: DemoPackage? = nil) {
         self.storybook = storybook
+        self.opening = opening
     }
 
     public var body: some View {
-        AdaptiveShell(path: $path) { layout in
-            packages(layout)
+        AdaptiveShell(path: $path) { _ in
+            packages
         } pane: {
             ShellPane(selection: picked) { package in
-                PackageDetail(package: package) { openSettings(.split) }
+                PackageDetail(package: package) { open(package) }
             } empty: {
                 Text(DemoWords.prompt).foregroundStyle(.secondary)
             }
-        } page: { page in
-            switch page {
-            case .package(let package):
-                PackageDetail(package: package) { openSettings(.stack) }
-            case .settings:
-                Form { StorybookSettingsSection(storybook) }
-                    .formStyle(.grouped)
-                    .navigationTitle(DemoWords.settings)
-            }
+        } page: { _ in
+            Form { StorybookSettingsSection(storybook) }
+                .formStyle(.grouped)
+                .navigationTitle(DemoWords.settings)
+        }
+        .demoCover(isPresented: $isShellSampleOpen) {
+            ShellSample { isShellSampleOpen = false }
         }
         .storybookEntry(storybook)
+        .task {
+            if let opening { open(opening) }
+        }
     }
 
-    /// The list of packages: the sidebar of a split, which marks the picked one, or the root of a
-    /// phone's stack.
-    @ViewBuilder
-    private func packages(_ layout: ShellLayout) -> some View {
+    /// The list of packages, which marks the one picked last.
+    private var packages: some View {
         List(DemoPackage.allCases) { package in
-            let isPicked = layout == .split && picked == package
-            Button { pick(package, layout) } label: { PackageRow(package: package) }
+            let isPicked = picked == package
+            Button { open(package) } label: { PackageRow(package: package) }
                 .accessibilityLabel(package.name)
                 .accessibilityHint(package.summary)
                 .accessibilityAddTraits(isPicked ? .isSelected : [])
@@ -61,26 +64,17 @@ public struct DemoRoot: View {
         }
         .navigationTitle(DemoWords.packages)
         .toolbar {
-            Button(DemoWords.settings, systemImage: "gear") { openSettings(layout) }
+            Button(DemoWords.settings, systemImage: "gear") { path = [.settings] }
         }
     }
 
-    /// A phone pushes the package; a split shows it in the pane, closing an open page first.
-    private func pick(_ package: DemoPackage, _ layout: ShellLayout) {
-        if layout == .stack {
-            path.append(.package(package))
-        } else {
-            picked = package
-            path = []
-        }
-    }
-
-    /// Opens Settings over what shows now, so Back returns to it.
-    private func openSettings(_ layout: ShellLayout) {
-        if layout == .stack {
-            path.append(.settings)
-        } else {
-            path = [.settings]
+    /// Opens the package itself over the demo, and marks it in the list.
+    private func open(_ package: DemoPackage) {
+        picked = package
+        path = []
+        switch package {
+        case .adaptiveShell: isShellSampleOpen = true
+        case .storybook: storybook.presentsCatalog()
         }
     }
 }
@@ -98,21 +92,15 @@ struct PackageRow: View {
     }
 }
 
-/// What one package shows when picked.
+/// The pane after a package closes: its summary, and a button that opens it again.
 struct PackageDetail: View {
     let package: DemoPackage
-    let openSettings: () -> Void
-    @Environment(\.shellLayout) private var layout
+    let open: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
             Text(package.summary)
-            switch package {
-            case .adaptiveShell:
-                Text(layout == .split ? DemoWords.inPane : DemoWords.onStack)
-            case .storybook:
-                Button(DemoWords.openSettings, action: openSettings)
-            }
+            Button(DemoWords.openAgain, action: open)
         }
         .padding()
         .navigationTitle(Text(verbatim: package.name))

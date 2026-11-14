@@ -34,13 +34,16 @@ struct Launch {
         try await user.taps(.button(package.name))
     }
 
-    /// Opens Settings from the Storybook package, then the Storybook row.
+    /// Picks Storybook, which opens the catalog.
     func opensStorybook() async throws {
         try await picks(.storybook)
-        try await user.taps(.button(DemoWords.openSettings))
-        // The sidebar still lists the Storybook package, so the row is found by its identifier.
-        try await user.taps(.identifier(StorybookIdentifiers().storybookRow))
         try await user.sees(.identifier("storybook.close"))
+    }
+
+    /// Picks AdaptiveShell, then an entry of the diary it opens.
+    func opensDiaryEntry() async throws {
+        try await picks(.adaptiveShell)
+        try await user.taps(.button(DemoWords.dunes))
     }
 
     func quits() throws {

@@ -14,10 +14,52 @@ enum DemoWords {
             comment: "Noun: the demo's Settings page, which holds the Storybook row")
     }
 
-    static var openSettings: String {
+    static var openAgain: String {
         String(
-            localized: "action.openSettings", defaultValue: "Open Settings", bundle: .module,
-            comment: "Action: opens the demo's Settings page from the Storybook package")
+            localized: "action.openAgain", defaultValue: "Open Again", bundle: .module,
+            comment: "Action: opens the picked package at work again, after it was closed")
+    }
+
+    static var about: String {
+        String(
+            localized: "noun.about", defaultValue: "About", bundle: .module,
+            comment: "Noun: the sample diary's page that says what AdaptiveShell gives an app")
+    }
+
+    static var done: String {
+        String(
+            localized: "verb.done", defaultValue: "Done", bundle: .module,
+            comment: "Verb: closes the sample diary and returns to the list of packages")
+    }
+
+    static var diary: String {
+        String(
+            localized: "noun.diary", defaultValue: "Diary", bundle: .module,
+            comment: "Noun: the title of the sample diary drawn by AdaptiveShell")
+    }
+
+    static var pickEntry: String {
+        String(
+            localized: "sentence.pickEntry", defaultValue: "Pick an entry.", bundle: .module,
+            comment: "The sample diary's pane prompt while no entry is picked")
+    }
+
+    static var kites: String {
+        String(
+            localized: "sample.kites", defaultValue: "Kites over the dunes", bundle: .module,
+            comment: "A sample diary entry's title")
+    }
+
+    static var dunes: String {
+        String(
+            localized: "sample.dunes", defaultValue: "A walk on the dunes", bundle: .module,
+            comment: "A sample diary entry's title")
+    }
+
+    static var tea: String {
+        String(
+            localized: "sample.tea", defaultValue: "Tea after the walk", bundle: .module,
+            comment: "A sample diary entry's title")
     }
 
     static var prompt: String {
