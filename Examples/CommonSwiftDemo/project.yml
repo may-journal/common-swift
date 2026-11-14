@@ -1,0 +1,39 @@
+# The demo app showing every common-swift package on iPhone, iPad and the Mac, screens in DemoKit.
+# XcodeGen writes CommonSwiftDemo.xcodeproj from this file, and git ignores it.
+# cspell:ignore mayjournal AMPJZXR
+name: CommonSwiftDemo
+options:
+  bundleIdPrefix: com.mayjournal
+  deploymentTarget:
+    iOS: "27.0"
+    macOS: "27.0"
+packages:
+  DemoKit:
+    path: DemoKit
+  CommonSwift:
+    path: ../..
+targets:
+  CommonSwiftDemo:
+    type: application
+    supportedDestinations: [iOS, macOS]
+    sources: [App]
+    # A shared scheme, so xcodebuild finds CommonSwiftDemo on a clean checkout.
+    scheme: {}
+    dependencies:
+      - package: DemoKit
+        product: DemoKit
+      - package: CommonSwift
+        product: Storybook
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Common Swift
+        # iPad requires all four for multitasking, so the split shows in every window size.
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # The owner's individual team; the Makefile's demo target builds without it.
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: AMPJZXR538

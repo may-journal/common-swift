@@ -1,6 +1,6 @@
 # Containers
 
-A container here is a unit that runs on its own. The repo ships only libraries, so it adds none; GitHub's pipelines build, check and deliver them.
+A container here is a unit that runs on its own. The repo ships libraries, and its one container is the demo app that shows them; GitHub's pipelines build, check and deliver the libraries.
 
 ```mermaid
 C4Container
@@ -11,15 +11,20 @@ C4Container
     System_Ext(github, "2 GitHub", "Hosts the repo and runs its fitness, build and test pipelines.")
     System_Ext(apps, "3 may-* apps", "Depend on the delivered packages.")
     System_Ext(apple, "4 Apple frameworks", "StoreKit, SwiftUI and the other frameworks a package links.")
+    System_Boundary(repo, "5 common-swift") {
+        Container(demo, "6 CommonSwiftDemo", "Swift, SwiftUI", "Examples/CommonSwiftDemo")
+    }
 
     Rel(contributor, github, "A")
     Rel(github, apps, "B")
     Rel(apps, apple, "C")
+    Rel(contributor, demo, "D")
 
     UpdateElementStyle(contributor, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(github, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
     UpdateElementStyle(apps, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
     UpdateElementStyle(apple, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
+    UpdateElementStyle(demo, $bgColor="#0f766e", $borderColor="#115e59", $fontColor="#ffffff")
 ```
 
 ```mermaid
@@ -27,9 +32,13 @@ C4Container
     title Legend
 
     Person(p, "Person", "Human actor")
+    System_Boundary(b, "Boundary") {
+        Container(c, "Container", "Tech", "Runs on its own")
+    }
     System_Ext(e, "External", "Outside our boundary")
 
     UpdateElementStyle(p, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
+    UpdateElementStyle(c, $bgColor="#0f766e", $borderColor="#115e59", $fontColor="#ffffff")
     UpdateElementStyle(e, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
 ```
 
@@ -41,8 +50,11 @@ Numbers on nodes and letters on arrows match the callout table.
 | 2   | Runs the fitness checks, the package build and tests, and the release. | The repo keeps no server of its own. |
 | 3   | The apps that receive the delivered packages. | They update a package by its version. |
 | 4   | The system frameworks the packages import. | They ship with the OS, not with the repo. |
+| 5   | This repository. | Only the demo runs on its own. |
+| 6   | The demo app, with its screens in DemoKit beside it. | A maintainer sees each package before adopting it. |
 | A   | Pushes the branch and opens a pull request. | Review comes before main. |
 | B   | Delivers each package as a Swift package. | The app takes it through its manifest. |
 | C   | Links the frameworks the packages name. | A package adds no framework the app did not choose. |
+| D   | Runs the demo on a device or the Mac. | The packages run outside any one app. |
 
 Release Please runs in manifest mode with only the root `.` component, so one `vX.Y.Z` tag versions every package. SwiftPM reads versions only from repo-wide tags of a root manifest, and the `release-changelog` check binds the root version to `version.txt`. So may-journal/.github syncs its shared release template here unchanged. The root `Package.swift` lists every package's products by `path:`, since an app's URL dependency reads only that manifest.
