@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/may-journal/common-swift/compare/v1.3.0...v1.4.0) (2026-11-14)
+
+
+### Features
+
+* **adaptive-shell:** keep the sidebar beside the pane with the system's split ([#34](https://github.com/may-journal/common-swift/issues/34)) ([6de34d9](https://github.com/may-journal/common-swift/commit/6de34d95c707ed8e4a9b3cf7feb62aa0e055b48e))
+
 ## [1.3.0](https://github.com/may-journal/common-swift/compare/v1.2.0...v1.3.0) (2026-11-12)
 
 
