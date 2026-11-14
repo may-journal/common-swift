@@ -1,4 +1,5 @@
 import AdaptiveShell
+import CoreGraphics
 import Testing
 import UITestingLibrary
 
@@ -12,6 +13,16 @@ extension AdaptiveShellTests {
             let entry = try await launch.element(.button(DiaryApp.entry)).frame
             let prompt = try await launch.element(.text(DiaryApp.prompt)).frame
             #expect(entry.maxX <= prompt.minX, "the sidebar covers the pane's prompt")
+            try launch.quits()
+        }
+
+        @Test func test0013_3() async throws {
+            let launch = try Launch(Launch.duoInner)
+            let before = try await launch.element(.identifier(DiaryApp.sidebarEdge)).frame
+            try await launch.user.drags(
+                .identifier(DiaryApp.sidebarEdge), by: CGVector(dx: 80, dy: 0), speed: .slow)
+            let after = try await launch.element(.identifier(DiaryApp.sidebarEdge)).frame
+            #expect(after.midX > before.midX + 40, "the sidebar kept its width")
             try launch.quits()
         }
 

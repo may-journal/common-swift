@@ -58,8 +58,6 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
                 .containerBackground(.clear, for: .navigation)
             #endif
         }
-        // The sidebar sits beside the pane at every width, never over it.
-        .navigationSplitViewStyle(.balanced)
         .environment(\.shellLayout, .split)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onGeometryChange(for: CGFloat.self) {

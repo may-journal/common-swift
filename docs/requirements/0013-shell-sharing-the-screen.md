@@ -22,3 +22,7 @@ screen sizes where the shell splits
   - Given App maintainer gives the empty pane only its title, symbol and message
     - When I look at the pane with nothing picked
       - Then the pane shows those words
+- 0013.3
+  - Given App maintainer runs the shell on the Duo's inner screen
+    - When I drag the sidebar's edge wider
+      - Then the sidebar widens

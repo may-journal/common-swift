@@ -43,6 +43,14 @@ struct DiaryApp: View {
             Button(Self.entry) { picked = Self.entry }
             Button(Self.settings) { path.append(.settings) }
         }
+        // A test's handle on the system's divider: it straddles the column's edge, and the
+        // press passes through it to the split.
+        .overlay(alignment: .trailing) {
+            Color.clear.frame(width: 2).offset(x: 1)
+                .accessibilityElement()
+                .accessibilityIdentifier(Self.sidebarEdge)
+                .allowsHitTesting(false)
+        }
     }
 
     /// The Settings page, which closes from its own Done button.
@@ -61,6 +69,7 @@ struct DiaryApp: View {
     static let settings = "Settings"
     static let done = "Done"
     static let settingsPage = "Reminders at nine"
+    static let sidebarEdge = "sidebar edge"
 }
 
 /// One launch of the diary app at a screen size: its rendered screen and the person using it.

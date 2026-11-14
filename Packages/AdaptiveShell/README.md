@@ -36,7 +36,7 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 
 ## Split
 
-On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split's balanced style keeps the sidebar beside the pane and its pages at every width, the Duo's inner screen included. Where the platform offers it, a person drags the column between `sidebarWidth`'s narrowest and widest.
+On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split keeps the system's automatic style. A person drags the column between `sidebarWidth`'s narrowest and widest.
 
 | Field | Default | What it sets |
 | --- | --- | --- |
