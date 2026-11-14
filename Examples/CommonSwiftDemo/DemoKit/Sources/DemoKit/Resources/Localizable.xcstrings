@@ -1,0 +1,102 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.openSettings" : {
+      "comment" : "Action: opens the demo's Settings page from the Storybook package",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "noun.packages" : {
+      "comment" : "Noun: the title of the demo's list of common-swift packages",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packages"
+          }
+        }
+      }
+    },
+    "noun.settings" : {
+      "comment" : "Noun: the demo's Settings page, which holds the Storybook row",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "sentence.adaptiveShell" : {
+      "comment" : "One line on what the AdaptiveShell package gives an app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The sidebar, pane and pages."
+          }
+        }
+      }
+    },
+    "sentence.inPane" : {
+      "comment" : "AdaptiveShell's detail when it shows in a wide window's pane",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This pane sits beside the sidebar."
+          }
+        }
+      }
+    },
+    "sentence.onStack" : {
+      "comment" : "AdaptiveShell's detail when a phone pushes it over the list",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This page sits on the phone's stack."
+          }
+        }
+      }
+    },
+    "sentence.prompt" : {
+      "comment" : "The pane's prompt while no package is picked",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a package to see it at work."
+          }
+        }
+      }
+    },
+    "sentence.storybook" : {
+      "comment" : "One line on what the Storybook package gives an app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The catalog of every preview."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
