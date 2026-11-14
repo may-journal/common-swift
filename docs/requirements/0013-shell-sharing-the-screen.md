@@ -42,3 +42,7 @@ screen sizes where the shell splits
   - Given App maintainer turns the border off, or gives it two points
     - When I look between the sidebar and the pane
       - Then no line shows, or the line is two points wide
+- 0013.8
+  - Given App maintainer runs the shell on the Duo's whole inner screen, side rail included
+    - When the shell works out how far the sidebar may go
+      - Then it allows the middle of the whole screen

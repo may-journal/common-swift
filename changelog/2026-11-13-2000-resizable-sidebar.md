@@ -2,7 +2,7 @@
 
 > On every screen that splits, the Duo's inner one too, the sidebar sits beside the pane and the system resizes it.
 
-- Fix: the split keeps the automatic style and hands the system its widths last, so the sidebar drags up to half the split.
+- Fix: the system gets the sidebar's widths, so it drags up to half the whole window, side rail included.
 - Feat: `sidebarMaxFraction`, default 0.5, and an optional cap in `sidebarWidth.max`, each overridable by the app.
 - Feat: `sidebarBorder`, a one-pixel separator line between sidebar and pane on iOS, which an app restyles or hides.
 - Feat: `pageHidesSidebarBelow` replaces `sidebarFloatsBelow`, and `ShellPane` shows `ContentUnavailableView` with the app's words.

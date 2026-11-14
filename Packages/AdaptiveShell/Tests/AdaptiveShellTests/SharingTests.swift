@@ -41,6 +41,12 @@ extension AdaptiveShellTests {
             try launch.quits()
         }
 
+        @Test func test0013_8() {
+            // The Duo's whole inner screen, with its 55-point side rail outside the safe area.
+            let column = ShellConfiguration().sidebarColumn(in: 669)
+            #expect(column.max == 334.5, "the sidebar may go to \(column.max), not the middle")
+        }
+
         @Test func test0013_6() {
             let border = ShellConfiguration().sidebarBorder
             #expect(border.drawnWidth(displayScale: 3) == 1.0 / 3, "the default line is not one pixel")

@@ -10,8 +10,10 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
     private let page: (Page) -> PageView
 
     @State private var columnVisibility = NavigationSplitViewVisibility.doubleColumn
-    /// The window's width, which says whether an opened page moves the sidebar aside.
+    /// The whole window's width, a side rail included: the sidebar may take its fraction of it.
     @State private var width: CGFloat = 0
+    /// The width inside the safe area, which the pane's narrowest fits within.
+    @State private var insetWidth: CGFloat = 0
     /// The sidebar's place before a page moved it aside, restored on Back.
     @State private var visibilityBeforePage: NavigationSplitViewVisibility?
 
@@ -60,15 +62,14 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
                 .containerBackground(.clear, for: .navigation)
                 // The pane's own narrowest, or the system keeps one that stops the sidebar short.
                 .navigationSplitViewColumnWidth(
-                    min: Swift.max(width - widths.max, 0), ideal: Swift.max(width - widths.ideal, 0))
+                    min: Swift.max(insetWidth - widths.max, 0), ideal: Swift.max(width - widths.ideal, 0))
             #endif
         }
         .environment(\.shellLayout, .split)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onGeometryChange(for: CGFloat.self) {
-            $0.size.width
-        } action: {
-            width = $0
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: {
+            insetWidth = $0
+            width = Self.windowWidth(atLeast: $0)
         }
         // Pages always land in the pane. Below the host's width the sidebar steps aside until Back.
         .onChange(of: path.isEmpty) { _, closed in
@@ -80,6 +81,18 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
                 columnVisibility = before
             }
         }
+    }
+
+    /// The window's whole width, a side rail included, which the safe area leaves out of the
+    /// split's own frame. The Mac has no rail, so its split's width is the window's.
+    private static func windowWidth(atLeast splitWidth: CGFloat) -> CGFloat {
+        #if os(iOS)
+            let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
+            return Swift.max(scene?.coordinateSpace.bounds.width ?? 0, splitWidth)
+        #else
+            return splitWidth
+        #endif
     }
 
     /// Shows or hides the sidebar from the top of the rail. A Mac keeps its window toolbar's own
