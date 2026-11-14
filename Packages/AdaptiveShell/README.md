@@ -36,11 +36,14 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 
 ## Split
 
-On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split keeps the system's automatic style. A person drags the column between `sidebarWidth`'s narrowest and widest.
+On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split keeps the system's automatic style.
+
+A person drags the column from `sidebarWidth`'s narrowest up to `sidebarMaxFraction` of the split. Each app overrides any default below in the `ShellConfiguration` it hands the shell.
 
 | Field | Default | What it sets |
 | --- | --- | --- |
-| `sidebarWidth` | 280, 360, 520 | The column's narrowest, ideal and widest width, handed to the system |
+| `sidebarWidth` | 280, 360, no cap | The column's narrowest and ideal width, and an absolute cap on its widest |
+| `sidebarMaxFraction` | 0.5 | The share of the split's width the column drags to; the narrowest and ideal shrink to fit it |
 | `pageHidesSidebarBelow` | 0 | Below this width an opened page moves the sidebar aside until Back; 0 never does |
 | `sidebarToggleTitle` | Show Sidebar, Hide Sidebar | The rail button's words |
 

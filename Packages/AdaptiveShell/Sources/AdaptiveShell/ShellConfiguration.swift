@@ -2,9 +2,11 @@ import CoreGraphics
 
 /// The sizes and words a host gives the shell. Every field has a default.
 public struct ShellConfiguration: Sendable {
-    /// The sidebar column's narrowest, ideal and widest width in a split. Where the platform
-    /// offers it, the system lets a person drag the column between them.
+    /// The sidebar column's narrowest and ideal width in a split, and an absolute cap on its
+    /// widest. Where the platform offers it, the system lets a person drag the column between.
     public var sidebarWidth: ColumnWidth
+    /// The share of the split's width the sidebar may be dragged to, under `sidebarWidth.max`.
+    public var sidebarMaxFraction: CGFloat
     /// Below this width a page opened from the sidebar moves it aside until Back. With 0, the
     /// default, the sidebar always stays beside the page.
     public var pageHidesSidebarBelow: CGFloat
@@ -12,13 +14,15 @@ public struct ShellConfiguration: Sendable {
     public var sidebarToggleTitle: @Sendable @MainActor (_ hidden: Bool) -> String
 
     public init(
-        sidebarWidth: ColumnWidth = ColumnWidth(min: 280, ideal: 360, max: 520),
+        sidebarWidth: ColumnWidth = ColumnWidth(min: 280, ideal: 360, max: .infinity),
+        sidebarMaxFraction: CGFloat = 0.5,
         pageHidesSidebarBelow: CGFloat = 0,
         sidebarToggleTitle: @escaping @Sendable @MainActor (_ hidden: Bool) -> String = {
             $0 ? ShellWords.showSidebar : ShellWords.hideSidebar
         }
     ) {
         self.sidebarWidth = sidebarWidth
+        self.sidebarMaxFraction = sidebarMaxFraction
         self.pageHidesSidebarBelow = pageHidesSidebarBelow
         self.sidebarToggleTitle = sidebarToggleTitle
     }
@@ -28,6 +32,16 @@ public struct ShellConfiguration: Sendable {
     public var sidebarFloatsBelow: CGFloat {
         get { pageHidesSidebarBelow }
         set { pageHidesSidebarBelow = newValue }
+    }
+
+    /// The widths the shell hands the system in a split `splitWidth` points wide, or the ideal
+    /// as the widest before it is measured. Neither the narrowest nor the ideal passes the widest.
+    public func sidebarColumn(in splitWidth: CGFloat) -> ColumnWidth {
+        let share = splitWidth > 0 ? splitWidth * sidebarMaxFraction : sidebarWidth.ideal
+        let widest = Swift.min(sidebarWidth.max, share)
+        return ColumnWidth(
+            min: Swift.min(sidebarWidth.min, widest), ideal: Swift.min(sidebarWidth.ideal, widest),
+            max: widest)
     }
 }
 

@@ -24,5 +24,13 @@ screen sizes where the shell splits
       - Then the pane shows those words
 - 0013.3
   - Given App maintainer runs the shell on the Duo's inner screen
-    - When I drag the sidebar's edge wider
-      - Then the sidebar widens
+    - When I drag the sidebar's edge narrower
+      - Then the sidebar narrows
+- 0013.4
+  - Given App maintainer keeps the shell's default widths on the Duo's inner screen
+    - When I drag the sidebar's edge as far right as it goes
+      - Then the sidebar stops at half the screen
+- 0013.5
+  - Given App maintainer lets the sidebar take six tenths of the split
+    - When I drag the sidebar's edge as far right as it goes
+      - Then the sidebar stops at six tenths of the screen

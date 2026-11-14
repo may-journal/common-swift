@@ -113,6 +113,19 @@ struct Launch {
         return try #require(drawn, "\(query) is not on the screen")
     }
 
+    /// Narrows the sidebar, drags its edge far past the screen's middle, then reads where the
+    /// edge stopped.
+    func dragsSidebarAllTheWay() async throws -> CGFloat {
+        try await user.drags(
+            .identifier(DiaryApp.sidebarEdge), by: CGVector(dx: -40, dy: 0), speed: .slow)
+        let narrowed = try await element(.identifier(DiaryApp.sidebarEdge)).frame.minX
+        try await user.drags(
+            .identifier(DiaryApp.sidebarEdge), by: CGVector(dx: 500, dy: 0), speed: .slow)
+        let stopped = try await element(.identifier(DiaryApp.sidebarEdge)).frame.minX
+        #expect(stopped > narrowed + 20, "the sidebar never widened from \(narrowed)")
+        return stopped
+    }
+
     func quits() throws {
         try screen.close()
     }

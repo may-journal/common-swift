@@ -20,9 +20,24 @@ extension AdaptiveShellTests {
             let launch = try Launch(Launch.duoInner)
             let before = try await launch.element(.identifier(DiaryApp.sidebarEdge)).frame
             try await launch.user.drags(
-                .identifier(DiaryApp.sidebarEdge), by: CGVector(dx: 80, dy: 0), speed: .slow)
+                .identifier(DiaryApp.sidebarEdge), by: CGVector(dx: -40, dy: 0), speed: .slow)
             let after = try await launch.element(.identifier(DiaryApp.sidebarEdge)).frame
-            #expect(after.midX > before.midX + 40, "the sidebar kept its width")
+            #expect(after.midX < before.midX - 20, "the sidebar kept its width")
+            try launch.quits()
+        }
+
+        @Test func test0013_4() async throws {
+            let launch = try Launch(Launch.duoInner)
+            let edge = try await launch.dragsSidebarAllTheWay()
+            #expect(abs(edge - 669 * 0.5) <= 4, "the sidebar stopped at \(edge), not half the screen")
+            try launch.quits()
+        }
+
+        @Test func test0013_5() async throws {
+            let launch = try Launch(
+                Launch.duoInner, configuration: ShellConfiguration(sidebarMaxFraction: 0.6))
+            let edge = try await launch.dragsSidebarAllTheWay()
+            #expect(abs(edge - 669 * 0.6) <= 4, "the sidebar stopped at \(edge), not six tenths")
             try launch.quits()
         }
 

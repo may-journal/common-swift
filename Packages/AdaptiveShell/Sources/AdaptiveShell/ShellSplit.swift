@@ -30,7 +30,7 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
     }
 
     public var body: some View {
-        let widths = configuration.sidebarWidth
+        let widths = configuration.sidebarColumn(in: width)
         NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebar()
                 .navigationSplitViewColumnWidth(min: widths.min, ideal: widths.ideal, max: widths.max)
