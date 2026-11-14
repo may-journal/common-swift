@@ -42,7 +42,7 @@ flowchart TB
     tag[(8 Version, tag and CHANGELOG.md<br/>Req 0002)]:::system
     maintainer((9 App maintainer)):::persona
     update(10 Move the app to the new tag<br/>Req 0002, 0009):::action
-    adopt(11 Use a package's features in the app<br/>Req 0006, 0007, 0008, 0010, 0011):::action
+    adopt(11 Use a package's features in the app<br/>Req 0006, 0007, 0008, 0010, 0011, 0013):::action
 
     contributor --> commit
     commit --> open

@@ -10,7 +10,7 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
     private let page: (Page) -> PageView
 
     @State private var columnVisibility = NavigationSplitViewVisibility.doubleColumn
-    /// The window's width, which says whether the sidebar sits beside the pane or floats over it.
+    /// The window's width, which says whether an opened page moves the sidebar aside.
     @State private var width: CGFloat = 0
     /// The sidebar's place before a page moved it aside, restored on Back.
     @State private var visibilityBeforePage: NavigationSplitViewVisibility?
@@ -65,9 +65,9 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
         } action: {
             width = $0
         }
-        // Pages always land in the pane. Where the sidebar floats over it, it steps aside until Back.
+        // Pages always land in the pane. Below the host's width the sidebar steps aside until Back.
         .onChange(of: path.isEmpty) { _, closed in
-            if !closed, width < configuration.sidebarFloatsBelow, columnVisibility != .detailOnly {
+            if !closed, width < configuration.pageHidesSidebarBelow, columnVisibility != .detailOnly {
                 visibilityBeforePage = columnVisibility
                 columnVisibility = .detailOnly
             } else if closed, let before = visibilityBeforePage {
