@@ -43,6 +43,7 @@ A person drags the column from `sidebarWidth`'s narrowest up to `sidebarMaxFract
 | Field | Default | What it sets |
 | --- | --- | --- |
 | `sidebarWidth` | 280, 360, no cap | The column's narrowest and ideal width, and an absolute cap on its widest |
+| `sidebarBorder` | shown, system separator color, one pixel | The line between the sidebar and the pane on iOS; `.hidden` turns it off |
 | `sidebarMaxFraction` | 0.5 | The share of the split's width the column drags to; the narrowest and ideal shrink to fit it |
 | `pageHidesSidebarBelow` | 0 | Below this width an opened page moves the sidebar aside until Back; 0 never does |
 | `sidebarToggleTitle` | Show Sidebar, Hide Sidebar | The rail button's words |

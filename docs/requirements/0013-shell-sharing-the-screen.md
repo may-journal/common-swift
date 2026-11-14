@@ -34,3 +34,11 @@ screen sizes where the shell splits
   - Given App maintainer lets the sidebar take six tenths of the split
     - When I drag the sidebar's edge as far right as it goes
       - Then the sidebar stops at six tenths of the screen
+- 0013.6
+  - Given App maintainer keeps the shell's default border
+    - When I look between the sidebar and the pane on a screen of three pixels a point
+      - Then a line one pixel wide shows there
+- 0013.7
+  - Given App maintainer turns the border off, or gives it two points
+    - When I look between the sidebar and the pane
+      - Then no line shows, or the line is two points wide

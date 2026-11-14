@@ -41,6 +41,18 @@ extension AdaptiveShellTests {
             try launch.quits()
         }
 
+        @Test func test0013_6() {
+            let border = ShellConfiguration().sidebarBorder
+            #expect(border.drawnWidth(displayScale: 3) == 1.0 / 3, "the default line is not one pixel")
+        }
+
+        @Test func test0013_7() {
+            let hidden = ShellConfiguration(sidebarBorder: .hidden).sidebarBorder
+            #expect(hidden.drawnWidth(displayScale: 3) == nil, "a hidden border still draws")
+            let wide = ShellConfiguration(sidebarBorder: SidebarBorder(width: 2)).sidebarBorder
+            #expect(wide.drawnWidth(displayScale: 3) == 2, "the border ignored the app's width")
+        }
+
         @Test func test0013_2() async throws {
             let launch = try Launch(.pad, systemPrompt: true)
             try await launch.user.sees(.text(DiaryApp.prompt))

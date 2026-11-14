@@ -7,6 +7,9 @@ public struct ShellConfiguration: Sendable {
     public var sidebarWidth: ColumnWidth
     /// The share of the split's width the sidebar may be dragged to, under `sidebarWidth.max`.
     public var sidebarMaxFraction: CGFloat
+    /// The thin line between the sidebar and the pane: shown, in the system's separator color,
+    /// one pixel wide unless the app changes it.
+    public var sidebarBorder: SidebarBorder
     /// Below this width a page opened from the sidebar moves it aside until Back. With 0, the
     /// default, the sidebar always stays beside the page.
     public var pageHidesSidebarBelow: CGFloat
@@ -16,6 +19,7 @@ public struct ShellConfiguration: Sendable {
     public init(
         sidebarWidth: ColumnWidth = ColumnWidth(min: 280, ideal: 360, max: .infinity),
         sidebarMaxFraction: CGFloat = 0.5,
+        sidebarBorder: SidebarBorder = SidebarBorder(),
         pageHidesSidebarBelow: CGFloat = 0,
         sidebarToggleTitle: @escaping @Sendable @MainActor (_ hidden: Bool) -> String = {
             $0 ? ShellWords.showSidebar : ShellWords.hideSidebar
@@ -23,6 +27,7 @@ public struct ShellConfiguration: Sendable {
     ) {
         self.sidebarWidth = sidebarWidth
         self.sidebarMaxFraction = sidebarMaxFraction
+        self.sidebarBorder = sidebarBorder
         self.pageHidesSidebarBelow = pageHidesSidebarBelow
         self.sidebarToggleTitle = sidebarToggleTitle
     }

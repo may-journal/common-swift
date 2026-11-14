@@ -33,11 +33,13 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
         let widths = configuration.sidebarColumn(in: width)
         NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebar()
-                .navigationSplitViewColumnWidth(min: widths.min, ideal: widths.ideal, max: widths.max)
                 #if os(iOS)
                     // The toggle sits in the rail on the right, as the Duo's apps keep it.
                     .toolbar(removing: .sidebarToggle)
                 #endif
+                .overlay(alignment: .trailing) { SidebarBorderLine(border: configuration.sidebarBorder) }
+                // Outermost, so the system reads the widths; under the toolbar removal it drew 320.
+                .navigationSplitViewColumnWidth(min: widths.min, ideal: widths.ideal, max: widths.max)
         } detail: {
             // Pages push over the pane with Back, which shows the pane as it was; the sidebar stays.
             NavigationStack(path: $path) {
@@ -56,6 +58,9 @@ public struct ShellSplit<Page: Hashable, Sidebar: View, Pane: View, PageView: Vi
             #if os(iOS)
                 // No background behind the Duo's side rail.
                 .containerBackground(.clear, for: .navigation)
+                // The pane's own narrowest, or the system keeps one that stops the sidebar short.
+                .navigationSplitViewColumnWidth(
+                    min: Swift.max(width - widths.max, 0), ideal: Swift.max(width - widths.ideal, 0))
             #endif
         }
         .environment(\.shellLayout, .split)
