@@ -11,7 +11,7 @@ C4Component
     Container_Boundary(shell, "2 AdaptiveShell") {
         Component(root, "3 Shell", "SwiftUI", "Picks the stack or the split from the size class")
         Component(split, "4 Split", "SwiftUI", "Sidebar column, pane stack, rail toggle")
-        Component(config, "5 Configuration", "Swift", "Column widths, float width and words")
+        Component(config, "5 Configuration", "Swift", "Column widths, page-hides width and words")
         Component(pending, "6 Pending open", "Observation", "Held request and the modifier that opens it")
         Component(pane, "7 Pane", "SwiftUI", "The picked item's detail or the prompt, filling the pane")
     }

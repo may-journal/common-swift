@@ -12,10 +12,11 @@ import AdaptiveShell
 AdaptiveShell(path: $state.pages) { layout in
     EntryList()
 } pane: {
-    ShellPane(selection: state.picked) { entry in
+    ShellPane(
+        selection: state.picked, title: "Pick an entry", systemImage: "book",
+        message: "It opens here, beside your entries."
+    ) { entry in
         EntryDetail(entry)
-    } empty: {
-        PickPrompt()
     }
 } page: { page in
     PageView(page)
@@ -29,13 +30,19 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 - `ShellLayout.fitting(_:)` is the rule the shell uses, for a modifier the app adds only where it splits.
 - An app with no sidebar yet picks the stack-only shell, `AdaptiveShell(path:root:page:)`, on every screen.
 - A Mac-only app may use `ShellSplit` alone.
-- `ShellPane` fills the pane with the picked item's detail, or the app's prompt while nothing is picked.
+- `ShellPane` fills the pane with the picked item's detail, or the system's `ContentUnavailableView` with the app's words. `empty:` takes an app's own view.
 - The detail keeps its identity as the pick changes, so it can move between items. Add `.id(item)` to start each item afresh.
 - A phone draws no pane. Its sidebar pushes the detail itself in the `.stack` layout.
 
 ## Split
 
-On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. Below `sidebarFloatsBelow`, 800 points by default, the sidebar floats over the pane. There an opened page moves it aside, and closing the page brings it back.
+On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split's balanced style keeps the sidebar beside the pane and its pages at every width, the Duo's inner screen included. Where the platform offers it, a person drags the column between `sidebarWidth`'s narrowest and widest.
+
+| Field | Default | What it sets |
+| --- | --- | --- |
+| `sidebarWidth` | 280, 360, 520 | The column's narrowest, ideal and widest width, handed to the system |
+| `pageHidesSidebarBelow` | 0 | Below this width an opened page moves the sidebar aside until Back; 0 never does |
+| `sidebarToggleTitle` | Show Sidebar, Hide Sidebar | The rail button's words |
 
 `ShellConfiguration` takes the sidebar's column widths, that width and the toggle's words. Every field has a default; the words come from this package's String Catalog.
 
@@ -63,4 +70,4 @@ A widget or an App Intent may set `pending` or call `open(_:)` before the screen
 swift test
 ```
 
-The tests prove requirements 0010 and 0011 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. A Mac test window has no size class, so the tests give it the phone's or the iPad's. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0010, 0011 and 0013 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. A Mac test window has no size class, so the tests give it the phone's or the iPad's. [docs/architecture](docs/architecture) holds this package's own C4 views.
