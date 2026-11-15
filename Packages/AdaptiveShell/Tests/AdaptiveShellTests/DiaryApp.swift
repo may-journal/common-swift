@@ -54,10 +54,10 @@ struct DiaryApp: View {
 
     /// A row that toggles what it opens. The list draws it selected while it is open, and
     /// VoiceOver says so.
-    private func row(_ title: String, _ row: Row, toggle: @escaping () -> Void) -> some View {
+    private func row(_ title: String, _ id: Row, toggle: @escaping () -> Void) -> some View {
         Button(title, action: toggle)
-            .tag(row)
-            .accessibilityAddTraits(rowSelection.wrappedValue == row ? .isSelected : [])
+            .tag(id)
+            .accessibilityAddTraits(rowSelection.wrappedValue == id ? .isSelected : [])
     }
 
     private var entries: some View {

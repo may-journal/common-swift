@@ -1,4 +1,3 @@
-import Dispatch
 import SwiftUI
 
 extension Binding {
@@ -13,7 +12,7 @@ extension Binding {
         } else {
             // The stack drops a path changed in place. Close the open page, then open the new one.
             wrappedValue = []
-            DispatchQueue.main.async { wrappedValue = [page] }
+            Task { @MainActor in if wrappedValue.isEmpty { wrappedValue = [page] } }
         }
     }
 }
