@@ -67,6 +67,7 @@ var (
 	resolveOnce sync.Once
 	resolved    string
 	resolveErr  error
+	checksDir   string
 )
 
 // fitnessBinary is the fitness a contributor runs: the latest release the
@@ -90,16 +91,22 @@ func installerPath() string {
 	return filepath.Join(dir, "fitness-install")
 }
 
-// resolveFitness asks that installer where the latest release lives, as the
-// hooks do. Without an installer it takes fitness from PATH.
+// resolveFitness asks that installer where the latest release and the checks
+// the repo pins live, as the hooks do. Without an installer it takes fitness
+// from PATH.
 func resolveFitness() (string, error) {
 	installer := installerPath()
 	if _, err := os.Stat(installer); err != nil {
 		return exec.LookPath("fitness")
 	}
-	out, err := exec.Command(installer, "--version", "latest", "--install-only").Output()
+	cmd := exec.Command(installer, "--version", "latest", "--install-only")
+	cmd.Dir, cmd.Env = "..", append(os.Environ(), "FITNESS_WITH_CHECKS=pinned")
+	out, err := cmd.Output()
 	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
-	bin := filepath.Join(lines[len(lines)-1], "fitness")
+	if len(lines) > 1 {
+		checksDir = lines[1]
+	}
+	bin := filepath.Join(lines[0], "fitness")
 	if _, statErr := os.Stat(bin); err != nil || statErr != nil {
 		return "", fmt.Errorf("%s --install-only named no folder holding fitness: %v %v", installer, err, statErr)
 	}
@@ -186,15 +193,22 @@ func run(t *testing.T, dir string, env []string, name string, args ...string) (s
 
 // runnerVars are the variable prefixes of whatever started the tests: its git,
 // GitHub Actions and fitness settings, which a contributor's shell lacks.
+// FITNESS_CHECKS_DIR is not removed: it is where fitness finds the installed
+// checks, which a contributor's installer hands it the same way.
 var runnerVars = []string{"GIT_", "GITHUB_", "FITNESS_", "CI="}
 
 // contributorEnv is the host's environment without runnerVars, and with a
 // git identity of its own.
 func contributorEnv(t *testing.T) []string {
 	t.Helper()
+	resolveOnce.Do(func() { resolved, resolveErr = resolveFitness() })
 	env := slices.DeleteFunc(os.Environ(), func(kv string) bool {
-		return slices.ContainsFunc(runnerVars, func(p string) bool { return strings.HasPrefix(kv, p) })
+		return !strings.HasPrefix(kv, "FITNESS_CHECKS_DIR=") &&
+			slices.ContainsFunc(runnerVars, func(p string) bool { return strings.HasPrefix(kv, p) })
 	})
+	if checksDir != "" && os.Getenv("FITNESS_CHECKS_DIR") == "" {
+		env = append(env, "FITNESS_CHECKS_DIR="+checksDir)
+	}
 	global := filepath.Join(t.TempDir(), "gitconfig")
 	mustDo(t, os.WriteFile(global, []byte("[user]\n\tname = Contributor\n\temail = contributor@example.com\n"), 0o644))
 	return append(env, "GIT_CONFIG_GLOBAL="+global, "GIT_CONFIG_SYSTEM="+os.DevNull)
