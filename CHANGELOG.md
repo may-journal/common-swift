@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/may-journal/common-swift/compare/v1.4.0...v1.4.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **release:** let the synced Dependabot caller pass the writer test ([#41](https://github.com/may-journal/common-swift/issues/41)) ([926a11e](https://github.com/may-journal/common-swift/commit/926a11e8fb521bb78b419f9b212472bbf504f122))
+
 ## [1.4.0](https://github.com/may-journal/common-swift/compare/v1.3.0...v1.4.0) (2026-11-14)
 
 
