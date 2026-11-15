@@ -62,10 +62,12 @@ func Test0002_2(t *testing.T) {
 
 func Test0002_3(t *testing.T) {
 	t.Parallel()
-	// The shared auto-merge only merges a pull request the owner approved.
-	want := []string{"auto-merge-on-ready.yml auto-merge", "release-please.yml release"}
-	if got := writers(t, checkout(t)); !slices.Equal(got, want) {
-		t.Errorf("jobs that can write the version, the tag or CHANGELOG.md: %q, want only %q", got, want)
+	// The shared auto-merge only merges a pull request the owner approved, and
+	// the shared Dependabot caller writes only to Dependabot's own branch.
+	allowed := []string{"auto-merge-on-ready.yml auto-merge", "dependabot-pr.yml dependabot-pr", "release-please.yml release"}
+	got := writers(t, checkout(t))
+	if !slices.Contains(got, "release-please.yml release") || slices.ContainsFunc(got, func(w string) bool { return !slices.Contains(allowed, w) }) {
+		t.Errorf("jobs that can write the version, the tag or CHANGELOG.md: %q, want the release job and no other than %q", got, allowed)
 	}
 }
 
