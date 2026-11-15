@@ -16,22 +16,40 @@ public enum DemoStorybook {
     /// A page per package, showing a piece of it on its own.
     @MainActor
     public static var pages: [BookPage] {
-        [
-            BookPage(title: "AdaptiveShell: \(paneSample)") {
-                ShellPane(selection: String?.none) { Text(verbatim: $0) } empty: {
-                    Text(DemoWords.prompt)
-                }
-            },
-            BookPage(title: "Storybook: \(lengthSample)") {
-                PreviewSample { length in
-                    Text(length.pick(empty: DemoWords.prompt, short: "Kites", long: DemoWords.storybookSummary))
+        DemoPackage.allCases.map { package in
+            BookPage(title: title(of: package)) {
+                switch package {
+                case .adaptiveShell:
+                    ShellPane(selection: String?.none) { Text(verbatim: $0) } empty: {
+                        Text(DemoWords.prompt)
+                    }
+                case .storybook:
+                    PreviewSample { length in
+                        Text(length.pick(
+                            empty: DemoWords.prompt, short: DemoPackage.storybook.name,
+                            long: DemoWords.storybookSummary))
+                    }
                 }
             }
-        ]
+        }
     }
 
-    /// The AdaptiveShell page's name in the catalog.
-    public static let paneSample = "empty pane"
-    /// The Storybook page's name in the catalog.
-    public static let lengthSample = "data length"
+    /// A package's page name in the catalog: the package, then the piece it shows.
+    public static func title(of package: DemoPackage) -> String {
+        "\(package.name): \(sample(of: package))"
+    }
+
+    /// The piece of the package its page shows, which the catalog lists under the package.
+    public static func sample(of package: DemoPackage) -> String {
+        switch package {
+        case .adaptiveShell: "empty pane"
+        case .storybook: "data length"
+        }
+    }
+
+    /// The Storybook availability the demo app holds, so the app links DemoKit alone.
+    @MainActor
+    public static func availability() -> StorybookAvailability {
+        StorybookAvailability(gate: .debugOnly, configuration: configuration())
+    }
 }

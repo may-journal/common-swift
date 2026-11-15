@@ -8,6 +8,9 @@ public enum DemoPackage: String, CaseIterable, Identifiable, Hashable, Sendable 
     /// The package's name, as its folder and product spell it.
     public var name: String { rawValue }
 
+    /// The identifier of the package's row in the list.
+    public var rowIdentifier: String { "package.\(rawValue)" }
+
     /// One line on what the package gives an app.
     public var summary: String {
         switch self {
@@ -19,5 +22,6 @@ public enum DemoPackage: String, CaseIterable, Identifiable, Hashable, Sendable 
 
 /// A page the demo routes to by value.
 public enum DemoPage: Hashable, Sendable {
+    case package(DemoPackage)
     case settings
 }

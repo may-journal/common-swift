@@ -10,7 +10,7 @@ extension DemoKitTests {
             let launch = try Launch(.pad)
             try await launch.picks(.adaptiveShell)
             try await launch.user.sees(.text(DemoWords.inPane))
-            try await launch.user.sees(.button(DemoPackage.storybook.name))
+            try await launch.user.sees(.identifier(DemoPackage.storybook.rowIdentifier))
             try launch.quits()
         }
 
@@ -18,7 +18,7 @@ extension DemoKitTests {
             let launch = try Launch(.phone)
             try await launch.picks(.adaptiveShell)
             try await launch.user.sees(.text(DemoWords.onStack))
-            try await launch.user.doesNotSee(.button(DemoPackage.storybook.name))
+            try await launch.user.doesNotSee(.identifier(DemoPackage.storybook.rowIdentifier))
             try launch.quits()
         }
 
@@ -31,8 +31,11 @@ extension DemoKitTests {
         @Test func test0012_4() async throws {
             let launch = try Launch(.pad)
             try await launch.opensStorybook()
-            try await launch.user.sees(.text(DemoStorybook.paneSample))
-            try await launch.user.sees(.text(DemoStorybook.lengthSample))
+            // One page per package, and one package per folder under Packages/.
+            for package in DemoPackage.allCases {
+                try await launch.user.sees(.text(DemoStorybook.sample(of: package)))
+            }
+            #expect(Set(DemoPackage.allCases.map(\.name)) == Launch.packageFolders())
             try launch.quits()
         }
     }

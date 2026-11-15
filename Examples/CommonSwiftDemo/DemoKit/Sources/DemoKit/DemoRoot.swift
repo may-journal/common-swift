@@ -22,42 +22,51 @@ public struct DemoRoot: View {
             } empty: {
                 Text(DemoWords.prompt).foregroundStyle(.secondary)
             }
-        } page: { _ in
-            Form { StorybookSettingsSection(storybook) }
-                .formStyle(.grouped)
-                .navigationTitle(DemoWords.settings)
+        } page: { page in
+            switch page {
+            case .package(let package):
+                PackageDetail(package: package, openSettings: openSettings)
+            case .settings:
+                Form { StorybookSettingsSection(storybook) }
+                    .formStyle(.grouped)
+                    .navigationTitle(DemoWords.settings)
+            }
         }
         .storybookEntry(storybook)
     }
 
     /// The list of packages: the sidebar of a split, or the root of a phone's stack.
-    @ViewBuilder
     private func packages(_ layout: ShellLayout) -> some View {
-        let list = List(DemoPackage.allCases) { package in
-            Button { picked = package } label: {
+        List(DemoPackage.allCases) { package in
+            let isPicked = layout == .split && picked == package
+            Button { choose(package, layout) } label: {
                 VStack(alignment: .leading) {
                     Text(verbatim: package.name).font(.headline)
                     Text(package.summary).font(.subheadline).foregroundStyle(.secondary)
                 }
             }
             .accessibilityLabel(package.name)
+            .accessibilityHint(package.summary)
+            .accessibilityAddTraits(isPicked ? .isSelected : [])
+            .accessibilityIdentifier(package.rowIdentifier)
+            .listRowBackground(isPicked ? Color.accentColor.opacity(0.2) : nil)
         }
         .navigationTitle(DemoWords.packages)
         .toolbar {
             Button(DemoWords.settings, systemImage: "gear", action: openSettings)
         }
-        if layout == .stack {
-            list.navigationDestination(item: $picked) { package in
-                PackageDetail(package: package, openSettings: openSettings)
-            }
-        } else {
-            list
-        }
     }
 
+    /// A sidebar pick closes an open page and shows the package in the pane. A phone pushes the
+    /// package on the same path as Settings instead, so one stack holds both.
+    private func choose(_ package: DemoPackage, _ layout: ShellLayout) {
+        picked = package
+        path = layout == .stack ? [.package(package)] : []
+    }
+
+    /// Settings opens over the pane and keeps the pick, so Back shows it again.
     private func openSettings() {
-        picked = nil
-        path = [.settings]
+        if path.last != .settings { path.append(.settings) }
     }
 }
 
