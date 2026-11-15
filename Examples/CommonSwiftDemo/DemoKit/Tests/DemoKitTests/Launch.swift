@@ -47,8 +47,12 @@ struct Launch {
     static func packageFolders(from file: String = #filePath) -> Set<String> {
         var root = URL(fileURLWithPath: file)
         for _ in 0..<6 { root.deleteLastPathComponent() }
-        let names = (try? FileManager.default.contentsOfDirectory(atPath: root.appending(path: "Packages").path)) ?? []
-        return Set(names.filter { !$0.hasPrefix(".") })
+        let packages = root.appending(path: "Packages")
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: packages.path)) ?? []
+        // A package is a folder with its own manifest.
+        return Set(names.filter {
+            FileManager.default.fileExists(atPath: packages.appending(path: "\($0)/Package.swift").path)
+        })
     }
 
     func quits() throws {

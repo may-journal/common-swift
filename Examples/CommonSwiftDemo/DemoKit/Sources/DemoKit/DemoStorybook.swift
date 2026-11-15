@@ -42,8 +42,8 @@ public enum DemoStorybook {
     /// The piece of the package its page shows, which the catalog lists under the package.
     public static func sample(of package: DemoPackage) -> String {
         switch package {
-        case .adaptiveShell: "empty pane"
-        case .storybook: "data length"
+        case .adaptiveShell: "Empty pane"
+        case .storybook: "Data length"
         }
     }
 
