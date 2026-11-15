@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/may-journal/common-swift/compare/v1.4.1...v1.5.0) (2026-11-15)
+
+
+### Features
+
+* **demo:** add a demo app that shows every package ([#32](https://github.com/may-journal/common-swift/issues/32)) ([90eb097](https://github.com/may-journal/common-swift/commit/90eb0970c1a19d9daca22eeb9ff6674637a7349c))
+
 ## [1.4.1](https://github.com/may-journal/common-swift/compare/v1.4.0...v1.4.1) (2026-11-15)
 
 
