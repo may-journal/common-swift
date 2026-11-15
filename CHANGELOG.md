@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/may-journal/common-swift/compare/v1.5.0...v1.6.0) (2026-11-15)
+
+
+### Features
+
+* **adaptive-shell:** tap a sidebar row again to close what it opened ([#48](https://github.com/may-journal/common-swift/issues/48)) ([863d95f](https://github.com/may-journal/common-swift/commit/863d95f8ab9bbe7288bbb361109407c5bcb93245))
+
 ## [1.5.0](https://github.com/may-journal/common-swift/compare/v1.4.1...v1.5.0) (2026-11-15)
 
 
