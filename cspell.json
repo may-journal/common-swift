@@ -3,6 +3,12 @@
   "useGitignore": true,
   "words": [
     "alignleft",
+    "INFOPLIST",
+    "iphoneos",
+    "libexec",
+    "udid",
+    "xcodegen",
+    "xcodeproj",
     "devicectl",
     "discardable",
     "laptopcomputer",
