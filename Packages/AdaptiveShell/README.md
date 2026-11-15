@@ -34,6 +34,23 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 - The detail keeps its identity as the pick changes, so it can move between items. Add `.id(item)` to start each item afresh.
 - A phone draws no pane. Its sidebar pushes the detail itself in the `.stack` layout.
 
+## Toggle a sidebar row
+
+Build each sidebar row as a `ShellRow`, so tapping it again closes what it opened, at every width. It is the system's `Button`, which gets the tap even on a selected row. Back stays on every page in the pane, at every width and with the sidebar hidden, as a second way out.
+
+```swift
+List {
+    ShellRow(.settings, path: $path) { Text("Settings") }
+    ShellRow(entry, picked: $picked, path: $path) { Text(entry.title) }
+}
+```
+
+- A page row calls `$path.toggle(page)`: it opens the page, closes it with any page above it, or replaces a different open page.
+- A pick row calls `picked.toggle(item)`, so the pane shows its empty prompt. While a page covers the pane, it closes the page instead.
+- A row tells VoiceOver it is selected while what it opened shows.
+- For the system's mark, tag each row with your row type. Give `List(selection:)` a binding that reads the open row and drops writes.
+- The phone's stack is unchanged: a pushed page covers the sidebar, so Back closes it.
+
 ## Split
 
 On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split keeps the system's automatic style.
@@ -74,4 +91,4 @@ A widget or an App Intent may set `pending` or call `open(_:)` before the screen
 swift test
 ```
 
-The tests prove requirements 0010, 0011 and 0013 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. A Mac test window has no size class, so the tests give it the phone's or the iPad's. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0010, 0011, 0013 and 0014 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. A Mac test window has no size class, so the tests give it the phone's or the iPad's. [docs/architecture](docs/architecture) holds this package's own C4 views.

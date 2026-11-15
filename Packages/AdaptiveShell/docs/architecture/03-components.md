@@ -14,6 +14,7 @@ C4Component
         Component(config, "5 Configuration", "Swift", "Column widths, page-hides width and words")
         Component(pending, "6 Pending open", "Observation", "Held request and the modifier that opens it")
         Component(pane, "7 Pane", "SwiftUI", "The picked item's detail or the prompt, filling the pane")
+        Component(toggle, "8 Toggle", "Swift", "Opens a row's page or pick, and closes it on the next tap")
     }
 
     Rel(person, root, "A")
@@ -21,6 +22,8 @@ C4Component
     Rel(split, config, "C")
     Rel(person, pending, "D")
     Rel(split, pane, "E")
+    Rel(person, toggle, "F")
+    Rel(toggle, split, "G")
 
     UpdateElementStyle(person, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(root, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
@@ -28,6 +31,7 @@ C4Component
     UpdateElementStyle(config, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(pending, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
     UpdateElementStyle(pane, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
+    UpdateElementStyle(toggle, $bgColor="#b45309", $borderColor="#92400e", $fontColor="#ffffff")
 ```
 
 ```mermaid
@@ -54,8 +58,11 @@ Numbers on nodes and letters on arrows match the callout table.
 | 5   | `ShellConfiguration` and `ShellWords`. | A host matches its sizes and catalog. |
 | 6   | `PendingOpen` and `opensRequests(_:perform:)`. | A cold launch's link waits for its screen. |
 | 7   | `ShellPane`, which a host puts in the pane. | Every app shows a detail or a prompt the same way. |
+| 8   | `ShellRow`, built on `Binding.toggle(_:)` and `Optional.toggle(_:)`. | Every app closes a row's page the same way. |
 | A   | Opens a page from the sidebar. | The page lands where the screen has room. |
 | B   | Hands the wide layout its views and path. | Both layouts share one path. |
 | C   | Reads the widths and the toggle's words. | Defaults need no setup. |
 | D   | Taps a link that launches the app. | The request opens once the screen shows. |
 | E   | Shows the pane the host built. | The host picks the item; the pane fills the space. |
+| F   | Taps a sidebar row again. | A second tap closes what the row opened. |
+| G   | Changes the path the split's pane stack shows. | Back still returns to the pane as it was. |

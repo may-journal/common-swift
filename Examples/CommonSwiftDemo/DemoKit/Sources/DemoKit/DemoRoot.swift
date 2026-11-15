@@ -38,8 +38,7 @@ public struct DemoRoot: View {
     /// The list of packages: the sidebar of a split, or the root of a phone's stack.
     private func packages(_ layout: ShellLayout) -> some View {
         List(DemoPackage.allCases) { package in
-            let isPicked = layout == .split && picked == package
-            Button { choose(package, layout) } label: {
+            row(package, layout) {
                 VStack(alignment: .leading) {
                     Text(verbatim: package.name).font(.headline)
                     Text(package.summary).font(.subheadline).foregroundStyle(.secondary)
@@ -47,9 +46,9 @@ public struct DemoRoot: View {
             }
             .accessibilityLabel(package.name)
             .accessibilityHint(package.summary)
-            .accessibilityAddTraits(isPicked ? .isSelected : [])
             .accessibilityIdentifier(package.rowIdentifier)
-            .listRowBackground(isPicked ? Color.accentColor.opacity(0.2) : nil)
+            .listRowBackground(
+                layout == .split && shown == package ? Color.accentColor.opacity(0.2) : nil)
         }
         .navigationTitle(DemoWords.packages)
         .toolbar {
@@ -57,11 +56,19 @@ public struct DemoRoot: View {
         }
     }
 
-    /// A sidebar pick closes an open page and shows the package in the pane. A phone pushes the
-    /// package on the same path as Settings instead, so one stack holds both.
-    private func choose(_ package: DemoPackage, _ layout: ShellLayout) {
-        picked = package
-        path = layout == .stack ? [.package(package)] : []
+    /// The package the pane shows, whose row is marked.
+    private var shown: DemoPackage? { path.isEmpty ? picked : nil }
+
+    /// A split's row toggles the package in the pane. A phone picks the package and pushes it on
+    /// the path Settings uses, so a wider screen keeps the pick.
+    @ViewBuilder private func row(
+        _ package: DemoPackage, _ layout: ShellLayout, @ViewBuilder label: () -> some View
+    ) -> some View {
+        switch layout {
+        case .split: ShellRow(package, picked: $picked, path: $path, label: label)
+        case .stack:
+            Button(action: { picked = package; path = [.package(package)] }, label: label)
+        }
     }
 
     /// Settings opens over the pane and keeps the pick, so Back shows it again.
