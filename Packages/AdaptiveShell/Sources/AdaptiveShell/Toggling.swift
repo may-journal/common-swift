@@ -2,8 +2,8 @@ import Dispatch
 import SwiftUI
 
 extension Binding {
-    /// Opens `page`, or closes it with every page above it when it shows; a different open page
-    /// is replaced, so Back never finds a stale one.
+    /// Opens `page`, or closes it with every page above it when it shows. A different open page
+    /// is replaced.
     @MainActor
     public func toggle<Page: Hashable>(_ page: Page) where Value == [Page] {
         if let index = wrappedValue.firstIndex(of: page) {
