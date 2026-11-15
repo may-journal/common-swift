@@ -25,4 +25,4 @@ releases
 - 0002.3
   - Given Contributor has every other workflow in the repo
     - When GitHub runs one
-      - Then it writes no file, at most merging a pull request the owner approved
+      - Then it writes no file of main, at most merging a pull request the owner approved or completing Dependabot's pull request
