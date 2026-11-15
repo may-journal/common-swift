@@ -34,6 +34,22 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 - The detail keeps its identity as the pick changes, so it can move between items. Add `.id(item)` to start each item afresh.
 - A phone draws no pane. Its sidebar pushes the detail itself in the `.stack` layout.
 
+## Toggle a sidebar row
+
+A row's action calls one toggle, so tapping it again closes what it opened. Back stays on every page in the pane, at every width and with the sidebar hidden, as a second way out.
+
+```swift
+List(selection: marked) {
+    Button("Settings") { $path.toggle(.settings) }.tag(Row.settings)
+    Button(entry.title) { picked.toggle(entry) }.tag(Row.entry(entry))
+}
+```
+
+- `$path.toggle(page)` opens `page`, closes it and any page above it when it already shows, and replaces a different open page, so Back never finds a stale one.
+- `picked.toggle(item)` clears the pane's pick when `item` is already picked, so the pane shows its empty prompt.
+- Pass `List(selection:)` a binding that reads the open row, and the system marks it. Add `.accessibilityAddTraits(.isSelected)` on that row so VoiceOver says it too.
+- The phone's stack is unchanged: a pushed page covers the sidebar, so Back closes it.
+
 ## Split
 
 On iOS the system's sidebar toggle moves to the rail on the right, labelled Show Sidebar and Hide Sidebar. The Mac keeps its window toolbar's own toggle. The split keeps the system's automatic style.
@@ -74,4 +90,4 @@ A widget or an App Intent may set `pending` or call `open(_:)` before the screen
 swift test
 ```
 
-The tests prove requirements 0010, 0011 and 0013 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. A Mac test window has no size class, so the tests give it the phone's or the iPad's. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0010, 0011, 0013 and 0014 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. A Mac test window has no size class, so the tests give it the phone's or the iPad's. [docs/architecture](docs/architecture) holds this package's own C4 views.
