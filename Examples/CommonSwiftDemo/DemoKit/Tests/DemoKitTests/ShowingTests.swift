@@ -38,5 +38,15 @@ extension DemoKitTests {
             #expect(Set(DemoPackage.allCases.map(\.name)) == Launch.packageFolders())
             try launch.quits()
         }
+
+        @Test func test0012_5() async throws {
+            let launch = try Launch(.pad)
+            try await launch.picks(.storybook)
+            try await launch.user.sees(.button(DemoWords.openSettings))
+            try await launch.picks(.storybook)
+            try await launch.user.sees(.text(DemoWords.prompt))
+            try await launch.user.doesNotSee(.button(DemoWords.openSettings))
+            try launch.quits()
+        }
     }
 }

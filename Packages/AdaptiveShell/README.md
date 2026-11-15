@@ -36,7 +36,19 @@ The path is the app's own `[Page]`, of any `Hashable` route type, so a view rebu
 
 ## Toggle a sidebar row
 
-A row's action calls one toggle, so tapping it again closes what it opened. Back stays on every page in the pane, at every width and with the sidebar hidden, as a second way out.
+Build each sidebar row as a `ShellRow`, so tapping it again closes what it opened, at every width. It is the system's `Button`, which gets the tap even on a selected row. Back stays on every page in the pane, at every width and with the sidebar hidden, as a second way out.
+
+```swift
+List {
+    ShellRow(.settings, path: $path) { Text("Settings") }
+    ShellRow(entry, picked: $picked, path: $path) { Text(entry.title) }
+}
+```
+
+- Each row calls the toggles below. While a page covers the pane, a pick row closes the page and shows its item.
+- A row tells VoiceOver it is selected while what it opened shows, and carries its value as the list's tag.
+
+A row of your own calls the same toggles from its action:
 
 ```swift
 List(selection: marked) {

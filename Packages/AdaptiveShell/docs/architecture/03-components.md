@@ -58,7 +58,7 @@ Numbers on nodes and letters on arrows match the callout table.
 | 5   | `ShellConfiguration` and `ShellWords`. | A host matches its sizes and catalog. |
 | 6   | `PendingOpen` and `opensRequests(_:perform:)`. | A cold launch's link waits for its screen. |
 | 7   | `ShellPane`, which a host puts in the pane. | Every app shows a detail or a prompt the same way. |
-| 8   | `Binding.toggle(_:)` for the path and `Optional.toggle(_:)` for the pick. | Every app closes a row's page the same way. |
+| 8   | `ShellRow`, built on `Binding.toggle(_:)` and `Optional.toggle(_:)`. | Every app closes a row's page the same way. |
 | A   | Opens a page from the sidebar. | The page lands where the screen has room. |
 | B   | Hands the wide layout its views and path. | Both layouts share one path. |
 | C   | Reads the widths and the toggle's words. | Defaults need no setup. |

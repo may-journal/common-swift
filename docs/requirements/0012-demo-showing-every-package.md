@@ -30,3 +30,7 @@ packages under Packages/
   - Given App maintainer runs a Debug build of the demo
     - When I open the catalog
       - Then each package has a page listed
+- 0012.5
+  - Given App maintainer runs the demo on an iPad, with Storybook picked
+    - When I tap Storybook again
+      - Then the pane shows its prompt
