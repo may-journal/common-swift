@@ -59,14 +59,15 @@ public struct DemoRoot: View {
     /// The package the pane shows, whose row is marked.
     private var shown: DemoPackage? { path.isEmpty ? picked : nil }
 
-    /// A split's row toggles the package in the pane. A phone pushes the package on the same
-    /// path as Settings instead, so one stack holds both.
+    /// A split's row toggles the package in the pane. A phone picks the package and pushes it on
+    /// the path Settings uses, so a wider screen keeps the pick.
     @ViewBuilder private func row(
         _ package: DemoPackage, _ layout: ShellLayout, @ViewBuilder label: () -> some View
     ) -> some View {
         switch layout {
         case .split: ShellRow(package, picked: $picked, path: $path, label: label)
-        case .stack: ShellRow(.package(package), path: $path, label: label)
+        case .stack:
+            Button(action: { picked = package; path = [.package(package)] }, label: label)
         }
     }
 

@@ -40,8 +40,8 @@ struct DiaryApp: View {
         }
     }
 
-    /// The row marked while its page or entry is open; the system draws it as selected. A tap on
-    /// a row toggles it through the row's own action, so a marked row closes on the next tap.
+    /// The row marked while its page or entry is open; the system draws it as selected. Each row
+    /// acts through its own tap, so the list's writes are dropped.
     private var rowSelection: Binding<Row?> {
         Binding {
             switch path.first {
@@ -52,19 +52,11 @@ struct DiaryApp: View {
         } set: { _ in }
     }
 
-    /// A row that toggles what it opens. The list draws it selected while it is open, and
-    /// VoiceOver says so.
-    private func row(_ title: String, _ id: Row, toggle: @escaping () -> Void) -> some View {
-        Button(title, action: toggle)
-            .tag(id)
-            .accessibilityAddTraits(rowSelection.wrappedValue == id ? .isSelected : [])
-    }
-
     private var entries: some View {
         List(selection: rowSelection) {
-            row(Self.entry, .entry) { picked.toggle(Self.entry) }
-            row(Self.settings, .settings) { $path.toggle(.settings) }
-            row(Self.about, .about) { $path.toggle(.about) }
+            ShellRow(Self.entry, picked: $picked, path: $path) { Text(Self.entry) }.tag(Row.entry)
+            ShellRow(Page.settings, path: $path) { Text(Self.settings) }.tag(Row.settings)
+            ShellRow(Page.about, path: $path) { Text(Self.about) }.tag(Row.about)
         }
         // A test's handle on the system's divider: it straddles the column's edge, and the
         // press passes through it to the split.

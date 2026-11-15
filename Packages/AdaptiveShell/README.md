@@ -45,21 +45,10 @@ List {
 }
 ```
 
-- Each row calls the toggles below. While a page covers the pane, a pick row closes the page and shows its item.
-- A row tells VoiceOver it is selected while what it opened shows, and carries its value as the list's tag.
-
-A row of your own calls the same toggles from its action:
-
-```swift
-List(selection: marked) {
-    Button("Settings") { $path.toggle(.settings) }.tag(Row.settings)
-    Button(entry.title) { picked.toggle(entry) }.tag(Row.entry(entry))
-}
-```
-
-- `$path.toggle(page)` opens `page`, closes it with any page above it, or replaces a different open page.
-- `picked.toggle(item)` clears the pane's pick when `item` is already picked, so the pane shows its empty prompt.
-- Give `List(selection:)` a binding that reads the open row, and the system marks it. Add `.isSelected` to the row's traits for VoiceOver.
+- A page row calls `$path.toggle(page)`: it opens the page, closes it with any page above it, or replaces a different open page.
+- A pick row calls `picked.toggle(item)`, so the pane shows its empty prompt. While a page covers the pane, it closes the page instead.
+- A row tells VoiceOver it is selected while what it opened shows.
+- For the system's mark, tag each row with your row type. Give `List(selection:)` a binding that reads the open row and drops writes.
 - The phone's stack is unchanged: a pushed page covers the sidebar, so Back closes it.
 
 ## Split

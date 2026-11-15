@@ -31,7 +31,7 @@ public struct ShellRow<Value: Hashable, Label: View>: View {
     /// different open page.
     public init(_ page: Value, path: Binding<[Value]>, @ViewBuilder label: () -> Label) {
         value = page
-        isOpen = path.wrappedValue.first == page
+        isOpen = path.wrappedValue.contains(page)
         toggle = { path.toggle(page) }
         self.label = label()
     }
