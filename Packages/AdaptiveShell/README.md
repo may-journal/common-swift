@@ -45,9 +45,9 @@ List(selection: marked) {
 }
 ```
 
-- `$path.toggle(page)` opens `page`, closes it and any page above it when it already shows, and replaces a different open page, so Back never finds a stale one.
+- `$path.toggle(page)` opens `page`, closes it with any page above it, or replaces a different open page.
 - `picked.toggle(item)` clears the pane's pick when `item` is already picked, so the pane shows its empty prompt.
-- Pass `List(selection:)` a binding that reads the open row, and the system marks it. Add `.accessibilityAddTraits(.isSelected)` on that row so VoiceOver says it too.
+- Give `List(selection:)` a binding that reads the open row, and the system marks it. Add `.isSelected` to the row's traits for VoiceOver.
 - The phone's stack is unchanged: a pushed page covers the sidebar, so Back closes it.
 
 ## Split

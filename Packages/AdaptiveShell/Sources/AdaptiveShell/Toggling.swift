@@ -2,19 +2,16 @@ import Dispatch
 import SwiftUI
 
 extension Binding {
-    /// Opens `page` when it isn't showing and closes it when it is. Closing also drops any page
-    /// pushed above it, so the pane shows what it did before. A different open page is replaced,
-    /// never stacked on, so Back never finds a stale page. Call it from the sidebar row's action,
-    /// on the shell's path binding.
+    /// Opens `page`, or closes it with every page above it when it shows; a different open page
+    /// is replaced, so Back never finds a stale one.
     @MainActor
     public func toggle<Page: Hashable>(_ page: Page) where Value == [Page] {
         if let index = wrappedValue.firstIndex(of: page) {
-            wrappedValue.removeSubrange(index...)
+            wrappedValue = Array(wrappedValue[..<index])
         } else if wrappedValue.isEmpty {
             wrappedValue = [page]
         } else {
-            // The stack drops a path whose pages change in place, so it closes the open page
-            // first and opens the new one on the next turn.
+            // The stack drops a path changed in place. Close the open page, then open the new one.
             wrappedValue = []
             DispatchQueue.main.async { wrappedValue = [page] }
         }
@@ -22,8 +19,7 @@ extension Binding {
 }
 
 extension Optional where Wrapped: Equatable {
-    /// Picks `item`, or clears the pick when `item` is already picked, so the pane shows its empty
-    /// prompt. Call it from the sidebar row's action.
+    /// Picks `item`, or clears the pick when `item` is already picked.
     public mutating func toggle(_ item: Wrapped) {
         self = self == item ? nil : item
     }
