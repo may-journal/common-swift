@@ -1,6 +1,6 @@
 # The demo app showing every common-swift package on iPhone, iPad and the Mac, screens in DemoKit.
 # XcodeGen writes CommonSwiftDemo.xcodeproj from this file, and git ignores it.
-# cspell:ignore mayjournal AMPJZXR
+# cspell:ignore mayjournal AMPJZXR xcassets ASSETCATALOG
 name: CommonSwiftDemo
 options:
   bundleIdPrefix: com.mayjournal
@@ -38,6 +38,9 @@ targets:
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
+        # App/Assets.xcassets only gives the app a Copy Bundle Resources phase.
+        # The demo has no icon, so the catalog compiler must not look for an AppIcon set.
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
         # The owner's individual team; the Makefile's demo target builds without it.
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: AMPJZXR538
