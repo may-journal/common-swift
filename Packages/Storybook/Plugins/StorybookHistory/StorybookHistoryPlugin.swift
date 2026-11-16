@@ -2,8 +2,8 @@
 import Foundation
 import PackagePlugin
 
-/// Bundles `storybook-history.json` into the target it is applied to, from the git history of
-/// the repo's requirement docs. It reruns when a commit, a checkout or a doc changes.
+/// Bundles `storybook-history.json` into its target, from the git history of the files the
+/// coverage map names. It reruns when a commit, a checkout, a doc or the map changes.
 @main
 struct StorybookHistoryPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) throws -> [Command] {
@@ -34,7 +34,7 @@ private func command(tool: PluginContext.Tool, folder: URL, work: URL) -> Comman
         outputFiles: [output])
 }
 
-/// The files a new commit, checkout or fetch touches, and the requirement docs, found from
+/// The files a commit, checkout or fetch touches, the docs and the coverage map, found from
 /// `folder` up to the repo's root. A worktree's `.git` file names its own git folder.
 private func staleWhen(_ folder: URL) -> [URL] {
     let files = FileManager.default
@@ -46,7 +46,8 @@ private func staleWhen(_ folder: URL) -> [URL] {
             let gitFolder = isFolder.boolValue ? dotGit : worktreeGitFolder(dotGit) ?? dotGit
             let docs = root.appending(path: "docs/requirements")
             let names = (try? files.contentsOfDirectory(atPath: docs.path)) ?? []
-            return refFiles(gitFolder) + names.filter { $0.hasSuffix(".md") }.map { docs.appending(path: $0) }
+            return refFiles(gitFolder)
+                + names.filter { $0.hasSuffix(".md") || $0 == "coverage.json" }.map { docs.appending(path: $0) }
         }
         root.deleteLastPathComponent()
     }

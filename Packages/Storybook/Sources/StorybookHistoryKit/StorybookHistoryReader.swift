@@ -1,85 +1,109 @@
+// cspell:ignore pathspecs
 #if os(macOS)
     import Foundation
 
-    /// Reads a repo's git history of its requirement docs into a `StorybookHistory`, as the
-    /// StorybookHistory build plugin does on every build.
+    /// Reads when the code behind each requirement acceptance last changed into a
+    /// `StorybookHistory`, as the StorybookHistory build plugin does on every build. The coverage
+    /// map names each acceptance's files; `scripts/requirement-coverage.sh` writes it.
     public enum StorybookHistoryReader {
         /// The folder that holds a repo's requirement docs.
         public static let docs = "docs/requirements"
+        /// The coverage map: each acceptance's ID mapped to the repo files its test covers.
+        public static let coverage = "docs/requirements/coverage.json"
 
         /// The history of the repo holding `directory`, or nil without git or a commit. A shallow
         /// clone has none either, since its oldest commit would mark every acceptance New.
         public static func read(_ directory: URL) -> StorybookHistory? {
             guard let root = git(["rev-parse", "--show-toplevel"], in: directory),
-                git(["rev-parse", "--is-shallow-repository"], in: directory) == "false",
-                let head = git(["rev-parse", "HEAD"], in: directory)
+                git(["rev-parse", "--is-shallow-repository"], in: directory) == "false"
             else { return nil }
             let repo = URL(filePath: root)
+            // Every mainline commit, newest first: the build's own, then its first parents.
+            guard let mainline = git(["log", "--first-parent", "--format=%H %aI", "HEAD"], in: repo)
+            else { return nil }
+            let commits = mainline.split(separator: "\n").compactMap(Commit.init)
+            guard let head = commits.first else { return nil }
+            let thens = thenLines(in: repo)
             var acceptances: [String: StorybookHistory.Acceptance] = [:]
-            for doc in requirementDocs(in: repo) {
-                acceptances.merge(history(of: doc, in: repo)) { first, _ in first }
+            for (id, change) in changes(of: coverageMap(in: repo), in: repo, mainline: commits) {
+                guard let then = thens[id] else { continue }
+                acceptances[id] = StorybookHistory.Acceptance(
+                    changed: change.commit.date, changedIn: change.commit.hash, commitsAgo: change.ago, then: then)
             }
-            return StorybookHistory(commit: head, acceptances: acceptances)
+            return StorybookHistory(commit: head.hash, buildDate: head.date, acceptances: acceptances)
         }
 
-        /// The tracked requirement docs directly in `docs`, leaving out the template.
-        static func requirementDocs(in repo: URL) -> [String] {
-            let files = git(["ls-files", "--", ":(glob)\(docs)/*.md"], in: repo) ?? ""
-            return files.split(separator: "\n").map(String.init)
-                .filter { !$0.hasSuffix("/template.md") }
-        }
-
-        /// Each acceptance in one doc: the commit that first held it, the last commit that
-        /// changed its lines, and its Then line now. It walks the mainline by author date, following renames.
-        static func history(of doc: String, in repo: URL) -> [String: StorybookHistory.Acceptance] {
-            var seen: [String: (acceptance: StorybookHistory.Acceptance, lines: String)] = [:]
-            for commit in commits(of: doc, in: repo) {
-                guard let body = git(["show", "\(commit.hash):\(commit.path)"], in: repo) else { continue }
-                for block in StorybookRequirementDoc.acceptances(in: body) {
-                    if var known = seen[block.id] {
-                        if known.lines != block.lines { known.acceptance.changed = commit.date }
-                        known.acceptance.then = block.then
-                        known.lines = block.lines
-                        seen[block.id] = known
-                    } else {
-                        let acceptance = StorybookHistory.Acceptance(
-                            added: commit.date, addedIn: commit.hash, changed: commit.date, then: block.then)
-                        seen[block.id] = (acceptance, block.lines)
-                    }
-                }
-            }
-            return seen.mapValues(\.acceptance)
-        }
-
-        /// A commit that touched a doc, and the path the doc had in it.
+        /// One mainline commit: its hash and author date, from a `%H %aI` line.
         struct Commit {
             let hash: String
             let date: Date
-            let path: String
-        }
 
-        /// The mainline commits that touched `doc`, oldest first, each with the path the doc had then.
-        static func commits(of doc: String, in repo: URL) -> [Commit] {
-            let arguments = ["log", "--first-parent", "--follow", "--name-only", "--format=%x00%H %aI", "--", doc]
-            var path = doc
-            var commits: [Commit] = []
-            for entry in (git(arguments, in: repo) ?? "").split(separator: "\0") {
-                let lines = entry.split(separator: "\n").map(String.init).filter { !$0.isEmpty }
-                guard let header = lines.first else { continue }
-                let parts = header.split(separator: " ", maxSplits: 1).map(String.init)
-                guard parts.count == 2, let date = try? Date(parts[1], strategy: .iso8601) else { continue }
-                // A commit without a listed name, such as a merge, keeps the newer commit's path.
-                if lines.count > 1, let name = lines.last { path = name }
-                commits.append(Commit(hash: parts[0], date: date, path: path))
+            init?(_ line: Substring) {
+                let parts = line.split(separator: " ", maxSplits: 1).map(String.init)
+                guard parts.count == 2, let date = try? Date(parts[1], strategy: .iso8601) else { return nil }
+                hash = parts[0]
+                self.date = date
             }
-            return commits.reversed()
         }
 
-        /// Runs git in `directory` and returns its output trimmed, or nil when it fails.
-        static func git(_ arguments: [String], in directory: URL) -> String? {
+        /// The coverage map in the repo's working tree, or none when it is missing or unreadable.
+        static func coverageMap(in repo: URL) -> [String: [String]] {
+            guard let data = try? Data(contentsOf: repo.appending(path: coverage)) else { return [:] }
+            return (try? JSONDecoder().decode([String: [String]].self, from: data)) ?? [:]
+        }
+
+        /// Each acceptance's newest mainline commit touching one of its files, and the mainline
+        /// commits since. One `git log` diffs each against its first parent, so a merge or rename counts.
+        static func changes(
+            of map: [String: [String]], in repo: URL, mainline: [Commit]
+        ) -> [String: (commit: Commit, ago: Int)] {
+            var owners: [String: [String]] = [:]
+            for (id, files) in map {
+                for file in files { owners[file, default: []].append(id) }
+            }
+            guard !owners.isEmpty else { return [:] }
+            let ago = Dictionary(mainline.enumerated().map { ($1.hash, $0) }) { first, _ in first }
+            let arguments =
+                ["log", "--first-parent", "--diff-merges=first-parent", "--name-only", "--format=%x00%H %aI"]
+                + ["HEAD", "--"] + owners.keys.sorted()
+            var found: [String: (commit: Commit, ago: Int)] = [:]
+            for entry in (git(arguments, in: repo, literal: true) ?? "").split(separator: "\0") {
+                let lines = entry.split(separator: "\n")
+                guard let header = lines.first, let commit = Commit(header), let count = ago[commit.hash]
+                else { continue }
+                for file in lines.dropFirst() {
+                    for id in owners[String(file)] ?? [] where found[id] == nil {
+                        found[id] = (commit, count)
+                    }
+                }
+                if found.count == map.count { break }
+            }
+            return found
+        }
+
+        /// Each acceptance's Then line, from the requirement docs at HEAD, leaving out the template.
+        static func thenLines(in repo: URL) -> [String: String] {
+            let files = (git(["ls-tree", "--name-only", "HEAD", "\(docs)/"], in: repo) ?? "")
+                .split(separator: "\n")
+                .filter { $0.hasSuffix(".md") && !$0.hasSuffix("/template.md") }
+            guard !files.isEmpty else { return [:] }
+            // One call shows every doc; each starts with its title, which ends the doc before it.
+            let bodies = git(["show"] + files.map { "HEAD:\($0)" }, in: repo) ?? ""
+            var thens: [String: String] = [:]
+            for block in StorybookRequirementDoc.acceptances(in: bodies) where thens[block.id] == nil {
+                thens[block.id] = block.then
+            }
+            return thens
+        }
+
+        /// Runs git in `directory` and returns its output trimmed, or nil when it fails. Paths print
+        /// unquoted, as the coverage map spells them; a literal call reads its paths as written.
+        static func git(_ arguments: [String], in directory: URL, literal: Bool = false) -> String? {
             let process = Process()
             process.executableURL = URL(filePath: "/usr/bin/git")
-            process.arguments = ["-C", directory.path(percentEncoded: false)] + arguments
+            process.arguments =
+                ["-C", directory.path(percentEncoded: false), "-c", "core.quotePath=false"]
+                + (literal ? ["--literal-pathspecs"] : []) + arguments
             let output = Pipe()
             process.standardOutput = output
             process.standardError = FileHandle.nullDevice

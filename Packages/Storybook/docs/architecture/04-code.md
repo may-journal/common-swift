@@ -28,6 +28,7 @@ classDiagram
     class StorybookEntry["5 StorybookEntry"]
     class StorybookHistory["7 StorybookHistory"] {
         +commit
+        +buildDate
         +acceptances
         +bundled()
         +badge(for)
@@ -81,7 +82,7 @@ Numbers on classes and letters on relationships match the callout table.
 | 4   | The version row and the Storybook row. | An app drops in one view. |
 | 5   | The modifier holding the one cover, the shake and ⌥⌘⇧D. | Every way in meets here. |
 | 6   | A header choice saved per launch, such as the device frame. | Arguments and buttons set one value. |
-| 7   | Each acceptance's added and changed dates and the build's commit, from the plugin. | A page earns New, Changed or Added. |
+| 7   | The build's commit and date, and each acceptance's newest change to the files its test covers, from the plugin. | A page earns New or Changed, aged at the build. |
 | A   | Asks the gate once, again after a failed answer. | Offline launches recover. |
 | B   | Reads the host's configuration. | Labels come from the host. |
 | C   | Shows the rows the availability allows. | The row and the cover agree. |

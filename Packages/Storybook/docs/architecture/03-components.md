@@ -14,7 +14,7 @@ C4Component
         Component(entry, "5 Entry", "SwiftUI", "One cover for the row, shake, shortcut and launch")
         Component(catalog, "6 Catalog", "SwiftUI", "Navigator, grid, page and header toggles")
         Component(settings, "7 Launch settings", "Swift", "Device, text size and data length tables")
-        Component(history, "9 History", "Swift and a build plugin", "Each acceptance's added and changed dates")
+        Component(history, "9 History", "Swift and a build plugin", "When each acceptance's covered code changed")
     }
 
     System_Ext(kit, "8 swift-storybook")

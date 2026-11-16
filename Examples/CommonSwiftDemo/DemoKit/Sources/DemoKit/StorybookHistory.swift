@@ -7,7 +7,7 @@ import SwiftUI
 enum StorybookHistoryPage {
     @MainActor static var pages: [BookPage] {
         [
-            BookPage(title: "0015.6 Renamed and rebased") { StorybookAcceptanceCard("0015.6") },
+            BookPage(title: "0015.6 Newest covered change") { StorybookAcceptanceCard("0015.6") },
             BookPage(title: "0015.7 Shallow clone") { StorybookAcceptanceCard("0015.7") }
         ]
     }

@@ -3,24 +3,25 @@ import Storybook
 import Testing
 import UITestingLibrary
 
-/// Requirement 0015: the catalog badges pages new and changed in this build.
+/// Requirement 0015: the catalog badges pages whose code is new or changed, aged at the build.
 extension StorybookTests {
     @MainActor
     @Suite struct Changed {
-        /// The diary card's acceptance, added `added` days ago and changed `changed` days ago,
-        /// in the commit "build" when `inBuild`.
-        static func history(added: Int, changed: Int, inBuild: Bool = false) -> StorybookHistory {
-            let day: TimeInterval = 24 * 60 * 60
-            let now = Date.now
+        /// The diary card's acceptance, changed at `changed`, `commitsAgo` commits before a
+        /// build made at `build`, or in its own commit at 0.
+        static func history(
+            changed: String, build: String = "2026-11-01T12:00:00Z", commitsAgo: Int = 2
+        ) throws -> StorybookHistory {
             let acceptance = StorybookHistory.Acceptance(
-                added: now.addingTimeInterval(-Double(added) * day),
-                addedIn: inBuild ? "build" : "older", changed: now.addingTimeInterval(-Double(changed) * day),
-                then: "it shows its long sample")
-            return StorybookHistory(commit: "build", acceptances: ["0008.2": acceptance])
+                changed: try Date(changed, strategy: .iso8601), changedIn: commitsAgo == 0 ? "build" : "older",
+                commitsAgo: commitsAgo, then: "it shows its long sample")
+            return StorybookHistory(
+                commit: "build", buildDate: try Date(build, strategy: .iso8601), acceptances: ["0008.2": acceptance])
         }
 
         @Test func test0015_1() async throws {
-            let launch = try Launch(.debug, history: Self.history(added: 0, changed: 0, inBuild: true))
+            let history = try Self.history(changed: "2026-11-01T12:00:00Z", commitsAgo: 0)
+            let launch = try Launch(.debug, history: history)
             try await launch.opensStorybook()
             try await launch.user.sees(.identifier("storybook.badge.new"))
             try await launch.user.sees(.text(StorybookWords.new))
@@ -28,30 +29,27 @@ extension StorybookTests {
         }
 
         @Test func test0015_2() async throws {
-            let history = Self.history(added: 30, changed: 2)
-            let launch = try Launch(.debug, history: history)
+            let launch = try Launch(.debug, history: try Self.history(changed: "2026-10-30T12:00:00Z"))
             try await launch.opensStorybook()
-            let changed = try #require(history.badge(for: "0008.2"))
-            try await launch.user.sees(.text(StorybookWords.badge(changed)))
+            try await launch.user.sees(.text("Changed Oct 30"))
+            try await launch.user.sees(.text("2 days before the build"))
             try await launch.user.doesNotSee(.identifier("storybook.badge.new"))
             try launch.quits()
         }
 
         @Test func test0015_3() async throws {
-            let history = Self.history(added: 30, changed: 30)
+            let history = try Self.history(changed: "2025-03-04T12:00:00Z", build: "2025-03-20T12:00:00Z")
             let launch = try Launch(.debug, history: history)
             try await launch.opensStorybook()
-            let added = try #require(history.badge(for: "0008.2"))
-            try await launch.user.sees(.text(StorybookWords.badge(added)))
+            try await launch.user.sees(.text("16 days before the build"))
             try launch.quits()
         }
 
         @Test func test0015_4() async throws {
-            let history = Self.history(added: 30, changed: 2)
+            let history = try Self.history(changed: "2026-10-30T12:00:00Z")
             let launch = try Launch(.debug, arguments: ["--storybook", DiaryApp.cardPage], history: history)
-            let acceptance = try #require(history.acceptances["0008.2"])
             try await launch.user.sees(.text("it shows its long sample"))
-            try await launch.user.sees(.text(StorybookWords.dates(acceptance)))
+            try await launch.user.sees(.text("Changed Oct 30, 2026"))
             try launch.quits()
         }
 
@@ -64,12 +62,9 @@ extension StorybookTests {
         }
 
         @Test func test0015_8() async throws {
-            let history = Self.history(added: 30, changed: 30)
+            let history = try Self.history(changed: "2026-10-30T12:00:00Z", commitsAgo: 3)
             let launch = try Launch(.debug, arguments: ["--storybook", DiaryApp.cardPage], history: history)
-            let acceptance = try #require(history.acceptances["0008.2"])
-            try await launch.user.sees(.text("it shows its long sample"))
-            let added = acceptance.added.formatted(date: .abbreviated, time: .omitted)
-            try await launch.user.sees(.text(StorybookWords.added(added)))
+            try await launch.user.sees(.text("3 commits ago"))
             try launch.quits()
         }
     }

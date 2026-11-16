@@ -13,7 +13,7 @@ In an XcodeGen `project.yml`, name the repo under `packages` and each product un
 
 ## Develop
 
-Each folder under `Packages/` keeps its own `Package.swift`, README and tests, and builds alone with `swift test` in that folder. A new package adds its products and targets to the root `Package.swift` by `path:` as well.
+Each folder under `Packages/` keeps its own `Package.swift`, README and tests, and builds alone with `swift test` in that folder. A new package adds its products and targets to the root `Package.swift` by `path:` as well. When a requirement test or the code it runs changes, rerun `scripts/requirement-coverage.sh`, as [Storybook's badges](Packages/Storybook/README.md#badges) say.
 
 ## Demo app
 

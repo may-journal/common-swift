@@ -1,20 +1,20 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "badge.added" : {
-      "comment" : "Caption: the day the page's acceptance was added, such as Oct 30",
+    "badge.age" : {
+      "comment" : "Spoken age beside the freshness meter, such as 2 days before the build",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Added %@"
+            "value" : "%@ before the build"
           }
         }
       }
     },
     "badge.changed" : {
-      "comment" : "Caption: when the page's acceptance last changed, such as 2 days ago",
+      "comment" : "Caption: the day the page's covered code last changed, such as Oct 30",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -25,8 +25,32 @@
         }
       }
     },
+    "badge.commits" : {
+      "comment" : "Above a page: how many commits before the build's its covered code last changed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld commit ago"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld commits ago"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "badge.new" : {
-      "comment" : "Caption: the page's acceptance came in this build's commit",
+      "comment" : "Caption: the page's covered code changed in this build's commit",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -374,7 +398,7 @@
       }
     },
     "scale.end" : {
-      "comment" : "Label under the old end of the age scale: five weeks or more ago",
+      "comment" : "Label under the old end of the age scale: five weeks or more before the build",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

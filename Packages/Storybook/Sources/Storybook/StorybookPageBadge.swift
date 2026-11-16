@@ -1,23 +1,23 @@
 import StorybookKit
 import SwiftUI
 
-/// How fresh a page's acceptance is, the one scale its chip, meter and header draw from. It is
-/// 4 when new in this build, then 3 within three days, 2 within two weeks, 1 within five weeks.
+/// How fresh a page's code is at the build's commit, never by the clock, for its chip, meter
+/// and header. It is 4 when new, then 3 within three days, 2 within two weeks, 1 within five.
 struct StorybookFreshness: Equatable {
-    /// The header's age scale spans five weeks.
+    /// The header's age scale spans five weeks before the build.
     static let scaleDays = 35.0
 
     let level: Int
-    /// Days since the acceptance last changed or was added; none when it is new.
+    /// Days from the code's last change to the build's commit; none when it is new.
     let days: Double
 
-    init(_ badge: StorybookBadge, at now: Date = .now) {
-        guard let date = badge.date else {
+    init(_ badge: StorybookBadge) {
+        guard case .changed(_, let age) = badge else {
             level = 4
             days = 0
             return
         }
-        days = max(now.timeIntervalSince(date), 0) / (24 * 60 * 60)
+        days = Double(age.components.seconds) / (24 * 60 * 60)
         level =
             switch days {
             case ...3: 3
@@ -25,16 +25,6 @@ struct StorybookFreshness: Equatable {
             case ...Self.scaleDays: 1
             default: 0
             }
-    }
-}
-
-extension StorybookBadge {
-    /// When the acceptance changed or was added; none when it is new in this build.
-    var date: Date? {
-        switch self {
-        case .new: nil
-        case .changed(let date), .added(let date): date
-        }
     }
 }
 
@@ -104,28 +94,31 @@ struct StorybookMeter: View {
     }
 }
 
-/// The short age, such as Now or 16d, beside the meter unless a card draws the meter over its
-/// preview. The caption says it in full, so VoiceOver skips both.
+/// The short age before the build, such as Now or 16d, beside the meter unless a card draws the
+/// meter over its preview. VoiceOver reads it as 16 days before the build, and skips Now, which
+/// the caption says in full.
 struct StorybookAgeMeter: View {
     let badge: StorybookBadge
     var showsMeter = true
 
     var body: some View {
         let level = StorybookFreshness(badge).level
+        let spoken = StorybookWords.spokenAge(badge)
         HStack(spacing: 6) {
             Text(verbatim: StorybookWords.age(badge))
                 .font(Font.storybookDetail.monospacedDigit())
                 .fontWeight(level == 4 ? .semibold : .regular)
                 .foregroundStyle(level >= 2 ? .primary : .secondary)
                 .fixedSize()
+                .accessibilityLabel(Text(verbatim: spoken ?? ""))
+                .accessibilityHidden(spoken == nil)
             if showsMeter { StorybookMeter(level: level) }
         }
-        .accessibilityHidden(true)
     }
 }
 
-/// The words under a page's label: New in this build, Changed 2 days ago, Added Oct 30, or
-/// No git history. Fresh pages say it in the primary color, older ones in the secondary.
+/// The words under a page's label: New in this build, Changed Oct 30, or No git history.
+/// Fresh pages say it in the primary color, older ones in the secondary.
 struct StorybookBadgeCaption: View {
     let badge: StorybookBadge?
 
@@ -228,7 +221,7 @@ struct StorybookAcceptanceStrip: View {
         }
     }
 
-    /// "Added Oct 30, 2026 · Changed 2 days ago", led by New in this build when it is. Without
+    /// "Changed Oct 30, 2026 · 3 commits ago", led by New in this build when it is. Without
     /// history it says why there is no age.
     @ViewBuilder private func dates(_ badge: StorybookBadge?, id: String) -> some View {
         if let acceptance = catalog.history?.acceptances[id] {
@@ -237,7 +230,11 @@ struct StorybookAcceptanceStrip: View {
                     Text(StorybookWords.new).fontWeight(.semibold).foregroundStyle(.primary)
                     Text(verbatim: "·").accessibilityHidden(true)
                 }
-                Text(StorybookWords.dates(acceptance))
+                Text(StorybookWords.changedOn(acceptance.changed))
+                if acceptance.commitsAgo > 0 {
+                    Text(verbatim: "·").accessibilityHidden(true)
+                    Text(StorybookWords.commitsAgo(acceptance.commitsAgo))
+                }
             }
         } else {
             Text(StorybookWords.noAge)

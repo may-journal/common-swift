@@ -3,27 +3,26 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// Storybook's badge pages, listed under this file's name, each a sidebar row in one freshness
-/// state. The strip the catalog draws above each page shows its Then line, dates and age scale.
+/// Storybook's badge pages, each a sidebar row in one freshness state, aged at a fixed build day.
+/// The strip above each page shows its Then line, dates, commits ago and age scale.
 enum StorybookBadgePage {
     @MainActor static var pages: [BookPage] {
         [
             BookPage(title: "0015.1 New") { SampleRow(badge: .new) },
-            BookPage(title: "0015.2 Changed") {
-                SampleRow(badge: .changed(.now.addingTimeInterval(-2 * day)))
-            },
-            BookPage(title: "0015.3 Added") {
-                SampleRow(badge: .added(.now.addingTimeInterval(-16 * day)))
-            },
+            BookPage(title: "0015.2 Changed") { SampleRow(badge: changed(days: 2)) },
+            BookPage(title: "0015.3 Weeks old") { SampleRow(badge: changed(days: 16)) },
             BookPage(title: "0015.4 Acceptance above") { StorybookAcceptanceCard("0015.4") },
             BookPage(title: "0015.5 No history") { SampleRow(badge: nil) },
-            BookPage(title: "0015.8 Added only") {
-                SampleRow(badge: .added(.now.addingTimeInterval(-40 * day)))
-            }
+            BookPage(title: "0015.8 Commits ago") { SampleRow(badge: changed(days: 40)) }
         ]
     }
 
-    private static let day: TimeInterval = 24 * 60 * 60
+    /// The badge of code that changed `days` before a build made on Nov 1, 2026.
+    private static func changed(days: Int) -> StorybookBadge {
+        let age = Duration.seconds(days * 24 * 60 * 60)
+        let build = Date(timeIntervalSince1970: 1_793_534_400)
+        return .changed(build.addingTimeInterval(-Double(age.components.seconds)), age: age)
+    }
 }
 
 /// One sidebar row, as the catalog draws it, on a grouped background.

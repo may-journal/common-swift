@@ -53,7 +53,7 @@ buildToolPlugins:
     package: common-swift
 ```
 
-On each build it bundles each acceptance's dates from the git history of `docs/requirements`, and none from a shallow clone. A page's ID chip is its badge, filled in accent color for New and fading with age beside a four-bar meter. Under the label it says New in this build, how long ago it changed, or the day it was added. The page's header places that age on a five-week scale.
+A page's age comes from the source files its acceptance's test covers, which the checked-in `docs/requirements/coverage.json` lists. Rerun `scripts/requirement-coverage.sh` and commit the map when a requirement test or its code changes. Each build bundles every acceptance's newest mainline change to those files, counted to the build's commit, and a shallow clone none. The ID chip fills for New and fades with age beside a meter; the header adds commits since, such as 3 commits ago.
 
 Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 

@@ -4,10 +4,10 @@
     import StorybookHistoryKit
     import Testing
 
-    /// Requirement 0015: the StorybookHistory tool reads each acceptance's git history.
+    /// Requirement 0015: the StorybookHistory tool dates each acceptance from the code its test covers.
     @Suite struct History {
-        /// A requirement doc with one acceptance whose Then line is `then`.
-        static func doc(_ then: String, more: String = "") -> String {
+        /// A requirement doc whose two acceptances end with these Then lines.
+        static func doc(_ then: String) -> String {
             """
             # 0001 Diary
 
@@ -17,37 +17,67 @@
               - Given Tester opens the diary
                 - When the card shows
                   - Then \(then)
-            \(more)
+            - 0001.2
+              - Given Tester opens an empty diary
+                - When the card shows
+                  - Then it shows a prompt
+
             """
+        }
+
+        /// 0001.1's test covers two source files; 0001.2's covers none, so it maps to its test.
+        static let coverage = """
+            {
+              "0001.1": ["Sources/Card.swift", "Sources/Diary.swift"],
+              "0001.2": ["Tests/DiaryTests.swift"]
+            }
+            """
+
+        static func date(_ text: String) throws -> Date {
+            try Date(text, strategy: .iso8601)
         }
 
         @Test func test0015_6() throws {
             let repo = try Repo()
-            try repo.commits(Self.doc("it shows the date"), at: "2026-10-01T09:00:00Z")
-            let second = [
-                "- 0001.2", "  - Given Tester opens an empty diary", "    - When the card shows",
-                "      - Then it shows a prompt"
-            ].joined(separator: "\n")
-            try repo.commits(Self.doc("it shows the date", more: second), at: "2026-10-05T09:00:00Z")
-            try repo.renames(to: "0001-journal.md", at: "2026-10-07T09:00:00Z")
             try repo.commits(
-                Self.doc("it shows the weekday", more: second), to: "0001-journal.md", at: "2026-10-09T09:00:00Z",
+                [
+                    "docs/requirements/0001-diary.md": Self.doc("it shows the date"),
+                    "docs/requirements/coverage.json": Self.coverage,
+                    "Sources/Card.swift": "let card = 1\n", "Sources/Diary.swift": "let diary = 1\n",
+                    "Tests/DiaryTests.swift": "let test = 1\n"
+                ], at: "2026-10-01T09:00:00Z")
+            try repo.commits(["Sources/Card.swift": "let card = 2\n"], at: "2026-10-05T09:00:00Z")
+            // Rebased: written on Oct 9, committed on Oct 20.
+            try repo.commits(
+                ["Sources/Diary.swift": "let diary = 2\n"], at: "2026-10-09T09:00:00Z",
                 committed: "2026-10-20T09:00:00Z")
+            let rebased = try repo.head()
+            try repo.commits(
+                ["docs/requirements/0001-diary.md": Self.doc("it shows the weekday")], at: "2026-10-12T09:00:00Z")
+            try repo.commits(["Tests/DiaryTests.swift": "let test = 2\n"], at: "2026-10-15T09:00:00Z")
+            let build = try repo.head()
+
             let history = try #require(StorybookHistoryReader.read(repo.folder))
-            let first = try #require(history.acceptances["0001.1"])
-            #expect(first.added == (try Date("2026-10-01T09:00:00Z", strategy: .iso8601)))
-            #expect(first.changed == (try Date("2026-10-09T09:00:00Z", strategy: .iso8601)))
-            #expect(first.then == "it shows the weekday")
-            let added = try #require(history.acceptances["0001.2"])
-            #expect(added.changed == added.added)
-            #expect(history.badge(for: "0001.2") == .added(added.added))
-            #expect(history.badge(for: "0001.1") == .changed(first.changed))
+            #expect(history.commit == build)
+            #expect(history.buildDate == (try Self.date("2026-10-15T09:00:00Z")))
+            let card = try #require(history.acceptances["0001.1"])
+            #expect(card.changed == (try Self.date("2026-10-09T09:00:00Z")))
+            #expect(card.changedIn == rebased)
+            #expect(card.commitsAgo == 2)
+            #expect(card.then == "it shows the weekday")
+            #expect(history.badge(for: "0001.1") == .changed(card.changed, age: .seconds(6 * 24 * 60 * 60)))
+            let prompt = try #require(history.acceptances["0001.2"])
+            #expect(prompt.commitsAgo == 0)
+            #expect(history.badge(for: "0001.2") == .new)
         }
 
         @Test func test0015_7() throws {
             let origin = try Repo()
-            try origin.commits(Self.doc("it shows the date"), at: "2026-10-01T09:00:00Z")
-            try origin.commits(Self.doc("it shows the weekday"), at: "2026-10-09T09:00:00Z")
+            try origin.commits(
+                ["docs/requirements/0001-diary.md": Self.doc("it shows the date"),
+                 "docs/requirements/coverage.json": Self.coverage], at: "2026-10-01T09:00:00Z")
+            try origin.commits(
+                ["docs/requirements/0001-diary.md": Self.doc("it shows the weekday")], at: "2026-10-09T09:00:00Z")
             let shallow = try Repo(cloning: origin, depth: 1)
             #expect(StorybookHistoryReader.read(shallow.folder) == nil)
         }
@@ -70,30 +100,32 @@
                  folder.path(percentEncoded: false)], in: FileManager.default.temporaryDirectory)
         }
 
-        /// Writes the diary's requirement doc as `name` and commits it, written at `date`.
-        /// A rebased commit was committed later, at `committed`.
-        func commits(_ doc: String, to name: String = "0001-diary.md", at date: String, committed: String? = nil)
-            throws {
-            let docs = folder.appending(path: "docs/requirements")
-            try FileManager.default.createDirectory(at: docs, withIntermediateDirectories: true)
-            try doc.write(to: docs.appending(path: name), atomically: true, encoding: .utf8)
+        /// Writes each file at its repo path and commits them, written at `date`. A rebased commit
+        /// was committed later, at `committed`.
+        func commits(_ files: [String: String], at date: String, committed: String? = nil) throws {
+            for (path, text) in files {
+                let file = folder.appending(path: path)
+                try FileManager.default.createDirectory(
+                    at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try text.write(to: file, atomically: true, encoding: .utf8)
+            }
             try run(["add", "-A"])
-            try run(["commit", "-q", "-m", "docs(requirements): diary"], date: date, committed: committed)
+            try run(["commit", "-q", "-m", "feat: diary"], date: date, committed: committed)
         }
 
-        /// Renames the diary's requirement doc to `name` and commits it at `date`.
-        func renames(to name: String, at date: String) throws {
-            try run(["mv", "docs/requirements/0001-diary.md", "docs/requirements/\(name)"])
-            try run(["commit", "-q", "-m", "docs(requirements): rename diary"], date: date)
+        /// The hash of the commit checked out.
+        func head() throws -> String {
+            try Repo.git(["rev-parse", "HEAD"], in: folder)
         }
 
         private func run(_ arguments: [String], date: String? = nil, committed: String? = nil) throws {
             try Repo.git(arguments, in: folder, date: date, committed: committed)
         }
 
-        private static func git(
+        /// Runs git in `folder` and returns what it printed, trimmed.
+        @discardableResult private static func git(
             _ arguments: [String], in folder: URL, date: String? = nil, committed: String? = nil
-        ) throws {
+        ) throws -> String {
             let process = Process()
             process.executableURL = URL(filePath: "/usr/bin/git")
             process.currentDirectoryURL = folder
@@ -106,9 +138,13 @@
                 environment["GIT_COMMITTER_DATE"] = committed ?? date
             }
             process.environment = environment
+            let output = Pipe()
+            process.standardOutput = output
             try process.run()
+            let data = output.fileHandleForReading.readDataToEndOfFile()
             process.waitUntilExit()
             #expect(process.terminationStatus == 0, "git \(arguments.joined(separator: " ")) failed")
+            return (String(bytes: data, encoding: .utf8) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         }
     }
 #endif
