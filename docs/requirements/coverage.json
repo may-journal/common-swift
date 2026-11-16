@@ -107,7 +107,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
@@ -125,7 +124,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
@@ -147,7 +145,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Header.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
@@ -165,7 +162,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
@@ -183,7 +179,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
@@ -205,7 +200,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Header.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
@@ -228,9 +222,46 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Header.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
+    "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
+  ],
+  "0008.3": [
+    "Packages/Storybook/Sources/Storybook/StorybookAvailability.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookBoard.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookCatalog.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookConfiguration.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookEntry.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookGate.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookNavigator.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookPageBadge.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookPlatform.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
+    "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistory.swift",
+    "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
+  ],
+  "0008.4": [
+    "Packages/Storybook/Sources/Storybook/StorybookAvailability.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookBoard.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookCatalog.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookConfiguration.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookEntry.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookGate.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookNavigator.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookPageBadge.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookPlatform.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
+    "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
+    "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistory.swift",
     "Packages/Storybook/Sources/StorybookSandbox/StorybookGate+Sandbox.swift"
   ],
   "0009.1": [
@@ -391,7 +422,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistory.swift"
@@ -432,7 +462,6 @@
     "Packages/Storybook/Sources/Storybook/StorybookRowSection.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettings.swift",
     "Packages/Storybook/Sources/Storybook/StorybookSettingsSection.swift",
-    "Packages/Storybook/Sources/Storybook/StorybookWords+Badge.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords+Catalog.swift",
     "Packages/Storybook/Sources/Storybook/StorybookWords.swift",
     "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistory.swift"

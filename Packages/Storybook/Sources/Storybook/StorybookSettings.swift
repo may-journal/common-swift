@@ -53,6 +53,23 @@ enum StorybookSettings {
         StorybookOrientation.applyLaunchArgument(arguments, to: defaults)
         StorybookTextSize.applyLaunchArgument(arguments, to: defaults)
         PreviewDataLength.applyLaunchArgument(arguments, to: defaults)
+        StorybookFreshnessSetting.applyLaunchArgument(arguments, to: defaults)
+    }
+}
+
+/// Whether the catalog shows each page's freshness: its tinted ID chip, meter, age, caption and
+/// the header's age scale. Off by default, so rows show the plain ID and label.
+public enum StorybookFreshnessSetting: String, StorybookSetting {
+    case hidden = "off", shown = "on"
+
+    public static let storageKey = "storybook.freshness"
+    public static let argument = "--storybook-freshness"
+
+    public var name: String {
+        switch self {
+        case .hidden: StorybookWords.freshnessHidden
+        case .shown: StorybookWords.freshnessShown
+        }
     }
 }
 

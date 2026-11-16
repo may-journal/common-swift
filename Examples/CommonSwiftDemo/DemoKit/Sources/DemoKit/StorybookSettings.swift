@@ -29,7 +29,9 @@ enum StorybookSettingsPage {
                 Text(verbatim: StorybookDevice.duo.label(StorybookDevice.duo.defaultOrientation))
                     .font(.body.monospacedDigit())
                     .padding()
-            }
+            },
+            BookPage(title: "0008.3 Freshness hidden") { StorybookAcceptanceCard("0008.3") },
+            BookPage(title: "0008.4 Freshness kept") { StorybookAcceptanceCard("0008.4") }
         ]
     }
 }

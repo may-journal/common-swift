@@ -229,6 +229,30 @@
         }
       }
     },
+    "name.freshnessHidden" : {
+      "comment" : "Name: the catalog shows each page's ID and label without its age",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freshness hidden"
+          }
+        }
+      }
+    },
+    "name.freshnessShown" : {
+      "comment" : "Name: the catalog shows each page's age beside its ID and label",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freshness shown"
+          }
+        }
+      }
+    },
     "name.landscape" : {
       "comment" : "Name: the device frame held on its side",
       "extractionState" : "manual",
@@ -357,6 +381,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Device"
+          }
+        }
+      }
+    },
+    "noun.freshness" : {
+      "comment" : "Noun: the Storybook header button that shows or hides each page's age",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freshness"
           }
         }
       }

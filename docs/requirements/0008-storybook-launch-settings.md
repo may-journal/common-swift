@@ -22,3 +22,11 @@ launches with Storybook arguments
   - Given App maintainer launches a page by its acceptance name with `--storybook-data-length long`
     - When the page opens
       - Then it shows its long sample
+- 0008.3
+  - Given App maintainer ships a build with a page whose code is new in it
+    - When I open the catalog
+      - Then its row shows its ID and label, with no freshness
+- 0008.4
+  - Given App maintainer launched the catalog once with `--storybook-freshness on`
+    - When I open it in a later launch without arguments
+      - Then each row still shows the day its page's code changed

@@ -28,35 +28,40 @@ struct StorybookFreshness: Equatable {
     }
 }
 
-/// The ID chip, which is the badge: one accent hue, filled for New and fading with age. A page
-/// without history gets a dashed chip with no tint.
+/// The ID chip, which is the badge: one accent hue, filled for New and fading with age. Without
+/// history it is dashed with no tint, and with the heat hidden it is plain gray.
 struct StorybookIDChip: View {
     let id: String
     let badge: StorybookBadge?
     var large = false
 
+    @Environment(\.storybookShowsFreshness) private var showsHeat
     @Environment(\.backgroundProminence) private var prominence
 
     var body: some View {
         let level = badge.map { StorybookFreshness($0).level }
-        let tint = prominence == .increased ? Color.white : Color.accentColor
         Text(verbatim: id)
             .font((large ? Font.subheadline : .storybookDetail).monospacedDigit())
-            .fontWeight(level == 4 ? .bold : .medium)
-            .foregroundStyle(text(level))
+            .fontWeight(showsHeat && level == 4 ? .bold : .medium)
+            .foregroundStyle(showsHeat ? text(level) : .secondary)
             .lineLimit(1)
             .fixedSize()
             .padding(.horizontal, large ? 10 : 8)
             .padding(.vertical, large ? 4 : 2)
-            .background {
-                if let level {
-                    Capsule().fill(tint.opacity([0.07, 0.12, 0.2, 0.32, 1][level]))
-                } else {
-                    Capsule().strokeBorder(
-                        .secondary, style: StrokeStyle(lineWidth: 1, dash: [3, 2.5]))
-                }
-            }
-            .storybookNewIdentifier(badge == .new)
+            .background { chip(showsHeat ? level : nil) }
+            .storybookNewIdentifier(showsHeat && badge == .new)
+    }
+
+    @ViewBuilder private func chip(_ level: Int?) -> some View {
+        let tint = prominence == .increased ? Color.white : Color.accentColor
+        if !showsHeat {
+            Capsule().fill(prominence == .increased ? AnyShapeStyle(.white.opacity(0.2))
+                : AnyShapeStyle(.fill.tertiary))
+        } else if let level {
+            Capsule().fill(tint.opacity([0.07, 0.12, 0.2, 0.32, 1][level]))
+        } else {
+            Capsule().strokeBorder(.secondary, style: StrokeStyle(lineWidth: 1, dash: [3, 2.5]))
+        }
     }
 
     private func text(_ level: Int?) -> Color {
@@ -65,6 +70,28 @@ struct StorybookIDChip: View {
         case nil: .secondary
         default: .primary
         }
+    }
+}
+
+extension EnvironmentValues {
+    /// Whether badge views draw the page's freshness. The catalog sets it from the header's
+    /// Freshness button; a host drawing `StorybookBadgeView` alone keeps the heat.
+    @Entry var storybookShowsFreshness = true
+}
+
+extension View {
+    /// Shows the freshness when the header's Freshness button is on, and hides it otherwise.
+    func storybookFreshness() -> some View {
+        modifier(StorybookFreshnessFromHeader())
+    }
+}
+
+private struct StorybookFreshnessFromHeader: ViewModifier {
+    @AppStorage(StorybookFreshnessSetting.storageKey)
+    private var freshness: StorybookFreshnessSetting = .hidden
+
+    func body(content: Content) -> some View {
+        content.environment(\.storybookShowsFreshness, freshness == .shown)
     }
 }
 
@@ -132,12 +159,14 @@ struct StorybookBadgeCaption: View {
     }
 }
 
-/// A page's sidebar row: the ID chip, the label over its caption, then the age and meter. A
-/// host can show it too.
+/// A page's sidebar row: the ID chip, the label over its caption, then the age and meter. The
+/// catalog drops all but the chip and label while its freshness is hidden; a host's keeps it all.
 public struct StorybookBadgeView: View {
     let badge: StorybookBadge?
     let id: String
     let label: String
+
+    @Environment(\.storybookShowsFreshness) private var showsFreshness
 
     /// A row for the acceptance `id` and its page's `label`, with the badge its history earns.
     /// A build without history passes none.
@@ -152,11 +181,11 @@ public struct StorybookBadgeView: View {
             StorybookIDChip(id: id, badge: badge)
             VStack(alignment: .leading, spacing: 1) {
                 Text(verbatim: label).lineLimit(1)
-                StorybookBadgeCaption(badge: badge)
+                if showsFreshness { StorybookBadgeCaption(badge: badge) }
             }
             .layoutPriority(1)
             Spacer(minLength: 4)
-            if let badge { StorybookAgeMeter(badge: badge) }
+            if showsFreshness, let badge { StorybookAgeMeter(badge: badge) }
         }
     }
 }
@@ -169,7 +198,9 @@ struct StorybookPageRow: View {
     var body: some View {
         if let id = StorybookCatalog.acceptanceID(of: page) {
             StorybookBadgeView(
-                catalog.badge(of: page), id: id, label: StorybookCatalog.shortTitle(of: page))
+                catalog.badge(of: page), id: id, label: StorybookCatalog.shortTitle(of: page)
+            )
+            .storybookFreshness()
         } else {
             Text(StorybookCatalog.shortTitle(of: page))
         }
@@ -177,48 +208,69 @@ struct StorybookPageRow: View {
 }
 
 /// Above an acceptance's page: its chip, label, Then line, dates and a five-week age scale.
-/// Without history the chip is dashed and the scale empty.
+/// Hidden freshness leaves the chip and label, and no history leaves the scale empty.
 struct StorybookAcceptanceStrip: View {
     let page: BookPage
     let catalog: StorybookCatalog
 
     var body: some View {
         if let id = StorybookCatalog.acceptanceID(of: page) {
-            let badge = catalog.badge(of: page)
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 10) {
-                    StorybookIDChip(id: id, badge: badge, large: true)
-                    Text(StorybookCatalog.shortTitle(of: page))
-                        .font(.title3.weight(.semibold))
-                        .lineLimit(1)
-                }
-                if let then = catalog.then(of: page) {
-                    Text(verbatim: then).font(.subheadline)
-                }
-                dates(badge, id: id)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                VStack(spacing: 4) {
-                    StorybookAgeScale(days: badge.map { StorybookFreshness($0).days })
-                    HStack {
-                        Text(StorybookWords.scaleStart)
-                        Spacer()
-                        Text(StorybookWords.scaleEnd)
-                    }
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-                }
-                .padding(.top, 4)
-            }
-            .padding(14)
-            .frame(maxWidth: 520, alignment: .leading)
-            .background(.fill.quaternary, in: .rect(cornerRadius: 12))
+            StorybookAcceptanceStripContent(page: page, catalog: catalog, id: id)
+                .storybookFreshness()
+        }
+    }
+}
+
+private struct StorybookAcceptanceStripContent: View {
+    let page: BookPage
+    let catalog: StorybookCatalog
+    let id: String
+
+    @Environment(\.storybookShowsFreshness) private var showsFreshness
+
+    var body: some View {
+        Group { if showsFreshness { panel } else { title } }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(.bar)
+    }
+
+    private var title: some View {
+        HStack(spacing: 10) {
+            StorybookIDChip(id: id, badge: catalog.badge(of: page), large: true)
+            Text(StorybookCatalog.shortTitle(of: page))
+                .font(.title3.weight(.semibold))
+                .lineLimit(1)
         }
+    }
+
+    private var panel: some View {
+        let badge = catalog.badge(of: page)
+        return VStack(alignment: .leading, spacing: 8) {
+            title
+            if let then = catalog.then(of: page) {
+                Text(verbatim: then).font(.subheadline)
+            }
+            dates(badge, id: id)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            VStack(spacing: 4) {
+                StorybookAgeScale(days: badge.map { StorybookFreshness($0).days })
+                HStack {
+                    Text(StorybookWords.scaleStart)
+                    Spacer()
+                    Text(StorybookWords.scaleEnd)
+                }
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            }
+            .padding(.top, 4)
+        }
+        .padding(14)
+        .frame(maxWidth: 520, alignment: .leading)
+        .background(.fill.quaternary, in: .rect(cornerRadius: 12))
     }
 
     /// "Changed Oct 30, 2026 · 3 commits ago", led by New in this build when it is. Without

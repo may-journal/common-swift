@@ -11,6 +11,9 @@ struct StorybookGridView: View {
     @Binding var selection: StorybookSelection?
     @Binding var appearance: ColorScheme?
 
+    @AppStorage(StorybookFreshnessSetting.storageKey)
+    private var freshness: StorybookFreshnessSetting = .hidden
+
     var body: some View {
         StorybookBoard(kind: .grid, anchor: anchor) { width in
             let columns = StorybookLayout.columns(in: width)
@@ -53,12 +56,13 @@ struct StorybookGridView: View {
         .accessibilityAddTraits(.isHeader)
     }
 
-    /// A page's preview, its ID chip and meter over its top corners, above its short name, age
-    /// and caption. The preview takes no touches, so a tap anywhere on the card opens the
-    /// page, where the preview can be used.
+    /// A page's preview under its ID chip and meter, above its name, age and caption; hidden
+    /// freshness leaves the chip and name. A tap anywhere opens the page, since the preview
+    /// takes no touches.
     private func card(_ page: BookPage, height: CGFloat) -> some View {
         let id = StorybookCatalog.acceptanceID(of: page)
-        let badge = catalog.badge(of: page)
+        let heat = freshness == .shown
+        let badge = heat ? catalog.badge(of: page) : nil
         return Button {
             selection = .page(page.id)
         } label: {
@@ -86,7 +90,7 @@ struct StorybookGridView: View {
                         Spacer(minLength: 4)
                         if let badge { StorybookAgeMeter(badge: badge, showsMeter: false) }
                     }
-                    if id != nil { StorybookBadgeCaption(badge: badge) }
+                    if heat, id != nil { StorybookBadgeCaption(badge: badge) }
                 }
                 .foregroundStyle(.primary)
                 .padding(.horizontal, 12)
@@ -102,10 +106,15 @@ struct StorybookGridView: View {
             .contentShape(.rect(cornerRadius: 12))
         }
         .buttonStyle(.plain)
+        .environment(\.storybookShowsFreshness, heat)
         .accessibilityLabel(Text(StorybookCatalog.shortTitle(of: page)))
-        .accessibilityValue(
-            Text(verbatim: id.map { "\($0), \(StorybookWords.badge(badge))" } ?? ""))
+        .accessibilityValue(Text(verbatim: id.map { accessibilityValue($0, badge, heat) } ?? ""))
         .accessibilityIdentifier("storybook.card.\(page.descriptor.accessibilityIdentifier)")
+    }
+
+    /// A card's ID, then its badge's words while the freshness shows.
+    private func accessibilityValue(_ id: String, _ badge: StorybookBadge?, _ heat: Bool) -> String {
+        heat ? "\(id), \(StorybookWords.badge(badge))" : id
     }
 }
 

@@ -4,7 +4,7 @@ import StorybookKit
 import SwiftUI
 
 /// Storybook's badge pages, each a sidebar row in one freshness state, aged at a fixed build day.
-/// The strip above each page shows its Then line, dates, commits ago and age scale.
+/// Each sample keeps its heat whatever the header's Freshness button shows.
 enum StorybookBadgePage {
     @MainActor static var pages: [BookPage] {
         [

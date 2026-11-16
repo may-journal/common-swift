@@ -8,6 +8,7 @@ struct StorybookHeaderToggles: View {
     var body: some View {
         StorybookDeviceToggle()
         StorybookTextSizeToggle()
+        StorybookFreshnessToggle()
         StorybookDataLengthToggle()
         StorybookAppearanceToggle(appearance: $appearance)
     }
@@ -72,6 +73,24 @@ struct StorybookTextSizeToggle: View {
         .contextMenu { storybookPicker($textSize) }
         .accessibilityValue(Text(textSize.name))
         .accessibilityIdentifier("storybook.page.textSize.toggle")
+    }
+}
+
+/// Shows or hides every page's freshness in the sidebar, grid and page header. The flame fills
+/// while the heat shows.
+struct StorybookFreshnessToggle: View {
+    @AppStorage(StorybookFreshnessSetting.storageKey)
+    private var freshness: StorybookFreshnessSetting = .hidden
+
+    var body: some View {
+        Button {
+            freshness = freshness.next
+        } label: {
+            storybookLabel(StorybookWords.freshness, "flame")
+                .symbolVariant(freshness == .shown ? .fill : .none)
+        }
+        .accessibilityValue(Text(freshness.name))
+        .accessibilityIdentifier("storybook.page.freshness.toggle")
     }
 }
 

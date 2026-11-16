@@ -37,7 +37,7 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 - The Storybook row at the end of Settings.
 - A shake on iOS, through a `UIWindow` extension.
 - ⌥⌘⇧D on the Mac, where there is no shake.
-- `--storybook` at launch, with an optional page name. `--storybook-device`, `--storybook-orientation`, `--storybook-text-size` and `--storybook-data-length` set the header's choices.
+- `--storybook` at launch, with an optional page name. `--storybook-device`, `--storybook-orientation`, `--storybook-text-size`, `--storybook-data-length` and `--storybook-freshness on|off` set the header's choices.
 
 ## Configure
 
@@ -53,7 +53,7 @@ buildToolPlugins:
     package: common-swift
 ```
 
-A page's age comes from the source files its acceptance's test covers, which the checked-in `docs/requirements/coverage.json` lists. Rerun `scripts/requirement-coverage.sh` and commit the map when a requirement test or its code changes. Each build bundles every acceptance's newest mainline change to those files, counted to the build's commit, and a shallow clone none. The ID chip fills for New and fades with age beside a meter; the header adds commits since, such as 3 commits ago.
+A page's age comes from the source files its acceptance's test covers, which the checked-in `docs/requirements/coverage.json` lists. Rerun `scripts/requirement-coverage.sh` and commit the map when a requirement test or its code changes. Each build bundles every acceptance's newest mainline change to those files, counted to the build's commit, and a shallow clone none. Off by default, the header's flame button shows each ID chip fading with age, its meter, and the page's age scale.
 
 Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 
