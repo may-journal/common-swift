@@ -4,7 +4,7 @@ import Testing
 import UITestingLibrary
 
 /// Requirement 0015: the catalog badges pages whose code is new or changed, aged at the build.
-/// Each launch turns the header's freshness on, since it starts hidden.
+/// A page launch turns the header's Freshness on, since its panel starts hidden.
 extension StorybookTests {
     @MainActor
     @Suite struct Changed {
@@ -25,7 +25,7 @@ extension StorybookTests {
 
         @Test func test0015_1() async throws {
             let history = try Self.history(changed: "2026-11-01T12:00:00Z", commitsAgo: 0)
-            let launch = try Launch(.debug, arguments: Self.freshness, history: history)
+            let launch = try Launch(.debug, history: history)
             try await launch.opensStorybook()
             try await launch.user.sees(.identifier("storybook.badge.new"))
             try await launch.user.sees(.text(StorybookWords.new))
@@ -33,8 +33,7 @@ extension StorybookTests {
         }
 
         @Test func test0015_2() async throws {
-            let launch = try Launch(
-                .debug, arguments: Self.freshness, history: try Self.history(changed: "2026-10-30T12:00:00Z"))
+            let launch = try Launch(.debug, history: try Self.history(changed: "2026-10-30T12:00:00Z"))
             try await launch.opensStorybook()
             try await launch.user.sees(.text("Changed Oct 30"))
             try await launch.user.sees(.text("2 days before the build"))
@@ -44,7 +43,7 @@ extension StorybookTests {
 
         @Test func test0015_3() async throws {
             let history = try Self.history(changed: "2025-03-04T12:00:00Z", build: "2025-03-20T12:00:00Z")
-            let launch = try Launch(.debug, arguments: Self.freshness, history: history)
+            let launch = try Launch(.debug, history: history)
             try await launch.opensStorybook()
             try await launch.user.sees(.text("16 days before the build"))
             try launch.quits()
@@ -59,7 +58,7 @@ extension StorybookTests {
         }
 
         @Test func test0015_5() async throws {
-            let launch = try Launch(.debug, arguments: Self.freshness)
+            let launch = try Launch(.debug)
             try await launch.opensStorybook()
             try await launch.user.sees(.text("sample"))
             try await launch.user.neverSees(.identifier("storybook.badge.new"), for: .seconds(1))

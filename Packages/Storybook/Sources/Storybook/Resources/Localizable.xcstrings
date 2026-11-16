@@ -230,7 +230,7 @@
       }
     },
     "name.freshnessHidden" : {
-      "comment" : "Name: the catalog shows each page's ID and label without its age",
+      "comment" : "Name: a page shows no panel of its age above it",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -242,7 +242,7 @@
       }
     },
     "name.freshnessShown" : {
-      "comment" : "Name: the catalog shows each page's age beside its ID and label",
+      "comment" : "Name: a page shows the panel of its age above it",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -386,7 +386,7 @@
       }
     },
     "noun.freshness" : {
-      "comment" : "Noun: the Storybook header button that shows or hides each page's age",
+      "comment" : "Noun: the Storybook header button that shows or hides the panel of a page's age",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

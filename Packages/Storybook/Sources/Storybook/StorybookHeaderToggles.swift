@@ -76,8 +76,8 @@ struct StorybookTextSizeToggle: View {
     }
 }
 
-/// Shows or hides every page's freshness in the sidebar, grid and page header. The flame fills
-/// while the heat shows.
+/// Shows or hides the freshness panel above each page; the sidebar and grid always show the age.
+/// The flame fills while the panel shows.
 struct StorybookFreshnessToggle: View {
     @AppStorage(StorybookFreshnessSetting.storageKey)
     private var freshness: StorybookFreshnessSetting = .hidden

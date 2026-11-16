@@ -30,8 +30,8 @@ enum StorybookSettingsPage {
                     .font(.body.monospacedDigit())
                     .padding()
             },
-            BookPage(title: "0008.3 Freshness hidden") { StorybookAcceptanceCard("0008.3") },
-            BookPage(title: "0008.4 Freshness kept") { StorybookAcceptanceCard("0008.4") }
+            BookPage(title: "0008.3 No freshness panel") { StorybookAcceptanceCard("0008.3") },
+            BookPage(title: "0008.4 Freshness panel kept") { StorybookAcceptanceCard("0008.4") }
         ]
     }
 }

@@ -57,8 +57,8 @@ enum StorybookSettings {
     }
 }
 
-/// Whether the catalog shows each page's freshness: its tinted ID chip, meter, age, caption and
-/// the header's age scale. Off by default, so rows show the plain ID and label.
+/// Whether a page shows its freshness panel above it: its ID chip, Then line, dates, age scale and
+/// commits since. Off by default, so the preview takes the whole canvas.
 public enum StorybookFreshnessSetting: String, StorybookSetting {
     case hidden = "off", shown = "on"
 

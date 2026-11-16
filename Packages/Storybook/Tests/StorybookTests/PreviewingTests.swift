@@ -23,12 +23,11 @@ extension StorybookTests {
         }
 
         @Test func test0008_3() async throws {
-            let history = try Changed.history(changed: "2026-11-01T12:00:00Z", commitsAgo: 0)
-            let launch = try Launch(.debug, history: history)
-            try await launch.opensStorybook()
-            try await launch.user.sees(.text("0008.2"))
-            try await launch.user.sees(.text("sample"))
-            try await launch.user.neverSees(.text(StorybookWords.new), for: .seconds(1))
+            let history = try Changed.history(changed: "2026-10-30T12:00:00Z")
+            let launch = try Launch(
+                .debug, arguments: ["--storybook", DiaryApp.cardPage], history: history)
+            try await launch.user.sees(.text("Changed Oct 30"))
+            try await launch.user.neverSees(.text("Changed Oct 30, 2026"), for: .seconds(1))
             try launch.quits()
         }
 
@@ -37,9 +36,10 @@ extension StorybookTests {
             let first = try Launch(.debug, arguments: Changed.freshness, history: history)
             try await first.opensStorybook()
             try first.screen.close()
-            let relaunch = try Launch(.debug, relaunch: true, history: history)
-            try await relaunch.opensStorybook()
-            try await relaunch.user.sees(.text("Changed Oct 30"))
+            let relaunch = try Launch(
+                .debug, arguments: ["--storybook", DiaryApp.cardPage], relaunch: true,
+                history: history)
+            try await relaunch.user.sees(.text("Changed Oct 30, 2026"))
             try relaunch.quits()
         }
     }

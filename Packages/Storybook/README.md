@@ -53,7 +53,7 @@ buildToolPlugins:
     package: common-swift
 ```
 
-A page's age comes from the source files its acceptance's test covers, which the checked-in `docs/requirements/coverage.json` lists. Rerun `scripts/requirement-coverage.sh` and commit the map when a requirement test or its code changes. Each build bundles every acceptance's newest mainline change to those files, counted to the build's commit, and a shallow clone none. Off by default, the header's flame button shows each ID chip fading with age, its meter, and the page's age scale.
+A page's age comes from the source files its acceptance's test covers, which the checked-in `docs/requirements/coverage.json` lists. Rerun `scripts/requirement-coverage.sh` and commit the map when a requirement test or its code changes. Each build bundles every acceptance's newest mainline change to those files, counted to the build's commit, and a shallow clone none. The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since.
 
 Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 
