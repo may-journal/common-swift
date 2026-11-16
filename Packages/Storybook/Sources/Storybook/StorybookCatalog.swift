@@ -32,8 +32,11 @@ struct StorybookCatalog {
     let groups: [Group]
     /// Every page in sidebar order, for previous and next.
     let pages: [BookPage]
+    /// When each acceptance was added and changed, for the pages' badges.
+    let history: StorybookHistory?
 
-    init(pages added: [BookPage]) {
+    init(pages added: [BookPage], history: StorybookHistory? = nil) {
+        self.history = history
         // The store holds only the host's pages, so a launch can never select a hidden one.
         let hosts = (Self.pages(in: Book.allBookPreviews() ?? []) + added).filter(Self.isHosts)
         store = BookStore(book: Book(title: StorybookWords.name) { hosts })
@@ -41,6 +44,18 @@ struct StorybookCatalog {
             .sorted { $0.key.localizedStandardCompare($1.key) == .orderedAscending }
             .map { Group(id: $0.key, pages: $0.value.sorted(by: Self.sourceOrder)) }
         pages = groups.flatMap(\.pages)
+    }
+
+    /// The badge a page earns from its acceptance's history, if the build bundled one.
+    func badge(of page: BookPage) -> StorybookBadge? {
+        guard let id = Self.acceptanceID(of: page) else { return nil }
+        return history?.badge(for: id)
+    }
+
+    /// The Then line of the acceptance a page shows, if the build bundled its history.
+    func then(of page: BookPage) -> String? {
+        guard let id = Self.acceptanceID(of: page) else { return nil }
+        return history?.acceptances[id]?.then
     }
 
     func page(_ id: DeclarationIdentifier?) -> BookPage? {
@@ -91,16 +106,27 @@ struct StorybookCatalog {
         return (file as NSString).deletingPathExtension
     }
 
-    /// The page's name within its component, so the header never repeats the component.
+    /// The page's name within its component, so the header never repeats the component. A page
+    /// named by an acceptance shows its label, or the ID when it has none.
     static func shortTitle(of page: BookPage) -> String {
+        if let id = acceptanceID(of: page) {
+            let label = page.title.dropFirst(id.count).trimmingCharacters(in: .whitespaces)
+            return label.isEmpty ? id : label
+        }
         guard let range = componentSeparator(in: page) else { return page.title }
         return String(page.title[range.upperBound...])
     }
 
+    /// The acceptance a page's name starts with, such as "0006.3" in "0006.3 unlocked".
+    static func acceptanceID(of page: BookPage) -> String? {
+        guard let match = page.title.prefixMatch(of: /[0-9]{4}\.[0-9]+(?= |$)/) else { return nil }
+        return String(match.output)
+    }
+
     /// Where a named page's component ends. An unnamed `#Preview` is titled "line: 42" by
-    /// Storybook, and that names no component.
+    /// Storybook, and that names no component, nor does a page named by an acceptance.
     private static func componentSeparator(in page: BookPage) -> Range<String.Index>? {
-        guard page.title.hasPrefix("line: ") == false else { return nil }
+        guard page.title.hasPrefix("line: ") == false, acceptanceID(of: page) == nil else { return nil }
         return page.title.range(of: ": ")
     }
 

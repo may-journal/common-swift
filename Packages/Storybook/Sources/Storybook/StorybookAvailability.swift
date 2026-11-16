@@ -111,7 +111,7 @@ public final class StorybookAvailability {
     var catalog: StorybookCatalog {
         if let scanned { return scanned }
         StorybookSettings.apply(configuration.arguments, to: defaults)
-        let catalog = StorybookCatalog(pages: configuration.pages())
+        let catalog = StorybookCatalog(pages: configuration.pages(), history: configuration.history)
         scanned = catalog
         return catalog
     }

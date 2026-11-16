@@ -53,6 +53,23 @@ enum StorybookSettings {
         StorybookOrientation.applyLaunchArgument(arguments, to: defaults)
         StorybookTextSize.applyLaunchArgument(arguments, to: defaults)
         PreviewDataLength.applyLaunchArgument(arguments, to: defaults)
+        StorybookFreshnessSetting.applyLaunchArgument(arguments, to: defaults)
+    }
+}
+
+/// Whether a page shows its freshness panel above it: its ID chip, Then line, dates, age scale and
+/// commits since. Off by default, so the preview takes the whole canvas.
+public enum StorybookFreshnessSetting: String, StorybookSetting {
+    case hidden = "off", shown = "on"
+
+    public static let storageKey = "storybook.freshness"
+    public static let argument = "--storybook-freshness"
+
+    public var name: String {
+        switch self {
+        case .hidden: StorybookWords.freshnessHidden
+        case .shown: StorybookWords.freshnessShown
+        }
     }
 }
 

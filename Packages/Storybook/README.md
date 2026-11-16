@@ -37,13 +37,30 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 - The Storybook row at the end of Settings.
 - A shake on iOS, through a `UIWindow` extension.
 - ⌥⌘⇧D on the Mac, where there is no shake.
-- `--storybook` at launch, with an optional page name. `--storybook-device`, `--storybook-orientation`, `--storybook-text-size` and `--storybook-data-length` set the header's choices.
+- `--storybook` at launch, with an optional page name. `--storybook-device`, `--storybook-orientation`, `--storybook-text-size`, `--storybook-data-length` and `--storybook-freshness on|off` set the header's choices.
 
 ## Configure
 
-`StorybookConfiguration` takes the host's words, accessibility identifiers, version string, launch arguments and pages of its own. Every field has a default. The words default to this package's String Catalog, so a host passes its own only to match its catalog. Hand-written pages are `BookPage` values; a title such as `"DiaryCard: empty"` lists the page under DiaryCard.
+`StorybookConfiguration` takes the host's words, accessibility identifiers, version string, launch arguments, history and pages of its own. Every field has a default. The words default to this package's String Catalog, so a host passes its own only to match its catalog. Hand-written pages are `BookPage` values, named like previews.
 
-Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
+## Badges
+
+Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. An app adopts the badges in four steps:
+
+1. Apply the `StorybookHistory` build plugin to the app target, which needs a Copy Bundle Resources phase, as the XcodeGen sample below spells it.
+2. Before each build that needs real ages, run the `StorybookCoverage` command plugin, which writes `docs/requirements/coverage.json` at the repo's root.
+3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage`, since it runs the tests itself.
+4. Build in CI with `-skipPackagePluginValidation`, from a full clone: a shallow clone shows no badges.
+
+```yaml
+buildToolPlugins:
+  - plugin: StorybookHistory
+    package: common-swift
+```
+
+The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved checkout, `swift run --package-path <checkout> storybook-coverage --scheme <scheme> --destination <destination>`. Git ignores the map, which goes stale, so release and TestFlight builds run the plugin before archiving, as in Xcode Cloud's `ci_post_clone.sh`. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
+
+The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since. Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 
 ## Release builds
 

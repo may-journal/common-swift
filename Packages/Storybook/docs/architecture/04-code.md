@@ -22,9 +22,17 @@ classDiagram
         +version
         +pages
         +arguments
+        +history
     }
     class StorybookSettingsSection["4 StorybookSettingsSection"]
     class StorybookEntry["5 StorybookEntry"]
+    class StorybookHistory["7 StorybookHistory"] {
+        +commit
+        +buildDate
+        +acceptances
+        +bundled()
+        +badge(for)
+    }
     class StorybookSetting["6 StorybookSetting"] {
         <<protocol>>
         +storageKey
@@ -37,6 +45,7 @@ classDiagram
     StorybookSettingsSection --> StorybookAvailability : C
     StorybookEntry --> StorybookAvailability : D
     StorybookEntry --> StorybookSetting : E
+    StorybookConfiguration --> StorybookHistory : F
 
     style StorybookAvailability fill:#6d28d9,stroke:#4c1d95,color:#ffffff
     style StorybookGate fill:#6d28d9,stroke:#4c1d95,color:#ffffff
@@ -44,6 +53,7 @@ classDiagram
     style StorybookSettingsSection fill:#6d28d9,stroke:#4c1d95,color:#ffffff
     style StorybookEntry fill:#6d28d9,stroke:#4c1d95,color:#ffffff
     style StorybookSetting fill:#6d28d9,stroke:#4c1d95,color:#ffffff
+    style StorybookHistory fill:#6d28d9,stroke:#4c1d95,color:#ffffff
 ```
 
 ```mermaid
@@ -72,11 +82,13 @@ Numbers on classes and letters on relationships match the callout table.
 | 4   | The version row and the Storybook row. | An app drops in one view. |
 | 5   | The modifier holding the one cover, the shake and ⌥⌘⇧D. | Every way in meets here. |
 | 6   | A header choice saved per launch, such as the device frame. | Arguments and buttons set one value. |
+| 7   | The build's commit and date, and each acceptance's newest change to the files its test covers, from the plugin. | A page earns New or Changed, aged at the build. |
 | A   | Asks the gate once, again after a failed answer. | Offline launches recover. |
 | B   | Reads the host's configuration. | Labels come from the host. |
 | C   | Shows the rows the availability allows. | The row and the cover agree. |
 | D   | Opens the cover when the availability says so. | No second cover. |
 | E   | Applies each `--storybook-*` argument once. | Header taps hold after redraws. |
+| F   | Carries the bundled history, or none from a shallow clone. | No page shows a wrong New. |
 
 ## Tests
 

@@ -43,6 +43,13 @@ struct Launch {
         try await user.sees(.identifier("storybook.close"))
     }
 
+    /// Searches the catalog for `text`, which narrows its list to the matching groups and pages.
+    func searchesCatalog(_ text: String) async throws {
+        let field = Query.role(.searchField, "")
+        try await user.clears(field)
+        try await user.types(text)
+    }
+
     /// The folder names under the repo's Packages/, one per package.
     static func packageFolders(from file: String = #filePath) -> Set<String> {
         var root = URL(fileURLWithPath: file)

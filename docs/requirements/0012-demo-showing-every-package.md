@@ -28,8 +28,8 @@ packages under Packages/
       - Then the catalog opens
 - 0012.4
   - Given App maintainer runs a Debug build of the demo
-    - When I open the catalog
-      - Then each package has a page listed
+    - When I open the catalog and search it for each package
+      - Then each package has a page listed, and Storybook one per badge
 - 0012.5
   - Given App maintainer runs the demo on an iPad, with Storybook picked
     - When I tap Storybook again

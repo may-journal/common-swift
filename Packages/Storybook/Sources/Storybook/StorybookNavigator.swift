@@ -50,7 +50,7 @@ struct StorybookNavigator: View {
                 Section {
                     groupRow(group)
                     ForEach(group.pages) { page in
-                        Text(StorybookCatalog.shortTitle(of: page))
+                        StorybookPageRow(page: page, catalog: catalog)
                             .tag(StorybookSelection.page(page.id))
                             .accessibilityAddTraits(.isButton)
                             .accessibilityAction { open(.page(page.id)) }
@@ -103,8 +103,8 @@ struct StorybookNavigator: View {
     @ViewBuilder private var detail: some View {
         if let group = selectedGroup {
             StorybookGridView(
-                group: group, anchor: anchor, store: store, selection: $selection,
-                appearance: $appearance)
+                group: group, catalog: catalog, anchor: anchor, store: store,
+                selection: $selection, appearance: $appearance)
         } else if let page = catalog.page(selection?.page) {
             StorybookPageView(
                 page: page, catalog: catalog, anchor: anchor, selection: $selection,

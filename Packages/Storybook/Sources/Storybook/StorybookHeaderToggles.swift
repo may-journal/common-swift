@@ -8,6 +8,7 @@ struct StorybookHeaderToggles: View {
     var body: some View {
         StorybookDeviceToggle()
         StorybookTextSizeToggle()
+        StorybookFreshnessToggle()
         StorybookDataLengthToggle()
         StorybookAppearanceToggle(appearance: $appearance)
     }
@@ -72,6 +73,24 @@ struct StorybookTextSizeToggle: View {
         .contextMenu { storybookPicker($textSize) }
         .accessibilityValue(Text(textSize.name))
         .accessibilityIdentifier("storybook.page.textSize.toggle")
+    }
+}
+
+/// Shows or hides the freshness panel above each page; the sidebar and grid always show the age.
+/// The flame fills while the panel shows.
+struct StorybookFreshnessToggle: View {
+    @AppStorage(StorybookFreshnessSetting.storageKey)
+    private var freshness: StorybookFreshnessSetting = .hidden
+
+    var body: some View {
+        Button {
+            freshness = freshness.next
+        } label: {
+            storybookLabel(StorybookWords.freshness, "flame")
+                .symbolVariant(freshness == .shown ? .fill : .none)
+        }
+        .accessibilityValue(Text(freshness.name))
+        .accessibilityIdentifier("storybook.page.freshness.toggle")
     }
 }
 

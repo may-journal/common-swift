@@ -20,6 +20,25 @@ extension StorybookWords {
             comment: "Noun: the Storybook header button that picks the previews' text size")
     }
 
+    /// "Freshness": the header button that shows or hides the panel of a page's age.
+    public static var freshness: String {
+        String(
+            localized: "noun.freshness", defaultValue: "Freshness", bundle: .module,
+            comment: "Noun: the Storybook header button that shows or hides the panel of a page's age")
+    }
+
+    static var freshnessHidden: String {
+        String(
+            localized: "name.freshnessHidden", defaultValue: "Freshness hidden", bundle: .module,
+            comment: "Name: a page shows no panel of its age above it")
+    }
+
+    static var freshnessShown: String {
+        String(
+            localized: "name.freshnessShown", defaultValue: "Freshness shown", bundle: .module,
+            comment: "Name: a page shows the panel of its age above it")
+    }
+
     static var dataLength: String {
         String(
             localized: "noun.dataLength", defaultValue: "Data length", bundle: .module,

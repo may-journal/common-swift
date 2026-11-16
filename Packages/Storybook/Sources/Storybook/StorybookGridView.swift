@@ -5,6 +5,7 @@ import SwiftUI
 /// header's device has room for. Tapping a card opens its page alone.
 struct StorybookGridView: View {
     let group: StorybookCatalog.Group
+    let catalog: StorybookCatalog
     let anchor: UnitPoint
     let store: UserDefaults
     @Binding var selection: StorybookSelection?
@@ -52,24 +53,45 @@ struct StorybookGridView: View {
         .accessibilityAddTraits(.isHeader)
     }
 
-    /// A page's preview under its short name. The preview takes no touches, so a tap anywhere
-    /// on the card opens the page, where the preview can be used.
+    /// A page's preview, its ID chip and meter over its top corners, above its short name, age
+    /// and caption. The preview takes no touches, so a tap anywhere on the card opens the
+    /// page, where the preview can be used.
     private func card(_ page: BookPage, height: CGFloat) -> some View {
-        Button {
+        let id = StorybookCatalog.acceptanceID(of: page)
+        let badge = catalog.badge(of: page)
+        return Button {
             selection = .page(page.id)
         } label: {
             VStack(alignment: .leading, spacing: 0) {
-                Text(StorybookCatalog.shortTitle(of: page))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
+                if let id {
+                    HStack {
+                        StorybookIDChip(id: id, badge: badge)
+                        Spacer()
+                        if let badge { StorybookMeter(level: StorybookFreshness(badge).level) }
+                    }
                     .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                Divider()
+                    .padding(.top, 10)
+                    .layoutPriority(1)
+                }
                 StorybookCardPreview(make: page.destination, store: store)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
+                Divider()
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(StorybookCatalog.shortTitle(of: page))
+                            .font(.subheadline.weight(.semibold))
+                            .lineLimit(1)
+                        Spacer(minLength: 4)
+                        if let badge { StorybookAgeMeter(badge: badge, showsMeter: false) }
+                    }
+                    if id != nil { StorybookBadgeCaption(badge: badge) }
+                }
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .layoutPriority(1)
             }
             .frame(height: height)
             .background(Color.storybookPage)
@@ -81,6 +103,8 @@ struct StorybookGridView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(StorybookCatalog.shortTitle(of: page)))
+        .accessibilityValue(
+            Text(verbatim: id.map { "\($0), \(StorybookWords.badge(badge))" } ?? ""))
         .accessibilityIdentifier("storybook.card.\(page.descriptor.accessibilityIdentifier)")
     }
 }
@@ -115,8 +139,11 @@ private func storybookCardRoot(_ make: @escaping () -> AnyView, _ store: UserDef
         let make: () -> AnyView
         let store: UserDefaults
 
+        /// The preview takes the card's room, so a tall one never pushes out the chip and caption.
         func makeNSViewController(context: Context) -> NSHostingController<AnyView> {
-            NSHostingController(rootView: storybookCardRoot(make, store))
+            let controller = NSHostingController(rootView: storybookCardRoot(make, store))
+            controller.sizingOptions = []
+            return controller
         }
 
         func updateNSViewController(_ controller: NSHostingController<AnyView>, context: Context) {}

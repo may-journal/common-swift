@@ -1,0 +1,81 @@
+// cspell:ignore commondir gitdir worktree
+import Foundation
+import PackagePlugin
+
+/// Bundles `storybook-history.json` into its target, from the git history of the files the
+/// coverage map names, or else its test's file. It reruns when a commit, checkout, doc or map changes.
+@main
+struct StorybookHistoryPlugin: BuildToolPlugin {
+    func createBuildCommands(context: PluginContext, target: Target) throws -> [Command] {
+        [try command(tool: context.tool(named: "storybook-history"), folder: context.package.directoryURL,
+                     work: context.pluginWorkDirectoryURL)]
+    }
+}
+
+#if canImport(XcodeProjectPlugin)
+    import XcodeProjectPlugin
+
+    extension StorybookHistoryPlugin: XcodeBuildToolPlugin {
+        func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
+            [try command(tool: context.tool(named: "storybook-history"), folder: context.xcodeProject.directoryURL,
+                         work: context.pluginWorkDirectoryURL)]
+        }
+    }
+#endif
+
+/// The build command that writes the history, with the files whose change makes it stale.
+private func command(tool: PluginContext.Tool, folder: URL, work: URL) -> Command {
+    let output = work.appending(path: "storybook-history.json")
+    return .buildCommand(
+        displayName: "Reading Storybook history",
+        executable: tool.url,
+        arguments: [folder.path(percentEncoded: false), output.path(percentEncoded: false)],
+        inputFiles: staleWhen(folder),
+        outputFiles: [output])
+}
+
+/// The files a commit, checkout or fetch touches, the docs and the coverage map, found from
+/// `folder` up to the repo's root. A worktree's `.git` file names its own git folder.
+private func staleWhen(_ folder: URL) -> [URL] {
+    let files = FileManager.default
+    var root = folder
+    while root.path != "/" {
+        let dotGit = root.appending(path: ".git")
+        var isFolder: ObjCBool = false
+        if files.fileExists(atPath: dotGit.path, isDirectory: &isFolder) {
+            let gitFolder = isFolder.boolValue ? dotGit : worktreeGitFolder(dotGit) ?? dotGit
+            let docs = root.appending(path: "docs/requirements")
+            let names = (try? files.contentsOfDirectory(atPath: docs.path)) ?? []
+            // The docs folder changes when the untracked map appears or goes, which reruns the command.
+            return refFiles(gitFolder) + (names.isEmpty ? [] : [docs])
+                + names.filter { $0.hasSuffix(".md") || $0 == "coverage.json" }.map { docs.appending(path: $0) }
+        }
+        root.deleteLastPathComponent()
+    }
+    return []
+}
+
+/// HEAD, its log, the branch file HEAD names, and the packed refs and shallow files.
+/// A worktree keeps those last three in the shared git folder; only files that exist are listed.
+private func refFiles(_ gitFolder: URL) -> [URL] {
+    let common = (try? String(contentsOf: gitFolder.appending(path: "commondir"), encoding: .utf8))
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .map { $0.hasPrefix("/") ? URL(filePath: $0) : gitFolder.appending(path: $0) } ?? gitFolder
+    var files = [gitFolder.appending(path: "HEAD"), gitFolder.appending(path: "logs/HEAD"),
+                 common.appending(path: "packed-refs"), common.appending(path: "shallow")]
+    if let head = try? String(contentsOf: gitFolder.appending(path: "HEAD"), encoding: .utf8),
+        head.hasPrefix("ref: ") {
+        let ref = head.dropFirst("ref: ".count).trimmingCharacters(in: .whitespacesAndNewlines)
+        files.append(common.appending(path: ref))
+    }
+    return files.filter { FileManager.default.fileExists(atPath: $0.path) }
+}
+
+/// The folder a worktree's `.git` file points at with its `gitdir:` line.
+private func worktreeGitFolder(_ file: URL) -> URL? {
+    guard let text = try? String(contentsOf: file, encoding: .utf8),
+        let line = text.split(separator: "\n").first(where: { $0.hasPrefix("gitdir: ") })
+    else { return nil }
+    let path = String(line.dropFirst("gitdir: ".count))
+    return path.hasPrefix("/") ? URL(filePath: path) : file.deletingLastPathComponent().appending(path: path)
+}

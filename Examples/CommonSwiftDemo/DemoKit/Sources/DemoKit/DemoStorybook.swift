@@ -1,4 +1,3 @@
-import AdaptiveShell
 import Storybook
 import StorybookKit
 import SwiftUI
@@ -13,33 +12,26 @@ public enum DemoStorybook {
         StorybookConfiguration(pages: { pages }, arguments: arguments)
     }
 
-    /// A page per package, showing a piece of it on its own.
+    /// A page per package, showing a piece of it on its own, then a page for every other
+    /// acceptance. Each page sits in a file named after what it shows, which the catalog lists
+    /// it under.
     @MainActor
     public static var pages: [BookPage] {
-        DemoPackage.allCases.map { package in
-            BookPage(title: title(of: package)) {
-                switch package {
-                case .adaptiveShell:
-                    ShellPane(selection: String?.none) { Text(verbatim: $0) } empty: {
-                        Text(DemoWords.prompt)
-                    }
-                case .storybook:
-                    PreviewSample { length in
-                        Text(length.pick(
-                            empty: DemoWords.prompt, short: DemoPackage.storybook.name,
-                            long: DemoWords.storybookSummary))
-                    }
-                }
-            }
+        DemoPackage.allCases.map(page) + StorybookBadgePage.pages + DemoRootPage.pages
+            + ShellPage.pages + ShellRowPage.pages + LinksPage.pages
+            + StorybookSettingsPage.pages + StorybookHistoryPage.pages
+            + ReleasePage.pages + ChecksPage.pages + ManifestPage.pages
+    }
+
+    @MainActor
+    static func page(_ package: DemoPackage) -> BookPage {
+        switch package {
+        case .adaptiveShell: AdaptiveShellPage.page
+        case .storybook: StorybookPage.page
         }
     }
 
-    /// A package's page name in the catalog: the package, then the piece it shows.
-    public static func title(of package: DemoPackage) -> String {
-        "\(package.name): \(sample(of: package))"
-    }
-
-    /// The piece of the package its page shows, which the catalog lists under the package.
+    /// The piece of the package its page shows, which its page's name ends with.
     public static func sample(of package: DemoPackage) -> String {
         switch package {
         case .adaptiveShell: "Empty pane"

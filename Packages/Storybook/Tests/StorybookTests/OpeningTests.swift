@@ -29,7 +29,7 @@ extension StorybookTests {
         }
 
         @Test func test0007_3() async throws {
-            let launch = try Launch(.debug, arguments: ["--storybook", "DiaryCard: sample"])
+            let launch = try Launch(.debug, arguments: ["--storybook", DiaryApp.cardPage])
             try await launch.user.sees(.text(DiaryApp.shortSample))
             try launch.quits()
         }
@@ -37,7 +37,7 @@ extension StorybookTests {
         @Test func test0007_4() async throws {
             let launch = try Launch(.debug)
             try await launch.opensStorybook()
-            try await launch.user.sees(.text("DiaryCard"))
+            try await launch.user.sees(.text(DiaryApp.cardComponent))
             try await launch.user.sees(.text("sample"))
             try launch.quits()
         }
@@ -45,7 +45,7 @@ extension StorybookTests {
         @Test func test0007_5() async throws {
             let launch = try Launch(.debug)
             try await launch.opensStorybook()
-            try await launch.user.sees(.text("DiaryCard"))
+            try await launch.user.sees(.text(DiaryApp.cardComponent))
             try await launch.user.doesNotSee(.text(DiaryApp.demoComponent))
             try launch.quits()
         }

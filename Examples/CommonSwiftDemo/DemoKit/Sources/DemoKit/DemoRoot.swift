@@ -1,5 +1,6 @@
 import AdaptiveShell
 import Storybook
+import StorybookKit
 import SwiftUI
 
 /// The demo's root, drawn by AdaptiveShell. The packages fill the sidebar, and ShellPane shows the
@@ -74,6 +75,27 @@ public struct DemoRoot: View {
     /// Settings opens over the pane and keeps the pick, so Back shows it again.
     private func openSettings() {
         if path.last != .settings { path.append(.settings) }
+    }
+}
+
+/// The demo's own pages, listed under this file's name. They show a package's detail, the way
+/// to Settings, and a pick a second tap clears.
+enum DemoRootPage {
+    @MainActor static var pages: [BookPage] {
+        [
+            BookPage(title: "0012.1 AdaptiveShell in the pane") {
+                PackageDetail(package: .adaptiveShell, openSettings: {})
+                    .environment(\.shellLayout, .split)
+            },
+            BookPage(title: "0012.2 AdaptiveShell on the stack") {
+                PackageDetail(package: .adaptiveShell, openSettings: {})
+                    .environment(\.shellLayout, .stack)
+            },
+            BookPage(title: "0012.3 Storybook's way to Settings") {
+                PackageDetail(package: .storybook, openSettings: {})
+            },
+            BookPage(title: "0012.5 Storybook picked") { ShellSample(.split, picked: .storybook) }
+        ]
     }
 }
 
