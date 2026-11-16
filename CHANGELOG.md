@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/may-journal/common-swift/compare/v1.7.0...v1.8.0) (2026-11-16)
+
+
+### Features
+
+* **storybook:** leave the catalog's own files out of the coverage map ([#58](https://github.com/may-journal/common-swift/issues/58)) ([f5a9907](https://github.com/may-journal/common-swift/commit/f5a9907c8f825c740fc78a221f41b1dc84b119bc))
+
 ## [1.7.0](https://github.com/may-journal/common-swift/compare/v1.6.0...v1.7.0) (2026-11-16)
 
 
