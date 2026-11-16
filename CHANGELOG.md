@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/may-journal/common-swift/compare/v1.6.0...v1.7.0) (2026-11-16)
+
+
+### Features
+
+* **storybook:** badge new and changed pages from requirement history ([#54](https://github.com/may-journal/common-swift/issues/54)) ([329d0b6](https://github.com/may-journal/common-swift/commit/329d0b60022db11f4e2b0823c551548b98f8f3c8))
+
 ## [1.6.0](https://github.com/may-journal/common-swift/compare/v1.5.0...v1.6.0) (2026-11-15)
 
 
