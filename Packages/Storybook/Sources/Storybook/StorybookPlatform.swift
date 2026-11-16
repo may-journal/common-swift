@@ -36,6 +36,17 @@ extension Color {
     }
 }
 
+extension Font {
+    /// Under a row's label, and in its ID chip: a step below the label on either platform.
+    static var storybookDetail: Font {
+        #if os(iOS)
+            .footnote
+        #else
+            .subheadline
+        #endif
+    }
+}
+
 extension ToolbarItemPlacement {
     /// Where the header's buttons sit: the trailing end of the bar.
     static var storybookTrailing: ToolbarItemPlacement {

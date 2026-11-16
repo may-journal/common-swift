@@ -26,13 +26,37 @@
       }
     },
     "badge.new" : {
-      "comment" : "Badge: the page's acceptance came in this build's commit",
+      "comment" : "Caption: the page's acceptance came in this build's commit",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New"
+            "value" : "New in this build"
+          }
+        }
+      }
+    },
+    "badge.none" : {
+      "comment" : "Caption: the build bundled no git history, so the page has no age",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No git history"
+          }
+        }
+      }
+    },
+    "badge.now" : {
+      "comment" : "Short age beside the freshness meter: the page is new in this build",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
           }
         }
       }
@@ -345,6 +369,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
+          }
+        }
+      }
+    },
+    "scale.end" : {
+      "comment" : "Label under the old end of the age scale: five weeks or more ago",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 weeks+"
+          }
+        }
+      }
+    },
+    "scale.start" : {
+      "comment" : "Label under the fresh end of the five-week age scale above a page",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This build"
+          }
+        }
+      }
+    },
+    "sentence.badge.none" : {
+      "comment" : "Above a page in a build without git history, under its empty age scale",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No git history in this build, so no age to place"
           }
         }
       }

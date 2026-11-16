@@ -3,8 +3,8 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// Storybook's badge pages, listed under this file's name, each a row with one badge or none.
-/// The strip the catalog draws above each page shows its Then line and dates.
+/// Storybook's badge pages, listed under this file's name, each a sidebar row in one freshness
+/// state. The strip the catalog draws above each page shows its Then line, dates and age scale.
 enum StorybookBadgePage {
     @MainActor static var pages: [BookPage] {
         [
@@ -18,7 +18,7 @@ enum StorybookBadgePage {
             BookPage(title: "0015.4 Acceptance above") { StorybookAcceptanceCard("0015.4") },
             BookPage(title: "0015.5 No history") { SampleRow(badge: nil) },
             BookPage(title: "0015.8 Added only") {
-                StorybookBadgeView(.added(.now.addingTimeInterval(-16 * day))).padding()
+                SampleRow(badge: .added(.now.addingTimeInterval(-40 * day)))
             }
         ]
     }
@@ -26,20 +26,16 @@ enum StorybookBadgePage {
     private static let day: TimeInterval = 24 * 60 * 60
 }
 
-/// A sidebar-style row for the demo's Storybook page: its ID and label, then the badge, if
-/// any.
+/// One sidebar row, as the catalog draws it, on a grouped background.
 private struct SampleRow: View {
     let badge: StorybookBadge?
 
     var body: some View {
-        HStack(spacing: 10) {
-            Text(verbatim: "0012.4")
-                .font(.footnote.monospacedDigit())
-                .foregroundStyle(.secondary)
-            Text(DemoStorybook.sample(of: .storybook))
-            Spacer(minLength: 0)
-            if let badge { StorybookBadgeView(badge) }
-        }
-        .padding()
+        StorybookBadgeView(badge, id: "0012.4", label: DemoStorybook.sample(of: .storybook))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .frame(maxWidth: 360)
+            .background(.fill.quaternary, in: .rect(cornerRadius: 12))
+            .padding()
     }
 }

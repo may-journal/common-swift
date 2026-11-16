@@ -53,7 +53,7 @@ buildToolPlugins:
     package: common-swift
 ```
 
-On each build it bundles each acceptance's dates from the git history of `docs/requirements`. A page shows New when the build's commit added its acceptance, else how long ago it changed, else the day it was added. A shallow clone has no history, so its build shows no badges and never a wrong New.
+On each build it bundles each acceptance's dates from the git history of `docs/requirements`, and none from a shallow clone. A page's ID chip is its badge, filled in accent color for New and fading with age beside a four-bar meter. Under the label it says New in this build, how long ago it changed, or the day it was added. The page's header places that age on a five-week scale.
 
 Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 

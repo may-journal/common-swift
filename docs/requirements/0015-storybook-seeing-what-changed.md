@@ -17,7 +17,7 @@ testers who open the catalog
 - 0015.1
   - Given App maintainer ships a build whose commit added a page's acceptance
     - When I open the catalog
-      - Then that page's row shows New
+      - Then that page's row says New in this build
 - 0015.2
   - Given App maintainer ships a build with a page whose acceptance changed after it was added
     - When I open the catalog

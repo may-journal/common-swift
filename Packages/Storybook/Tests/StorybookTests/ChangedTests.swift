@@ -23,6 +23,7 @@ extension StorybookTests {
             let launch = try Launch(.debug, history: Self.history(added: 0, changed: 0, inBuild: true))
             try await launch.opensStorybook()
             try await launch.user.sees(.identifier("storybook.badge.new"))
+            try await launch.user.sees(.text(StorybookWords.new))
             try launch.quits()
         }
 
