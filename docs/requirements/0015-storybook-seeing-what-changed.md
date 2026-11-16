@@ -35,7 +35,7 @@ testers who open the catalog
     - When I open the catalog
       - Then no row shows a badge
 - 0015.6
-  - Given App maintainer has a repo whose coverage map lists some acceptances' covered files, changed in rebased commits, and misses others
+  - Given App maintainer has a repo whose untracked coverage map lists some acceptances' covered files, changed in rebased commits, and misses others
     - When the StorybookHistory tool reads it
       - Then each acceptance takes the newest change among its files, or else its test's file; one without a test gets none
 - 0015.7

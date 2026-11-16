@@ -3,7 +3,7 @@ import Foundation
 import PackagePlugin
 
 /// Bundles `storybook-history.json` into its target, from the git history of the files the
-/// coverage map names. It reruns when a commit, a checkout, a doc or the map changes.
+/// coverage map names, or else its test's file. It reruns when a commit, checkout, doc or map changes.
 @main
 struct StorybookHistoryPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) throws -> [Command] {
@@ -46,7 +46,8 @@ private func staleWhen(_ folder: URL) -> [URL] {
             let gitFolder = isFolder.boolValue ? dotGit : worktreeGitFolder(dotGit) ?? dotGit
             let docs = root.appending(path: "docs/requirements")
             let names = (try? files.contentsOfDirectory(atPath: docs.path)) ?? []
-            return refFiles(gitFolder)
+            // The docs folder changes when the untracked map appears or goes, which reruns the command.
+            return refFiles(gitFolder) + (names.isEmpty ? [] : [docs])
                 + names.filter { $0.hasSuffix(".md") || $0 == "coverage.json" }.map { docs.appending(path: $0) }
         }
         root.deleteLastPathComponent()

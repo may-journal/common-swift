@@ -48,7 +48,7 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. An app adopts the badges in four steps:
 
 1. Apply the `StorybookHistory` build plugin to the app target, which needs a Copy Bundle Resources phase, as the XcodeGen sample below spells it.
-2. Run the `StorybookCoverage` command plugin, which writes `docs/requirements/coverage.json` at the repo's root, and commit it whenever a requirement test changes.
+2. Before each build that needs real ages, run the `StorybookCoverage` command plugin, which writes `docs/requirements/coverage.json` at the repo's root.
 3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage`, since it runs the tests itself.
 4. Build in CI with `-skipPackagePluginValidation`, from a full clone: a shallow clone shows no badges.
 
@@ -58,9 +58,9 @@ buildToolPlugins:
     package: common-swift
 ```
 
-The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved checkout, `swift run --package-path <checkout> storybook-coverage --scheme <scheme> --destination <destination>`. An acceptance missing from the map is dated by its test's file, and one without a test gets no badge. The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since.
+The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved checkout, `swift run --package-path <checkout> storybook-coverage --scheme <scheme> --destination <destination>`. Git ignores the map, which goes stale, so release and TestFlight builds run the plugin before archiving, as in Xcode Cloud's `ci_post_clone.sh`. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
 
-Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
+The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since. Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 
 ## Release builds
 

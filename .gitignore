@@ -6,3 +6,5 @@
 Package.resolved
 # the demo app's project, which XcodeGen writes from Examples/CommonSwiftDemo/project.yml
 Examples/CommonSwiftDemo/CommonSwiftDemo.xcodeproj/
+# the coverage map, which make coverage writes before a build that needs real badge ages; it goes stale
+docs/requirements/coverage.json

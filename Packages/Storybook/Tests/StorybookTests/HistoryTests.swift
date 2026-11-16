@@ -53,10 +53,12 @@
 
         @Test func test0015_6() throws {
             let repo = try Repo()
+            // The map is generated and ignored by git, so it sits in the working tree uncommitted.
+            try repo.writes(["docs/requirements/coverage.json": Self.coverage])
             try repo.commits(
                 [
+                    ".gitignore": "docs/requirements/coverage.json\n",
                     "docs/requirements/0001-diary.md": Self.doc("it shows the date"),
-                    "docs/requirements/coverage.json": Self.coverage,
                     "Sources/Card.swift": "let card = 1\n", "Sources/Diary.swift": "let diary = 1\n",
                     "Tests/DiaryTests.swift": "let test = 1\n", "Tests/NightTests.swift": Self.nightTest("")
                 ], at: "2026-10-01T09:00:00Z")
@@ -103,8 +105,7 @@
         @Test func test0015_7() throws {
             let origin = try Repo()
             try origin.commits(
-                ["docs/requirements/0001-diary.md": Self.doc("it shows the date"),
-                 "docs/requirements/coverage.json": Self.coverage], at: "2026-10-01T09:00:00Z")
+                ["docs/requirements/0001-diary.md": Self.doc("it shows the date")], at: "2026-10-01T09:00:00Z")
             try origin.commits(
                 ["docs/requirements/0001-diary.md": Self.doc("it shows the weekday")], at: "2026-10-09T09:00:00Z")
             let shallow = try Repo(cloning: origin, depth: 1)
@@ -129,15 +130,20 @@
                  folder.path(percentEncoded: false)], in: FileManager.default.temporaryDirectory)
         }
 
-        /// Writes each file at its repo path and commits them, written at `date`. A rebased commit
-        /// was committed later, at `committed`.
-        func commits(_ files: [String: String], at date: String, committed: String? = nil) throws {
+        /// Writes each file at its repo path without committing it, as the coverage tool writes its map.
+        func writes(_ files: [String: String]) throws {
             for (path, text) in files {
                 let file = folder.appending(path: path)
                 try FileManager.default.createDirectory(
                     at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
                 try text.write(to: file, atomically: true, encoding: .utf8)
             }
+        }
+
+        /// Writes each file at its repo path and commits them, written at `date`. A rebased commit
+        /// was committed later, at `committed`.
+        func commits(_ files: [String: String], at date: String, committed: String? = nil) throws {
+            try writes(files)
             try run(["add", "-A"])
             try run(["commit", "-q", "-m", "feat: diary"], date: date, committed: committed)
         }

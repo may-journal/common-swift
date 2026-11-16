@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "StorybookSandbox", targets: ["StorybookSandbox"]),
         // A host applies it to its app target, so the catalog badges new and changed pages.
         .plugin(name: "StorybookHistory", targets: ["StorybookHistory"]),
-        // A host runs it when its tests change and commits the coverage map it writes.
+        // A host runs it before a build that needs real badge ages; the coverage map it writes stays untracked.
         .plugin(name: "StorybookCoverage", targets: ["StorybookCoverage"])
     ],
     dependencies: [
