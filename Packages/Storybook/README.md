@@ -62,6 +62,12 @@ The map lists the files each acceptance's test covers, running Swift packages th
 
 The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since. Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 
+## Catalog files
+
+The coverage map leaves out the catalog's own files, since a test opening the catalog covers every page. A catalog file imports `Storybook`, names a `BookPage` or the `StorybookConfiguration`, and declares no view, app or scene. A folder of mostly catalog files goes whole, helpers included. So screens stay, even those holding their own page or a `#Preview`.
+
+Pass `--exclude <folder or file>` from the repo's root, as often as needed, for a helper the rule misses. `--results <folder>` maps an earlier Xcode run's result bundles again; a test without one maps to its own file.
+
 ## Release builds
 
 Build the host app's Release configuration file by file, not whole module. Whole-module optimization drops the types each `#Preview` declares that nothing else references, and the catalog then lists nothing.
@@ -72,4 +78,4 @@ Build the host app's Release configuration file by file, not whole module. Whole
 swift test
 ```
 
-The tests prove requirements 0006 to 0008 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0006 to 0008, 0015 and 0016 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.

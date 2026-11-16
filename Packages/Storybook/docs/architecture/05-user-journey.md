@@ -37,7 +37,7 @@ flowchart TB
     taps(5 Tap Version seven times<br/>Req 0006):::action
     gate[(6 Gate answers and the unlock is saved<br/>Req 0006)]:::system
     open(7 Tap Storybook, shake, or press the shortcut<br/>Req 0007):::action
-    catalog[8 Catalog of every page, new ones badged<br/>Req 0007, 0008, 0015]:::screen
+    catalog[8 Catalog of every page, new ones badged<br/>Req 0007, 0008, 0015, 0016]:::screen
 
     maintainer --> adopt
     adopt --> settings

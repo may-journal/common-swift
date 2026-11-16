@@ -19,7 +19,7 @@ public enum DemoStorybook {
     public static var pages: [BookPage] {
         DemoPackage.allCases.map(page) + StorybookBadgePage.pages + DemoRootPage.pages
             + ShellPage.pages + ShellRowPage.pages + LinksPage.pages
-            + StorybookSettingsPage.pages + StorybookHistoryPage.pages
+            + StorybookSettingsPage.pages + StorybookHistoryPage.pages + StorybookCoveragePage.pages
             + ReleasePage.pages + ChecksPage.pages + ManifestPage.pages
     }
 

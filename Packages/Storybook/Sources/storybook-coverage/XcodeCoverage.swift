@@ -9,9 +9,24 @@ struct XcodeCoverage {
     let scheme: String?
     let destination: String
     let root: URL
+    /// A folder of an earlier run's `<test>.xcresult` bundles, read instead of running the tests.
+    var results: URL?
 
     /// Each test's covered repo files, keyed by the test's name. A test the scheme does not run is left out.
     func covered(_ tests: [String]) throws -> [String: [String]] {
+        if let results {
+            say("Reading \(results.path(percentEncoded: false))")
+            return try tests.reduce(into: [:]) { found, test in
+                let bundle = results.appending(path: "\(test).xcresult")
+                // A test without a bundle maps to its own file rather than running again.
+                guard FileManager.default.fileExists(atPath: bundle.path) else {
+                    say("  \(test) has no result bundle there, so it maps to its own file")
+                    found[test] = []
+                    return
+                }
+                found[test] = try files(bundle)
+            }
+        }
         let work = FileManager.default.temporaryDirectory.appending(path: "storybook-coverage-xcode")
             .appending(path: root.path(percentEncoded: false).replacing("/", with: "_"))
         try? FileManager.default.removeItem(at: work.appending(path: "results"))

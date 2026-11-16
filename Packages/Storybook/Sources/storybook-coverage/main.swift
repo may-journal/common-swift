@@ -1,4 +1,4 @@
-// cspell:ignore xcworkspace xcodeproj
+// cspell:ignore xcworkspace xcodeproj xcresult
 import Foundation
 import StorybookHistoryKit
 
@@ -6,8 +6,11 @@ import StorybookHistoryKit
 // Packages' tests run through `swift test`, Xcode schemes' through `xcodebuild`, and Go's through `go test`.
 let usage = """
     usage: storybook-coverage [--root <folder>] [--xcode <project, workspace or package folder>]
-                              [--scheme <name>] [--destination <specifier>] [output]
+                              [--scheme <name>] [--destination <specifier>] [--results <folder>]
+                              [--exclude <path>]... [output]
     Writes <repo root>/docs/requirements/coverage.json unless output names another file.
+    Leaves out the Storybook catalog's own files, and each repo folder or file --exclude names.
+    --results reads each Xcode test's <test>.xcresult from an earlier run instead of running it.
 
     """
 
@@ -17,6 +20,8 @@ struct Options {
     var xcode: URL?
     var scheme: String?
     var destination = "platform=macOS"
+    var results: URL?
+    var excluded: [String] = []
 
     init(_ arguments: [String]) {
         var words = arguments.makeIterator()
@@ -26,15 +31,27 @@ struct Options {
                 return value
             }
             switch word {
-            case "--root": root = URL(filePath: value())
-            case "--xcode": xcode = URL(filePath: value())
-            case "--scheme": scheme = value()
-            case "--destination": destination = value()
             case "-h", "--help": Options.fail("")
+            case _ where Options.valued.contains(word): set(word, value())
             default:
                 guard !word.hasPrefix("-"), output == nil else { Options.fail("unknown argument \(word)") }
                 output = URL(filePath: word)
             }
+        }
+    }
+
+    /// The options that take a value, which `set` stores.
+    static let valued = ["--root", "--xcode", "--scheme", "--destination", "--results", "--exclude"]
+
+    private mutating func set(_ option: String, _ value: String) {
+        switch option {
+        case "--root": root = URL(filePath: value)
+        case "--xcode": xcode = URL(filePath: value)
+        case "--scheme": scheme = value
+        case "--destination": destination = value
+        case "--results": results = URL(filePath: value)
+        case "--exclude": excluded.append(value)
+        default: Options.fail("unknown argument \(option)")
         }
     }
 
@@ -77,10 +94,14 @@ var covered: [String: [String]] = [:]
 do {
     var swiftTests = declarations.filter { $0.path.hasSuffix(".swift") }
     let outside = swiftTests.filter { package(of: $0.path, root: root) == nil }
-    if let xcode = options.xcode ?? (outside.isEmpty ? nil : xcodeContainer(in: root)) {
+    let xcode = options.xcode ?? (outside.isEmpty ? nil : xcodeContainer(in: root))
+    if options.results != nil, xcode == nil {
+        Options.fail("--results reads Xcode result bundles, so it needs --xcode")
+    }
+    if let xcode {
         let ran = try XcodeCoverage(
             container: xcode.resolvingSymlinksInPath(), scheme: options.scheme, destination: options.destination,
-            root: root
+            root: root, results: options.results
         ).covered(swiftTests.map(\.test))
         covered.merge(ran) { $1 }
         swiftTests.removeAll { ran[$0.test] != nil }
@@ -104,10 +125,13 @@ do {
     exit(1)
 }
 
-// A test that covered nothing outside its tests maps to its own file.
+// The catalog's own files are left out, so a page's commit dates only the acceptances that cover its code.
+// A test that covered nothing else maps to its own file.
+let catalog = StorybookCatalogFiles(in: root, excluding: options.excluded)
+catalog.unmatched.forEach { say("  --exclude \($0) names no tracked file; spell it from the repo's root") }
 var map: [String: Set<String>] = [:]
 for test in declarations {
-    let files = covered[test.test] ?? []
+    let files = (covered[test.test] ?? []).filter { !catalog.contains($0) }
     map[test.id, default: []].formUnion(files.isEmpty ? [test.path] : files)
 }
 try StorybookCoverageMap.json(map).write(to: output, atomically: true, encoding: .utf8)
