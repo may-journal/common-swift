@@ -1,6 +1,42 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "badge.added" : {
+      "comment" : "Caption: the day the page's acceptance was added, such as Oct 30",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added %@"
+          }
+        }
+      }
+    },
+    "badge.changed" : {
+      "comment" : "Caption: when the page's acceptance last changed, such as 2 days ago",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed %@"
+          }
+        }
+      }
+    },
+    "badge.new" : {
+      "comment" : "Badge: the page's acceptance came in this build's commit",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New"
+          }
+        }
+      }
+    },
     "count.pages" : {
       "comment" : "Count: preview pages under a component's name in the Storybook grid",
       "extractionState" : "manual",

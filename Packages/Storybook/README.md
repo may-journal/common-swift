@@ -41,7 +41,19 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 
 ## Configure
 
-`StorybookConfiguration` takes the host's words, accessibility identifiers, version string, launch arguments and pages of its own. Every field has a default. The words default to this package's String Catalog, so a host passes its own only to match its catalog. Hand-written pages are `BookPage` values; a title such as `"DiaryCard: empty"` lists the page under DiaryCard.
+`StorybookConfiguration` takes the host's words, accessibility identifiers, version string, launch arguments, history and pages of its own. Every field has a default. The words default to this package's String Catalog, so a host passes its own only to match its catalog. Hand-written pages are `BookPage` values, named like previews.
+
+## Badges
+
+Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. Apply the `StorybookHistory` plugin to the app target, which needs a Copy Bundle Resources phase, as XcodeGen spells it:
+
+```yaml
+buildToolPlugins:
+  - plugin: StorybookHistory
+    package: common-swift
+```
+
+On each build it bundles each acceptance's dates from the git history of `docs/requirements`. A page shows New when the build's commit added its acceptance, else how long ago it changed, else the day it was added. A shallow clone has no history, so its build shows no badges and never a wrong New.
 
 Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 

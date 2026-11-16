@@ -12,9 +12,9 @@ DEMO_PROJECT = $(DEMO)/CommonSwiftDemo.xcodeproj
 demo:
 	xcodegen generate --spec $(DEMO)/project.yml
 	xcodebuild build -project $(DEMO_PROJECT) -scheme CommonSwiftDemo -configuration Debug \
-		-destination generic/platform=iOS -derivedDataPath .build/demo CODE_SIGNING_ALLOWED=NO
+		-destination generic/platform=iOS -derivedDataPath .build/demo CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation
 	xcodebuild build -project $(DEMO_PROJECT) -scheme CommonSwiftDemo -configuration Debug \
-		-destination platform=macOS -derivedDataPath .build/demo CODE_SIGNING_ALLOWED=NO
+		-destination platform=macOS -derivedDataPath .build/demo CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation
 
 # Run the demo's requirement tests on the Mac.
 demo-test:

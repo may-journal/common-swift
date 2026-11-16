@@ -5,6 +5,7 @@ import SwiftUI
 /// header's device has room for. Tapping a card opens its page alone.
 struct StorybookGridView: View {
     let group: StorybookCatalog.Group
+    let catalog: StorybookCatalog
     let anchor: UnitPoint
     let store: UserDefaults
     @Binding var selection: StorybookSelection?
@@ -59,7 +60,7 @@ struct StorybookGridView: View {
             selection = .page(page.id)
         } label: {
             VStack(alignment: .leading, spacing: 0) {
-                Text(StorybookCatalog.shortTitle(of: page))
+                StorybookPageRow(page: page, catalog: catalog)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)

@@ -51,16 +51,17 @@ struct DiaryApp: View {
         }
     }
 
-    /// The app's diary card, showing the sample the header's data length picks. StorybookKit's
-    /// demo `#Preview` is replayed, since a test bundle's catalog finds no previews.
+    /// The app's diary card, showing the sample the header's data length picks, as if declared
+    /// in its own file. StorybookKit's demo `#Preview` is replayed, since a test bundle's catalog
+    /// finds no previews.
     static var pages: [BookPage] {
         [
-            BookPage(title: "DiaryCard: sample") {
+            BookPage("StorybookTests/\(cardComponent).swift", 1, title: "0008.2 sample") {
                 PreviewSample { length in
                     Text(length.pick(empty: emptySample, short: shortSample, long: longSample))
                 }
             },
-            BookPage("StorybookKit/\(demoComponent).swift", 593, title: "line: 593") {
+            BookPage("StorybookKit/\(demoComponent).swift", 593, title: "0007.5 demo") {
                 Color.purple
             }
         ]
@@ -68,6 +69,10 @@ struct DiaryApp: View {
 
     /// The file StorybookKit's unnamed demo preview sits in, which would name its component.
     static let demoComponent = "StorybookDisplayRootView"
+
+    /// The diary card's file, which names its component, and its page's name.
+    static let cardComponent = "DiaryCard"
+    static let cardPage = "0008.2 sample"
 
     static let emptySample = "No entries yet"
     static let shortSample = "Kites"
@@ -87,11 +92,12 @@ struct Launch {
 
     /// Opens the app; a relaunch keeps the switch the launch before turned on.
     init(
-        _ build: Build, arguments: [String] = [], relaunch: Bool = false, ownsVersion: Bool = false
+        _ build: Build, arguments: [String] = [], relaunch: Bool = false, ownsVersion: Bool = false,
+        history: StorybookHistory? = nil
     ) throws {
         if !relaunch { Self.forgetsSettings() }
         let configuration = StorybookConfiguration(
-            version: "1.0 (7)", pages: { DiaryApp.pages }, arguments: arguments)
+            version: "1.0 (7)", pages: { DiaryApp.pages }, arguments: arguments, history: history)
         storybook = StorybookAvailability(
             gate: build.gate, configuration: configuration,
             defaults: UserDefaults(suiteName: Self.suite) ?? .standard)

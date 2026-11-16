@@ -19,6 +19,9 @@ struct StorybookPageView: View {
                 .background(Color.storybookPage)
                 .accessibilityIdentifier(page.descriptor.accessibilityIdentifier)
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            StorybookAcceptanceStrip(page: page, catalog: catalog)
+        }
         .navigationTitle(Text(page.title))
         .storybookInlineTitle()
         .toolbar {

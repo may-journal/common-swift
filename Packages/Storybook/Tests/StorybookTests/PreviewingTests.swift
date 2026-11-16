@@ -8,7 +8,7 @@ extension StorybookTests {
     @Suite struct Previewing {
         @Test func test0008_1() async throws {
             let launch = try Launch(
-                .debug, arguments: ["--storybook", "DiaryCard: sample", "--storybook-device", "duo"])
+                .debug, arguments: ["--storybook", DiaryApp.cardPage, "--storybook-device", "duo"])
             let frame = try await launch.user.sees(.identifier("storybook.board.device"))
             #expect(frame.spoken.hasSuffix("669x951"))
             try launch.quits()
@@ -17,7 +17,7 @@ extension StorybookTests {
         @Test func test0008_2() async throws {
             let launch = try Launch(
                 .debug,
-                arguments: ["--storybook", "DiaryCard: sample", "--storybook-data-length", "long"])
+                arguments: ["--storybook", DiaryApp.cardPage, "--storybook-data-length", "long"])
             try await launch.user.sees(.text(DiaryApp.longSample))
             try launch.quits()
         }

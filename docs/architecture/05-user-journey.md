@@ -42,7 +42,8 @@ flowchart TB
     tag[(8 Version, tag and CHANGELOG.md<br/>Req 0002)]:::system
     maintainer((9 App maintainer)):::persona
     update(10 Move the app to the new tag<br/>Req 0002, 0009):::action
-    adopt(11 Use a package's features in the app<br/>Req 0006, 0007, 0008, 0010, 0011, 0012, 0013, 0014):::action
+    adopt(11 Use a package's features in the app<br/>Req 0010, 0011, 0012, 0013, 0014):::action
+    storybook(12 Open the app's Storybook catalog<br/>Req 0006, 0007, 0008, 0015):::action
 
     contributor --> commit
     commit --> open
@@ -54,6 +55,7 @@ flowchart TB
     maintainer --> update
     tag --> update
     update --> adopt
+    update --> storybook
 
     classDef persona fill:#eef2ff,stroke:#6366f1,color:#312e81,stroke-width:2px
     classDef screen fill:#f8fafc,stroke:#64748b,color:#1e293b,stroke-width:2px
@@ -76,3 +78,4 @@ Numbers match the callout table.
 | 9   | A developer who keeps a may-* app current. | Persona | Same person as the system context. |
 | 10  | Moves the app's dependency on the repo URL to the new tag. | Action | The app takes the release by version, with only the products it picks. |
 | 11  | Uses what a package promises; its own journey draws the steps. | Action | Fitness reads every requirement doc here only. |
+| 12  | Opens Storybook from Settings to browse every page, the new ones badged. | Action | Testers check the latest work first. |

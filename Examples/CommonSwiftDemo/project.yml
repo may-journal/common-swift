@@ -10,6 +10,9 @@ options:
 packages:
   DemoKit:
     path: DemoKit
+  # This repo, for the StorybookHistory plugin, which badges new and changed catalog pages.
+  common-swift:
+    path: ../..
 targets:
   CommonSwiftDemo:
     type: application
@@ -20,6 +23,9 @@ targets:
     dependencies:
       - package: DemoKit
         product: DemoKit
+    buildToolPlugins:
+      - plugin: StorybookHistory
+        package: common-swift
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

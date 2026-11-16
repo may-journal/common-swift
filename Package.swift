@@ -11,7 +11,9 @@ let package = Package(
     products: [
         .library(name: "AdaptiveShell", targets: ["AdaptiveShell"]),
         .library(name: "Storybook", targets: ["Storybook"]),
-        .library(name: "StorybookSandbox", targets: ["StorybookSandbox"])
+        .library(name: "StorybookSandbox", targets: ["StorybookSandbox"]),
+        // A host applies it to its app target, so the catalog badges new and changed pages.
+        .plugin(name: "StorybookHistory", targets: ["StorybookHistory"])
     ],
     dependencies: [
         .package(url: "https://github.com/eure/swift-storybook", from: "3.3.0")
@@ -24,9 +26,24 @@ let package = Package(
         ),
         .target(
             name: "Storybook",
-            dependencies: [.product(name: "StorybookKit", package: "swift-storybook")],
+            dependencies: [
+                "StorybookHistoryKit",
+                .product(name: "StorybookKit", package: "swift-storybook")
+            ],
             path: "Packages/Storybook/Sources/Storybook",
             resources: [.process("Resources")]
+        ),
+        .target(name: "StorybookHistoryKit", path: "Packages/Storybook/Sources/StorybookHistoryKit"),
+        .executableTarget(
+            name: "storybook-history",
+            dependencies: ["StorybookHistoryKit"],
+            path: "Packages/Storybook/Sources/storybook-history"
+        ),
+        .plugin(
+            name: "StorybookHistory",
+            capability: .buildTool(),
+            dependencies: ["storybook-history"],
+            path: "Packages/Storybook/Plugins/StorybookHistory"
         ),
         .target(
             name: "StorybookSandbox",

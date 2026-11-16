@@ -29,7 +29,7 @@ ways in a build allows
 - 0007.4
   - Given App maintainer adds a page of the app's own
     - When I open the catalog
-      - Then the page is listed under its component
+      - Then the page is listed under the name of the file that declares it
 - 0007.5
   - Given App maintainer links StorybookKit, which ships a demo preview of its own
     - When I open the catalog

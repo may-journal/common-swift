@@ -15,10 +15,10 @@ launches with Storybook arguments
 ## Requirements
 
 - 0008.1
-  - Given App maintainer launches a page with `--storybook-device duo`
+  - Given App maintainer launches a page by its acceptance name with `--storybook-device duo`
     - When the page opens
       - Then its frame reads 669x951
 - 0008.2
-  - Given App maintainer launches a page with `--storybook-data-length long`
+  - Given App maintainer launches a page by its acceptance name with `--storybook-data-length long`
     - When the page opens
       - Then it shows its long sample

@@ -11,24 +11,29 @@ public struct StorybookConfiguration {
     public var identifiers: StorybookIdentifiers
     /// The version row's value, such as "1.0.0 (42)".
     public var version: String
-    /// Pages the app writes by hand, beside every `#Preview` the catalog finds. A title such
-    /// as "DiaryCard: empty" puts the page under DiaryCard, as a preview's name does.
+    /// Pages the app writes by hand, beside every `#Preview` the catalog finds. A title starts
+    /// with the acceptance the page shows, such as "0006.3 unlocked", as a preview's name does.
     public var pages: @MainActor () -> [BookPage]
     /// The process arguments: `--storybook` and the `--storybook-*` settings.
     public var arguments: [String]
+    /// When each acceptance was added and changed, which the StorybookHistory plugin bundles.
+    /// Without it no page shows a badge.
+    public var history: StorybookHistory?
 
     public init(
         labels: StorybookLabels = StorybookLabels(),
         identifiers: StorybookIdentifiers = StorybookIdentifiers(),
         version: String = StorybookConfiguration.bundleVersion(),
         pages: @escaping @MainActor () -> [BookPage] = { [] },
-        arguments: [String] = ProcessInfo.processInfo.arguments
+        arguments: [String] = ProcessInfo.processInfo.arguments,
+        history: StorybookHistory? = .bundled()
     ) {
         self.labels = labels
         self.identifiers = identifiers
         self.version = version
         self.pages = pages
         self.arguments = arguments
+        self.history = history
     }
 
     /// "1.0.0 (42)": the marketing version, then the build number.
