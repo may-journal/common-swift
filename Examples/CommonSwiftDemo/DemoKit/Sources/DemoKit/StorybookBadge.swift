@@ -3,8 +3,8 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// Storybook's badge pages, listed under this file's name. Each shows a sidebar row with one
-/// badge a page's history earns, and the last shows a row without history.
+/// Storybook's badge pages, listed under this file's name, each a row with one badge or none.
+/// The strip the catalog draws above each page shows its Then line and dates.
 enum StorybookBadgePage {
     @MainActor static var pages: [BookPage] {
         [
@@ -15,7 +15,11 @@ enum StorybookBadgePage {
             BookPage(title: "0015.3 Added") {
                 SampleRow(badge: .added(.now.addingTimeInterval(-16 * day)))
             },
-            BookPage(title: "0015.5 No history") { SampleRow(badge: nil) }
+            BookPage(title: "0015.4 Acceptance above") { StorybookAcceptanceCard("0015.4") },
+            BookPage(title: "0015.5 No history") { SampleRow(badge: nil) },
+            BookPage(title: "0015.8 Added only") {
+                StorybookBadgeView(.added(.now.addingTimeInterval(-16 * day))).padding()
+            }
         ]
     }
 

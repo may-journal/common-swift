@@ -20,6 +20,12 @@ enum DemoWords {
             comment: "Action: opens the demo's Settings page from the Storybook package")
     }
 
+    static var back: String {
+        String(
+            localized: "action.back", defaultValue: "Back", bundle: .module,
+            comment: "Action: closes the top page of a shell sample in the Storybook catalog")
+    }
+
     static var prompt: String {
         String(
             localized: "sentence.prompt", defaultValue: "Pick a package to see it at work.",

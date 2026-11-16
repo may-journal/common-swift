@@ -1,6 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "action.back" : {
+      "comment" : "Action: closes the top page of a shell sample in the Storybook catalog",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
     "action.openSettings" : {
       "comment" : "Action: opens the demo's Settings page from the Storybook package",
       "extractionState" : "manual",
