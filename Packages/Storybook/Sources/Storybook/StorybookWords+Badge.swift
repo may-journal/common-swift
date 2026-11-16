@@ -32,8 +32,10 @@ extension StorybookWords {
     }
 
     /// "Added Oct 30, 2026 · Changed 2 days ago": an acceptance's dates above its page.
+    /// One that never changed shows only when it was added, as its row does.
     public static func dates(_ acceptance: StorybookHistory.Acceptance) -> String {
         let added = added(acceptance.added.formatted(date: .abbreviated, time: .omitted))
+        guard acceptance.changed > acceptance.added else { return added }
         let changed = changed(acceptance.changed.formatted(.relative(presentation: .named)))
         return "\(added) · \(changed)"
     }

@@ -35,10 +35,14 @@ testers who open the catalog
     - When I open the catalog
       - Then no row shows a badge
 - 0015.6
-  - Given App maintainer has a repo whose requirement docs were committed and later changed
+  - Given App maintainer has a repo whose requirement docs were committed, renamed, and changed in a rebased commit
     - When the StorybookHistory tool reads it
-      - Then each acceptance has the commit that added it, when it last changed, and its Then line
+      - Then each acceptance has the commit that added it, when its last change was written, and its Then line
 - 0015.7
   - Given App maintainer builds from a shallow clone
     - When the StorybookHistory tool reads it
       - Then it records no history, so no page shows New
+- 0015.8
+  - Given App maintainer ships a build with a page whose acceptance never changed
+    - When I open that page
+      - Then only the day it was added shows above it

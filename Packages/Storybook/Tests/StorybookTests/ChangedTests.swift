@@ -11,9 +11,10 @@ extension StorybookTests {
         /// in the commit "build" when `inBuild`.
         static func history(added: Int, changed: Int, inBuild: Bool = false) -> StorybookHistory {
             let day: TimeInterval = 24 * 60 * 60
+            let now = Date.now
             let acceptance = StorybookHistory.Acceptance(
-                added: .now.addingTimeInterval(-Double(added) * day),
-                addedIn: inBuild ? "build" : "older", changed: .now.addingTimeInterval(-Double(changed) * day),
+                added: now.addingTimeInterval(-Double(added) * day),
+                addedIn: inBuild ? "build" : "older", changed: now.addingTimeInterval(-Double(changed) * day),
                 then: "it shows its long sample")
             return StorybookHistory(commit: "build", acceptances: ["0008.2": acceptance])
         }
@@ -58,6 +59,16 @@ extension StorybookTests {
             try await launch.opensStorybook()
             try await launch.user.sees(.text("sample"))
             try await launch.user.neverSees(.identifier("storybook.badge.new"), for: .seconds(1))
+            try launch.quits()
+        }
+
+        @Test func test0015_8() async throws {
+            let history = Self.history(added: 30, changed: 30)
+            let launch = try Launch(.debug, arguments: ["--storybook", DiaryApp.cardPage], history: history)
+            let acceptance = try #require(history.acceptances["0008.2"])
+            try await launch.user.sees(.text("it shows its long sample"))
+            let added = acceptance.added.formatted(date: .abbreviated, time: .omitted)
+            try await launch.user.sees(.text(StorybookWords.added(added)))
             try launch.quits()
         }
     }

@@ -29,7 +29,10 @@
                 "      - Then it shows a prompt"
             ].joined(separator: "\n")
             try repo.commits(Self.doc("it shows the date", more: second), at: "2026-10-05T09:00:00Z")
-            try repo.commits(Self.doc("it shows the weekday", more: second), at: "2026-10-09T09:00:00Z")
+            try repo.renames(to: "0001-journal.md", at: "2026-10-07T09:00:00Z")
+            try repo.commits(
+                Self.doc("it shows the weekday", more: second), to: "0001-journal.md", at: "2026-10-09T09:00:00Z",
+                committed: "2026-10-20T09:00:00Z")
             let history = try #require(StorybookHistoryReader.read(repo.folder))
             let first = try #require(history.acceptances["0001.1"])
             #expect(first.added == (try Date("2026-10-01T09:00:00Z", strategy: .iso8601)))
@@ -67,20 +70,30 @@
                  folder.path(percentEncoded: false)], in: FileManager.default.temporaryDirectory)
         }
 
-        /// Writes the diary's requirement doc and commits it at `date`.
-        func commits(_ doc: String, at date: String) throws {
+        /// Writes the diary's requirement doc as `name` and commits it, written at `date`.
+        /// A rebased commit was committed later, at `committed`.
+        func commits(_ doc: String, to name: String = "0001-diary.md", at date: String, committed: String? = nil)
+            throws {
             let docs = folder.appending(path: "docs/requirements")
             try FileManager.default.createDirectory(at: docs, withIntermediateDirectories: true)
-            try doc.write(to: docs.appending(path: "0001-diary.md"), atomically: true, encoding: .utf8)
+            try doc.write(to: docs.appending(path: name), atomically: true, encoding: .utf8)
             try run(["add", "-A"])
-            try run(["commit", "-q", "-m", "docs(requirements): diary"], date: date)
+            try run(["commit", "-q", "-m", "docs(requirements): diary"], date: date, committed: committed)
         }
 
-        private func run(_ arguments: [String], date: String? = nil) throws {
-            try Repo.git(arguments, in: folder, date: date)
+        /// Renames the diary's requirement doc to `name` and commits it at `date`.
+        func renames(to name: String, at date: String) throws {
+            try run(["mv", "docs/requirements/0001-diary.md", "docs/requirements/\(name)"])
+            try run(["commit", "-q", "-m", "docs(requirements): rename diary"], date: date)
         }
 
-        private static func git(_ arguments: [String], in folder: URL, date: String? = nil) throws {
+        private func run(_ arguments: [String], date: String? = nil, committed: String? = nil) throws {
+            try Repo.git(arguments, in: folder, date: date, committed: committed)
+        }
+
+        private static func git(
+            _ arguments: [String], in folder: URL, date: String? = nil, committed: String? = nil
+        ) throws {
             let process = Process()
             process.executableURL = URL(filePath: "/usr/bin/git")
             process.currentDirectoryURL = folder
@@ -90,7 +103,7 @@
             var environment = ProcessInfo.processInfo.environment
             if let date {
                 environment["GIT_AUTHOR_DATE"] = date
-                environment["GIT_COMMITTER_DATE"] = date
+                environment["GIT_COMMITTER_DATE"] = committed ?? date
             }
             process.environment = environment
             try process.run()

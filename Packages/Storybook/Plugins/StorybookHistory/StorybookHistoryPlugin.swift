@@ -1,4 +1,4 @@
-// cspell:ignore gitdir worktree
+// cspell:ignore commondir gitdir worktree
 import Foundation
 import PackagePlugin
 
@@ -34,8 +34,8 @@ private func command(tool: PluginContext.Tool, folder: URL, work: URL) -> Comman
         outputFiles: [output])
 }
 
-/// The files a new commit or checkout touches, and the requirement docs, found from `folder`
-/// up to the repo's root. A worktree's `.git` file names its own git folder.
+/// The files a new commit, checkout or fetch touches, and the requirement docs, found from
+/// `folder` up to the repo's root. A worktree's `.git` file names its own git folder.
 private func staleWhen(_ folder: URL) -> [URL] {
     let files = FileManager.default
     var root = folder
@@ -46,12 +46,27 @@ private func staleWhen(_ folder: URL) -> [URL] {
             let gitFolder = isFolder.boolValue ? dotGit : worktreeGitFolder(dotGit) ?? dotGit
             let docs = root.appending(path: "docs/requirements")
             let names = (try? files.contentsOfDirectory(atPath: docs.path)) ?? []
-            return [gitFolder.appending(path: "HEAD"), gitFolder.appending(path: "logs/HEAD")]
-                + names.filter { $0.hasSuffix(".md") }.map { docs.appending(path: $0) }
+            return refFiles(gitFolder) + names.filter { $0.hasSuffix(".md") }.map { docs.appending(path: $0) }
         }
         root.deleteLastPathComponent()
     }
     return []
+}
+
+/// HEAD, its log, the branch file HEAD names, and the packed refs and shallow files.
+/// A worktree keeps those last three in the shared git folder; only files that exist are listed.
+private func refFiles(_ gitFolder: URL) -> [URL] {
+    let common = (try? String(contentsOf: gitFolder.appending(path: "commondir"), encoding: .utf8))
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .map { $0.hasPrefix("/") ? URL(filePath: $0) : gitFolder.appending(path: $0) } ?? gitFolder
+    var files = [gitFolder.appending(path: "HEAD"), gitFolder.appending(path: "logs/HEAD"),
+                 common.appending(path: "packed-refs"), common.appending(path: "shallow")]
+    if let head = try? String(contentsOf: gitFolder.appending(path: "HEAD"), encoding: .utf8),
+        head.hasPrefix("ref: ") {
+        let ref = head.dropFirst("ref: ".count).trimmingCharacters(in: .whitespacesAndNewlines)
+        files.append(common.appending(path: ref))
+    }
+    return files.filter { FileManager.default.fileExists(atPath: $0.path) }
 }
 
 /// The folder a worktree's `.git` file points at with its `gitdir:` line.
