@@ -13,7 +13,9 @@ let package = Package(
         .library(name: "Storybook", targets: ["Storybook"]),
         .library(name: "StorybookSandbox", targets: ["StorybookSandbox"]),
         // A host applies it to its app target, so the catalog badges new and changed pages.
-        .plugin(name: "StorybookHistory", targets: ["StorybookHistory"])
+        .plugin(name: "StorybookHistory", targets: ["StorybookHistory"]),
+        // A host runs it when its tests change and commits the coverage map it writes.
+        .plugin(name: "StorybookCoverage", targets: ["StorybookCoverage"])
     ],
     dependencies: [
         .package(url: "https://github.com/eure/swift-storybook", from: "3.3.0")
@@ -44,6 +46,23 @@ let package = Package(
             capability: .buildTool(),
             dependencies: ["storybook-history"],
             path: "Packages/Storybook/Plugins/StorybookHistory"
+        ),
+        .executableTarget(
+            name: "storybook-coverage",
+            dependencies: ["StorybookHistoryKit"],
+            path: "Packages/Storybook/Sources/storybook-coverage"
+        ),
+        .plugin(
+            name: "StorybookCoverage",
+            capability: .command(
+                intent: .custom(
+                    verb: "storybook-coverage",
+                    description: "Map each requirement acceptance to the files its test covers"),
+                permissions: [
+                    .writeToPackageDirectory(reason: "Writes docs/requirements/coverage.json")
+                ]),
+            dependencies: ["storybook-coverage"],
+            path: "Packages/Storybook/Plugins/StorybookCoverage"
         ),
         .target(
             name: "StorybookSandbox",

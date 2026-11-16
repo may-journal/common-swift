@@ -21,8 +21,22 @@
               - Given Tester opens an empty diary
                 - When the card shows
                   - Then it shows a prompt
+            - 0001.3
+              - Given Tester opens the diary at night
+                - When the card shows
+                  - Then it dims
+            - 0001.4
+              - Given Tester opens the diary offline
+                - When the card shows
+                  - Then it says so
 
             """
+        }
+
+        /// A Swift test file declaring 0001.3's test, which the coverage map leaves out. The name is
+        /// spelled in pieces, so this repo's own search for requirement tests never finds it here.
+        static func nightTest(_ body: String) -> String {
+            "func test\("0001")_3() { \(body) }\n"
         }
 
         /// 0001.1's test covers two source files; 0001.2's covers none, so it maps to its test.
@@ -44,7 +58,7 @@
                     "docs/requirements/0001-diary.md": Self.doc("it shows the date"),
                     "docs/requirements/coverage.json": Self.coverage,
                     "Sources/Card.swift": "let card = 1\n", "Sources/Diary.swift": "let diary = 1\n",
-                    "Tests/DiaryTests.swift": "let test = 1\n"
+                    "Tests/DiaryTests.swift": "let test = 1\n", "Tests/NightTests.swift": Self.nightTest("")
                 ], at: "2026-10-01T09:00:00Z")
             try repo.commits(["Sources/Card.swift": "let card = 2\n"], at: "2026-10-05T09:00:00Z")
             // Rebased: written on Oct 9, committed on Oct 20.
@@ -53,7 +67,8 @@
                 committed: "2026-10-20T09:00:00Z")
             let rebased = try repo.head()
             try repo.commits(
-                ["docs/requirements/0001-diary.md": Self.doc("it shows the weekday")], at: "2026-10-12T09:00:00Z")
+                ["docs/requirements/0001-diary.md": Self.doc("it shows the weekday"),
+                 "Tests/NightTests.swift": Self.nightTest("dims()")], at: "2026-10-12T09:00:00Z")
             try repo.commits(["Tests/DiaryTests.swift": "let test = 2\n"], at: "2026-10-15T09:00:00Z")
             let build = try repo.head()
 
@@ -69,6 +84,20 @@
             let prompt = try #require(history.acceptances["0001.2"])
             #expect(prompt.commitsAgo == 0)
             #expect(history.badge(for: "0001.2") == .new)
+            // Missing from the map, 0001.3 is dated by its test's file; 0001.4 has no test, so no badge.
+            let night = try #require(history.acceptances["0001.3"])
+            #expect(night.changed == (try Self.date("2026-10-12T09:00:00Z")))
+            #expect(night.commitsAgo == 1)
+            #expect(history.acceptances["0001.4"] == nil)
+
+            // A repo with no map at all dates each acceptance by its test's file alone.
+            let unmapped = try Repo()
+            try unmapped.commits(
+                ["docs/requirements/0001-diary.md": Self.doc("it shows the date"),
+                 "Tests/NightTests.swift": Self.nightTest("")], at: "2026-10-01T09:00:00Z")
+            let bare = try #require(StorybookHistoryReader.read(unmapped.folder))
+            #expect(bare.badge(for: "0001.3") == .new)
+            #expect(bare.acceptances.keys.sorted() == ["0001.3"])
         }
 
         @Test func test0015_7() throws {

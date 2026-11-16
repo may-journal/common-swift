@@ -45,7 +45,12 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 
 ## Badges
 
-Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. Apply the `StorybookHistory` plugin to the app target, which needs a Copy Bundle Resources phase, as XcodeGen spells it:
+Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. An app adopts the badges in four steps:
+
+1. Apply the `StorybookHistory` build plugin to the app target, which needs a Copy Bundle Resources phase, as the XcodeGen sample below spells it.
+2. Run the `StorybookCoverage` command plugin, which writes `docs/requirements/coverage.json` at the repo's root, and commit it whenever a requirement test changes.
+3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage`, since it runs the tests itself.
+4. Build in CI with `-skipPackagePluginValidation`, from a full clone: a shallow clone shows no badges.
 
 ```yaml
 buildToolPlugins:
@@ -53,7 +58,7 @@ buildToolPlugins:
     package: common-swift
 ```
 
-A page's age comes from the source files its acceptance's test covers, which the checked-in `docs/requirements/coverage.json` lists. Rerun `scripts/requirement-coverage.sh` and commit the map when a requirement test or its code changes. Each build bundles every acceptance's newest mainline change to those files, counted to the build's commit, and a shallow clone none. The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since.
+The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved checkout, `swift run --package-path <checkout> storybook-coverage --scheme <scheme> --destination <destination>`. An acceptance missing from the map is dated by its test's file, and one without a test gets no badge. The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since.
 
 Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
 

@@ -740,7 +740,8 @@
   "0015.6": [
     "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistory.swift",
     "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistoryReader.swift",
-    "Packages/Storybook/Sources/StorybookHistoryKit/StorybookRequirementDoc.swift"
+    "Packages/Storybook/Sources/StorybookHistoryKit/StorybookRequirementDoc.swift",
+    "Packages/Storybook/Sources/StorybookHistoryKit/StorybookRequirementTests.swift"
   ],
   "0015.7": [
     "Packages/Storybook/Sources/StorybookHistoryKit/StorybookHistoryReader.swift"

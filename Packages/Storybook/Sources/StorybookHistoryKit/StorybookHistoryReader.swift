@@ -4,7 +4,7 @@
 
     /// Reads when the code behind each requirement acceptance last changed into a
     /// `StorybookHistory`, as the StorybookHistory build plugin does on every build. The coverage
-    /// map names each acceptance's files; `scripts/requirement-coverage.sh` writes it.
+    /// map, which the StorybookCoverage plugin writes, names each acceptance's files.
     public enum StorybookHistoryReader {
         /// The folder that holds a repo's requirement docs.
         public static let docs = "docs/requirements"
@@ -25,7 +25,7 @@
             guard let head = commits.first else { return nil }
             let thens = thenLines(in: repo)
             var acceptances: [String: StorybookHistory.Acceptance] = [:]
-            for (id, change) in changes(of: coverageMap(in: repo), in: repo, mainline: commits) {
+            for (id, change) in changes(of: files(in: repo), in: repo, mainline: commits) {
                 guard let then = thens[id] else { continue }
                 acceptances[id] = StorybookHistory.Acceptance(
                     changed: change.commit.date, changedIn: change.commit.hash, commitsAgo: change.ago, then: then)
@@ -44,6 +44,16 @@
                 hash = parts[0]
                 self.date = date
             }
+        }
+
+        /// Each acceptance's files from the coverage map, or else the file declaring its test at
+        /// HEAD, the first by path when several do. An acceptance with neither has no files.
+        static func files(in repo: URL) -> [String: [String]] {
+            var map = coverageMap(in: repo)
+            for test in StorybookRequirementTests.declarations(in: repo, at: "HEAD") where map[test.id] == nil {
+                map[test.id] = [test.path]
+            }
+            return map
         }
 
         /// The coverage map in the repo's working tree, or none when it is missing or unreadable.
