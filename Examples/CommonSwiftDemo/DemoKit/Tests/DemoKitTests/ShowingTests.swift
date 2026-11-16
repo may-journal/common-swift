@@ -35,6 +35,8 @@ extension DemoKitTests {
             for package in DemoPackage.allCases {
                 try await launch.user.sees(.text(DemoStorybook.sample(of: package)))
             }
+            // Storybook also lists its badge pages, down to the row without history.
+            try await launch.user.sees(.text("No history"))
             #expect(Set(DemoPackage.allCases.map(\.name)) == Launch.packageFolders())
             try launch.quits()
         }

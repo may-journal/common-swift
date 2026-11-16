@@ -12,11 +12,11 @@ public enum DemoStorybook {
         StorybookConfiguration(pages: { pages }, arguments: arguments)
     }
 
-    /// A page per package, showing a piece of it on its own. Each page sits in a file named
-    /// after its package, which the catalog lists it under.
+    /// A page per package, showing a piece of it on its own, then Storybook's badge pages.
+    /// Each page sits in a file named after what it shows, which the catalog lists it under.
     @MainActor
     public static var pages: [BookPage] {
-        DemoPackage.allCases.map(page)
+        DemoPackage.allCases.map(page) + StorybookBadgePage.pages
     }
 
     @MainActor

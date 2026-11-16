@@ -15,6 +15,26 @@ struct StorybookNewCapsule: View {
     }
 }
 
+/// A page's badge on its own: the New capsule, or a caption saying when the page changed or
+/// was added. The catalog's rows draw it, and a host can show it too.
+public struct StorybookBadgeView: View {
+    let badge: StorybookBadge
+
+    public init(_ badge: StorybookBadge) {
+        self.badge = badge
+    }
+
+    public var body: some View {
+        if badge == .new {
+            StorybookNewCapsule()
+        } else {
+            Text(StorybookWords.badge(badge))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
 /// A page's sidebar row: its acceptance ID, its label, and the badge its history earns. New
 /// sits at the end of the row; how long ago it changed, or when it was added, sits under the
 /// label.
@@ -32,14 +52,10 @@ struct StorybookPageRow: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(StorybookCatalog.shortTitle(of: page))
-                if let badge, badge != .new {
-                    Text(StorybookWords.badge(badge))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                if let badge, badge != .new { StorybookBadgeView(badge) }
             }
             Spacer(minLength: 0)
-            if badge == .new { StorybookNewCapsule() }
+            if badge == .new { StorybookBadgeView(.new) }
         }
     }
 }
