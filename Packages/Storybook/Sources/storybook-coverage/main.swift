@@ -50,7 +50,8 @@ struct Options {
         case "--scheme": scheme = value
         case "--destination": destination = value
         case "--results": results = URL(filePath: value)
-        default: excluded.append(value)
+        case "--exclude": excluded.append(value)
+        default: Options.fail("unknown argument \(option)")
         }
     }
 
@@ -93,7 +94,11 @@ var covered: [String: [String]] = [:]
 do {
     var swiftTests = declarations.filter { $0.path.hasSuffix(".swift") }
     let outside = swiftTests.filter { package(of: $0.path, root: root) == nil }
-    if let xcode = options.xcode ?? (outside.isEmpty ? nil : xcodeContainer(in: root)) {
+    let xcode = options.xcode ?? (outside.isEmpty ? nil : xcodeContainer(in: root))
+    if options.results != nil, xcode == nil {
+        Options.fail("--results reads Xcode result bundles, so it needs --xcode")
+    }
+    if let xcode {
         let ran = try XcodeCoverage(
             container: xcode.resolvingSymlinksInPath(), scheme: options.scheme, destination: options.destination,
             root: root, results: options.results
@@ -123,6 +128,7 @@ do {
 // The catalog's own files are left out, so a page's commit dates only the acceptances that cover its code.
 // A test that covered nothing else maps to its own file.
 let catalog = StorybookCatalogFiles(in: root, excluding: options.excluded)
+catalog.unmatched.forEach { say("  --exclude \($0) names no tracked file; spell it from the repo's root") }
 var map: [String: Set<String>] = [:]
 for test in declarations {
     let files = (covered[test.test] ?? []).filter { !catalog.contains($0) }

@@ -18,7 +18,13 @@ struct XcodeCoverage {
             say("Reading \(results.path(percentEncoded: false))")
             return try tests.reduce(into: [:]) { found, test in
                 let bundle = results.appending(path: "\(test).xcresult")
-                if FileManager.default.fileExists(atPath: bundle.path) { found[test] = try files(bundle) }
+                // A test without a bundle maps to its own file rather than running again.
+                guard FileManager.default.fileExists(atPath: bundle.path) else {
+                    say("  \(test) has no result bundle there, so it maps to its own file")
+                    found[test] = []
+                    return
+                }
+                found[test] = try files(bundle)
             }
         }
         let work = FileManager.default.temporaryDirectory.appending(path: "storybook-coverage-xcode")

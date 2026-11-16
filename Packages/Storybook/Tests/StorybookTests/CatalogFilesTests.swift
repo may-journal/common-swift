@@ -1,3 +1,4 @@
+// cspell:ignore spi
 #if os(macOS)
     import Foundation
     import StorybookHistoryKit
@@ -6,7 +7,7 @@
     /// Requirement 0016: the coverage map leaves out the Storybook catalog's own files.
     @Suite struct CatalogFiles {
         /// An app laid out as the may-* apps are: screens beside a folder of pages, their entry and a helper.
-        /// One screen imports `Storybook` for its entry; another holds a `#Preview`.
+        /// One screen imports `Storybook` for its entry and holds its own page; another holds a `#Preview`.
         static let app = [
             "src/App/RootView.swift": """
                 import Storybook
@@ -15,6 +16,8 @@
                 struct RootView: View {
                     var body: some View { DiaryView().storybookEntry(.debug) }
                 }
+
+                let rootPage = BookPage(title: "0001.2 root") { RootView() }
                 """,
             "src/UI/DiaryView.swift": """
                 import SwiftUI
@@ -26,7 +29,7 @@
                 #Preview("0001.1 today") { DiaryView() }
                 """,
             "src/Storybook/0001-Diary.swift": """
-                import Storybook
+                @_spi(Pages) import Storybook
                 import StorybookKit
 
                 let diaryPage = BookPage(title: "0001.1 today") { PageHost { DiaryView() } }
@@ -70,7 +73,9 @@
         }
 
         @Test func test0016_1() throws {
-            let catalog = StorybookCatalogFiles(in: try Self.repo())
+            let repo = try Self.repo()
+            defer { try? FileManager.default.removeItem(at: repo) }
+            let catalog = StorybookCatalogFiles(in: repo)
             #expect(
                 catalog.paths
                     == ["src/Storybook/0001-Diary.swift", "src/Storybook/AppStorybook.swift",
@@ -82,12 +87,17 @@
 
         @Test func test0016_2() throws {
             let repo = try Self.repo()
+            defer { try? FileManager.default.removeItem(at: repo) }
             let catalog = StorybookCatalogFiles(in: repo, excluding: ["./src/Fixtures/"])
+            #expect(catalog.unmatched.isEmpty)
             #expect(catalog.contains("src/Fixtures/Samples.swift"))
             #expect(catalog.contains("src/Storybook/PageHost.swift"))
             // A prefix names a folder or a file, never the start of a longer name.
             #expect(!StorybookCatalogFiles(in: repo, excluding: ["src/U"]).contains("src/UI/DiaryView.swift"))
             #expect(!catalog.contains("src/UI/DiaryView.swift"))
+            // A path spelled from elsewhere names nothing, so the tool can say so.
+            let elsewhere = repo.appending(path: "src/Fixtures").path(percentEncoded: false)
+            #expect(StorybookCatalogFiles(in: repo, excluding: [elsewhere]).unmatched == [elsewhere])
         }
     }
 #endif

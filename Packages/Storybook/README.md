@@ -64,9 +64,9 @@ The ID chip fades with age; the header's flame button adds a panel with its Then
 
 ## Catalog files
 
-The coverage map leaves out the catalog's own files, since a test opening the catalog covers every page. A catalog file imports `Storybook` and names a `BookPage` or the `StorybookConfiguration`. A folder of mostly catalog files goes whole, helpers included. Screens that import `Storybook` for the gate or entry, or hold a `#Preview`, stay.
+The coverage map leaves out the catalog's own files, since a test opening the catalog covers every page. A catalog file imports `Storybook`, names a `BookPage` or the `StorybookConfiguration`, and declares no view, app or scene. A folder of mostly catalog files goes whole, helpers included. So screens stay, even those holding their own page or a `#Preview`.
 
-Pass `--exclude <folder or file>`, as often as needed, for a helper the rule misses. `--results <folder>` maps an earlier Xcode run's result bundles again without rerunning its tests.
+Pass `--exclude <folder or file>` from the repo's root, as often as needed, for a helper the rule misses. `--results <folder>` maps an earlier Xcode run's result bundles again; a test without one maps to its own file.
 
 ## Release builds
 

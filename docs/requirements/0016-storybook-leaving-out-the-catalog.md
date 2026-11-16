@@ -15,7 +15,7 @@ acceptances in the coverage map
 ## Requirements
 
 - 0016.1
-  - Given App maintainer keeps catalog pages and a helper in one folder, beside screens importing Storybook or holding a #Preview
+  - Given App maintainer keeps catalog pages and a helper in one folder, beside screens holding their own page or a #Preview
     - When the StorybookCoverage tool maps the repo
       - Then it leaves out that folder and keeps both screens and the package's own code
 - 0016.2
