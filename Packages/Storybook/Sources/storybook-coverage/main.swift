@@ -7,10 +7,13 @@ import StorybookHistoryKit
 let usage = """
     usage: storybook-coverage [--root <folder>] [--xcode <project, workspace or package folder>]
                               [--scheme <name>] [--destination <specifier>] [--results <folder>]
-                              [--exclude <path>]... [output]
+                              [--exclude <path>]... [output] [-- <xcodebuild argument>...]
     Writes <repo root>/docs/requirements/coverage.json unless output names another file.
+    Skips the run when that map was written for HEAD with the same arguments on a clean tree,
+    where an untracked file counts as a change. Delete the map to run it again anyway.
     Leaves out the Storybook catalog's own files, and each repo folder or file --exclude names.
     --results reads each Xcode test's <test>.xcresult from an earlier run instead of running it.
+    Arguments after -- go to each xcodebuild call, such as -allowProvisioningUpdates or -xcconfig <file>.
 
     """
 
@@ -22,6 +25,8 @@ struct Options {
     var destination = "platform=macOS"
     var results: URL?
     var excluded: [String] = []
+    /// The arguments after `--`, which each xcodebuild call passes on.
+    var xcodebuild: [String] = []
 
     init(_ arguments: [String]) {
         var words = arguments.makeIterator()
@@ -32,6 +37,7 @@ struct Options {
             }
             switch word {
             case "-h", "--help": Options.fail("")
+            case "--": while let argument = words.next() { xcodebuild.append(argument) }
             case _ where Options.valued.contains(word): set(word, value())
             default:
                 guard !word.hasPrefix("-"), output == nil else { Options.fail("unknown argument \(word)") }
@@ -45,8 +51,8 @@ struct Options {
 
     private mutating func set(_ option: String, _ value: String) {
         switch option {
-        case "--root": root = URL(filePath: value)
-        case "--xcode": xcode = URL(filePath: value)
+        case "--root": root = URL(filePath: value).absoluteURL
+        case "--xcode": xcode = URL(filePath: value).absoluteURL
         case "--scheme": scheme = value
         case "--destination": destination = value
         case "--results": results = URL(filePath: value)
@@ -88,6 +94,14 @@ guard
 else { Options.fail("\(options.root.path) is not in a git repo") }
 let root = URL(filePath: top).resolvingSymlinksInPath()
 let output = options.output ?? root.appending(path: StorybookHistoryReader.coverage)
+// Only the default map is stamped, so a run writing elsewhere never skips.
+let stamp = options.output == nil
+    ? StorybookCoverageStamp(repo: root, map: output, arguments: Array(CommandLine.arguments.dropFirst())) : nil
+if let stamp, stamp.isCurrent {
+    say("\(StorybookHistoryReader.coverage) is current for HEAD on a clean tree, so it stays")
+    exit(0)
+}
+stamp?.clear()
 
 let declarations = StorybookRequirementTests.declarations(in: root)
 var covered: [String: [String]] = [:]
@@ -101,7 +115,7 @@ do {
     if let xcode {
         let ran = try XcodeCoverage(
             container: xcode.resolvingSymlinksInPath(), scheme: options.scheme, destination: options.destination,
-            root: root, results: options.results
+            root: root, results: options.results, arguments: options.xcodebuild
         ).covered(swiftTests.map(\.test))
         covered.merge(ran) { $1 }
         swiftTests.removeAll { ran[$0.test] != nil }
@@ -134,5 +148,7 @@ for test in declarations {
     let files = (covered[test.test] ?? []).filter { !catalog.contains($0) }
     map[test.id, default: []].formUnion(files.isEmpty ? [test.path] : files)
 }
+try FileManager.default.createDirectory(at: output.deletingLastPathComponent(), withIntermediateDirectories: true)
 try StorybookCoverageMap.json(map).write(to: output, atomically: true, encoding: .utf8)
+try stamp?.record()
 say("Wrote \(sources([output.path(percentEncoded: false)], root: root).first ?? output.path): \(map.count) acceptances")

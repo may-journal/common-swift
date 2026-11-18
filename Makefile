@@ -8,9 +8,10 @@ DEMO_PROJECT = $(DEMO)/CommonSwiftDemo.xcodeproj
 .PHONY: demo demo-test coverage demo-install
 
 # Write the untracked coverage map, so a build dates each Storybook badge by the code its test covers.
+# It is the StorybookCoverage step apps run, and skips itself when the map is current for HEAD.
 # The fast demo build skips it, and its badges date by each test's file instead.
 coverage:
-	scripts/requirement-coverage.sh
+	swift run -q storybook-coverage
 
 # Build the demo for any iPhone and for the Mac without signing credentials, as a fresh clone would.
 # The project signs with the owner's team; CODE_SIGNING_ALLOWED=NO on the command line turns that off.

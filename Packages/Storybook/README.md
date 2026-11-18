@@ -48,8 +48,8 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. An app adopts the badges in four steps:
 
 1. Apply the `StorybookHistory` build plugin to the app target, which needs a Copy Bundle Resources phase, as the XcodeGen sample below spells it.
-2. Before each build that needs real ages, run the `StorybookCoverage` command plugin, which writes `docs/requirements/coverage.json` at the repo's root.
-3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage`, since it runs the tests itself.
+2. Run the [coverage step](#coverage-step) before each build that needs real ages; it writes `docs/requirements/coverage.json` at the repo's root, which git must ignore.
+3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage` instead, since it runs the tests itself.
 4. Build in CI with `-skipPackagePluginValidation`, from a full clone: a shallow clone shows no badges.
 
 ```yaml
@@ -58,9 +58,22 @@ buildToolPlugins:
     package: common-swift
 ```
 
-The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved checkout, `swift run --package-path <checkout> storybook-coverage --scheme <scheme> --destination <destination>`. Git ignores the map, which goes stale, so release and TestFlight builds run the plugin before archiving, as in Xcode Cloud's `ci_post_clone.sh`. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
-
 The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since. Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
+
+## Coverage step
+
+The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved common-swift checkout, so the tool matches the plugin. One `make coverage` does it, and the run, device and archive targets list it first:
+
+```make
+CHECKOUT = $(DERIVED_DATA)/SourcePackages/checkouts/common-swift
+coverage: generate
+	xcodebuild -resolvePackageDependencies -project $(PROJECT) -scheme $(SCHEME) \
+		-derivedDataPath $(DERIVED_DATA) -skipPackagePluginValidation -quiet
+	swift run --package-path $(CHECKOUT) -q storybook-coverage --xcode $(PROJECT) --scheme $(SCHEME) \
+		--destination 'platform=macOS,variant=Designed for iPad' -- -allowProvisioningUpdates
+```
+
+Arguments after `--` go to each `xcodebuild` call, such as `-xcconfig <file>` or `DEVELOPMENT_TEAM=<team>`. The tool skips the run when the map was written for HEAD with the same arguments on a clean tree. An untracked file counts as a change, and deleting the map forces a run. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
 
 ## Catalog files
 
@@ -78,4 +91,4 @@ Build the host app's Release configuration file by file, not whole module. Whole
 swift test
 ```
 
-The tests prove requirements 0006 to 0008, 0015 and 0016 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0006 to 0008 and 0015 to 0017 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
