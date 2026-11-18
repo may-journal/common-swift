@@ -20,6 +20,7 @@
     "xcrun",
     "xmark",
     "xcstrings",
-    "xcconfig"
+    "xcconfig",
+    "profdata"
   ]
 }

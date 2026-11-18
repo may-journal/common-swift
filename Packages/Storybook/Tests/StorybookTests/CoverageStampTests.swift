@@ -1,11 +1,12 @@
 // cspell:ignore gpgsign pbxproj xccov
 #if os(macOS)
     import Foundation
+    import StorybookCoverageScope
     import Testing
 
     /// Requirement 0017: the StorybookCoverage tool skips a current map and passes xcodebuild arguments on.
     /// Each test runs the built tool on a repo in a temporary folder, as an app's `make coverage` does.
-    @Suite struct CoverageStamp {
+    @Suite(.storybookCoverage) struct CoverageStamp {
         /// A map the tool would never write, so a run that leaves it proves the run skipped.
         static let marker = "{\n  \"0000.1\": []\n}\n"
 
@@ -62,15 +63,16 @@
             let result = try Tool.run(in: repo, ["--scheme", "App", "--"] + extra, path: xcodebuild.folder)
             #expect(result.status == 0, "\(result.log)")
             let calls = try xcodebuild.calls()
-            // It builds for testing, lists the tests, then runs the repo's one test alone.
-            #expect(calls.count == 3)
+            // It builds, lists the tests and runs them once; the fake records no profile, so the test
+            // runs alone.
+            #expect(calls.count == 4)
             #expect(calls.allSatisfy { Array($0.suffix(extra.count)) == extra })
             #expect(try Tool.map(of: repo).contains("Requirements/DiaryTests.swift"))
         }
     }
 
     /// The built `storybook-coverage` tool, beside this test bundle in the build folder.
-    private enum Tool {
+    enum Tool {
         final class Marker {}
 
         static var url: URL {

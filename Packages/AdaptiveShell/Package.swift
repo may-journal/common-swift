@@ -12,7 +12,9 @@ let package = Package(
     ],
     dependencies: [
         // Test target only: requirement tests drive a rendered screen as a person would.
-        .package(url: "https://github.com/may-journal/apple-ui-testing-library", from: "1.7.2")
+        .package(url: "https://github.com/may-journal/apple-ui-testing-library", from: "1.7.2"),
+        // Test target only: lets the coverage tool map every test from one run.
+        .package(path: "../Storybook")
     ],
     targets: [
         .target(name: "AdaptiveShell", resources: [.process("Resources")]),
@@ -20,7 +22,8 @@ let package = Package(
             name: "AdaptiveShellTests",
             dependencies: [
                 "AdaptiveShell",
-                .product(name: "UITestingLibrary", package: "apple-ui-testing-library")
+                .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
+                .product(name: "StorybookCoverageScope", package: "Storybook")
             ]
         )
     ],

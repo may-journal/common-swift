@@ -75,6 +75,25 @@ coverage: generate
 
 Arguments after `--` go to each `xcodebuild` call, such as `-xcconfig <file>` or `DEVELOPMENT_TEAM=<team>`. The tool skips the run when the map was written for HEAD with the same arguments on a clean tree. An untracked file counts as a change, but an ignored one, such as an xcconfig, does not: delete the map after changing it. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
 
+### One run
+
+Put `.storybookCoverage` on each test target's root suite, from the `StorybookCoverageScope` product, which depends on nothing. The tool then runs each suite once instead of once per test. A target with only XCTest names `StorybookCoverageObserver` as its bundle's `NSPrincipalClass` instead. Both act only in the tool's run, which sets `TEST_RUNNER_STORYBOOK_COVERAGE=1`.
+
+```swift
+import StorybookCoverageScope
+import Testing
+
+@Suite(.serialized, .storybookCoverage) struct DiaryTests {}
+```
+
+Before each test the scope zeroes every loaded image's coverage counters, then attaches the test's raw profile. The tool converts each with `llvm-profdata` and `llvm-cov`, adding the first test's launch profile to every test. A test without a profile runs alone: one outside the trait, one that failed, or every test if the profile internals change. A `static let` counts only for the first test that touches it, and work a test leaves running counts for the next.
+
+### Later commits
+
+On a later commit the tool maps again only the acceptances whose covered files, test files or requirement docs changed. It maps every acceptance when the stamp is missing, as after a run on a dirty tree, or not in HEAD's history. A changed argument, project, package, xcconfig, `Info.plist` or entitlements file does the same, as does changed code no row lists. So does a change to over 60% of acceptances, or `--full`, as a nightly run uses to clear rows a partial run kept.
+
+Go requirement tests run side by side. In a module with nothing but tests, they map to their own files without a run.
+
 ## Catalog files
 
 The coverage map leaves out the catalog's own files, since a test opening the catalog covers every page. A catalog file imports `Storybook`, names a `BookPage` or the `StorybookConfiguration`, and declares no view, app or scene. A folder of mostly catalog files goes whole, helpers included. So screens stay, even those holding their own page or a `#Preview`.
@@ -91,4 +110,4 @@ Build the host app's Release configuration file by file, not whole module. Whole
 swift test
 ```
 
-The tests prove requirements 0006 to 0008 and 0015 to 0017 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0006 to 0008 and 0015 to 0018 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
