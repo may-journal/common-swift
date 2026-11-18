@@ -7,10 +7,17 @@ import StorybookHistoryKit
 let usage = """
     usage: storybook-coverage [--root <folder>] [--xcode <project, workspace or package folder>]
                               [--scheme <name>] [--destination <specifier>] [--results <folder>]
-                              [--exclude <path>]... [output]
+                              [--exclude <path>]... [--full] [output] [-- <xcodebuild argument>...]
     Writes <repo root>/docs/requirements/coverage.json unless output names another file.
+    Skips the run when that map was written for HEAD with the same arguments on a clean tree,
+    where an untracked file counts as a change. Delete the map to run it again anyway.
+    Otherwise maps again only the acceptances a change since that map's commit can touch, and
+    every acceptance when it cannot tell or --full asks.
+    Runs each suite once when its root suite carries .storybookCoverage, and each test it did not
+    record alone.
     Leaves out the Storybook catalog's own files, and each repo folder or file --exclude names.
     --results reads each Xcode test's <test>.xcresult from an earlier run instead of running it.
+    Arguments after -- go to each xcodebuild call, such as -allowProvisioningUpdates or -xcconfig <file>.
 
     """
 
@@ -22,6 +29,10 @@ struct Options {
     var destination = "platform=macOS"
     var results: URL?
     var excluded: [String] = []
+    /// Maps every acceptance, as a nightly run does to clear rows a partial run kept.
+    var full = false
+    /// The arguments after `--`, which each xcodebuild call passes on.
+    var xcodebuild: [String] = []
 
     init(_ arguments: [String]) {
         var words = arguments.makeIterator()
@@ -32,6 +43,8 @@ struct Options {
             }
             switch word {
             case "-h", "--help": Options.fail("")
+            case "--full": full = true
+            case "--": while let argument = words.next() { xcodebuild.append(argument) }
             case _ where Options.valued.contains(word): set(word, value())
             default:
                 guard !word.hasPrefix("-"), output == nil else { Options.fail("unknown argument \(word)") }
@@ -45,8 +58,8 @@ struct Options {
 
     private mutating func set(_ option: String, _ value: String) {
         switch option {
-        case "--root": root = URL(filePath: value)
-        case "--xcode": xcode = URL(filePath: value)
+        case "--root": root = URL(filePath: value).absoluteURL.standardizedFileURL
+        case "--xcode": xcode = URL(filePath: value).absoluteURL.standardizedFileURL.resolvingSymlinksInPath()
         case "--scheme": scheme = value
         case "--destination": destination = value
         case "--results": results = URL(filePath: value)
@@ -88,11 +101,41 @@ guard
 else { Options.fail("\(options.root.path) is not in a git repo") }
 let root = URL(filePath: top).resolvingSymlinksInPath()
 let output = options.output ?? root.appending(path: StorybookHistoryReader.coverage)
+// Only the default map is stamped, so a run writing elsewhere, or rereading result bundles, never skips.
+let settings =
+    [options.xcode?.path(percentEncoded: false) ?? "", options.scheme ?? "", options.destination]
+    + options.excluded + ["--"] + options.xcodebuild
+let stamp = options.output == nil && options.results == nil
+    ? CoverageStamp(repo: root, map: output, settings: settings) : nil
+// A run that rewrites the default map without a stamp leaves the old stamp vouching for it, so it goes.
+let defaultMap = root.appending(path: StorybookHistoryReader.coverage)
+if stamp == nil, output.standardizedFileURL.path == defaultMap.path {
+    CoverageStamp(repo: root, map: defaultMap, settings: []).clear()
+}
+if let stamp, stamp.isCurrent, !options.full {
+    say("\(StorybookHistoryReader.coverage) is current for HEAD on a clean tree, so it stays")
+    exit(0)
+}
+let recorded = stamp?.recorded
+stamp?.clear()
 
 let declarations = StorybookRequirementTests.declarations(in: root)
+// Only the default map is reused, since it alone has a stamp.
+let plan: CoverageReuse.Plan =
+    if stamp == nil { .full("") } else if options.full { .full("--full asks for it") } else {
+        CoverageReuse.plan(
+            root: root, recorded: recorded, settings: settings, map: output, declarations: declarations)
+    }
+switch plan {
+case .full(let reason): if !reason.isEmpty { say("Mapping every acceptance, since \(reason)") }
+case .only(let ids, _):
+    let count = Set(declarations.map(\.id)).count
+    say("Mapping \(ids.count) of \(count) acceptances again; the rest keep the earlier map's rows")
+}
+let running = declarations.filter { plan.maps($0.id) }
 var covered: [String: [String]] = [:]
 do {
-    var swiftTests = declarations.filter { $0.path.hasSuffix(".swift") }
+    var swiftTests = running.filter { $0.path.hasSuffix(".swift") }
     let outside = swiftTests.filter { package(of: $0.path, root: root) == nil }
     let xcode = options.xcode ?? (outside.isEmpty ? nil : xcodeContainer(in: root))
     if options.results != nil, xcode == nil {
@@ -101,7 +144,7 @@ do {
     if let xcode {
         let ran = try XcodeCoverage(
             container: xcode.resolvingSymlinksInPath(), scheme: options.scheme, destination: options.destination,
-            root: root, results: options.results
+            root: root, results: options.results, arguments: options.xcodebuild
         ).covered(swiftTests.map(\.test))
         covered.merge(ran) { $1 }
         swiftTests.removeAll { ran[$0.test] != nil }
@@ -115,7 +158,7 @@ do {
         covered.merge(try SwiftPMCoverage(package: folder, root: root).covered(tests.map(\.test))) { $1 }
     }
     let golang = GoCoverage(root: root)
-    let goTests = declarations.filter {
+    let goTests = running.filter {
         $0.path.hasPrefix("requirements/") && $0.path.hasSuffix("_test.go") && !$0.path.dropFirst(13).contains("/")
     }
     if golang.exists, !goTests.isEmpty { covered.merge(try golang.covered(goTests.map(\.test))) { $1 } }
@@ -131,8 +174,17 @@ let catalog = StorybookCatalogFiles(in: root, excluding: options.excluded)
 catalog.unmatched.forEach { say("  --exclude \($0) names no tracked file; spell it from the repo's root") }
 var map: [String: Set<String>] = [:]
 for test in declarations {
+    if case .only(_, let kept) = plan, !plan.maps(test.id) {
+        map[test.id, default: []].formUnion(kept[test.id] ?? [test.path])
+        continue
+    }
     let files = (covered[test.test] ?? []).filter { !catalog.contains($0) }
     map[test.id, default: []].formUnion(files.isEmpty ? [test.path] : files)
 }
+try FileManager.default.createDirectory(at: output.deletingLastPathComponent(), withIntermediateDirectories: true)
 try StorybookCoverageMap.json(map).write(to: output, atomically: true, encoding: .utf8)
+stamp?.record()
+if let stamp, !stamp.mapIgnored {
+    say("  git does not ignore \(StorybookHistoryReader.coverage), so each run counts it as a change and none skips")
+}
 say("Wrote \(sources([output.path(percentEncoded: false)], root: root).first ?? output.path): \(map.count) acceptances")

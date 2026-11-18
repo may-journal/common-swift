@@ -10,6 +10,9 @@ let package = Package(
     products: [
         .library(name: "Storybook", targets: ["Storybook"]),
         .library(name: "StorybookSandbox", targets: ["StorybookSandbox"]),
+        // A host's test target puts its trait on the root suite, so the coverage tool runs the suite once.
+        // It depends on nothing, so it links no Storybook code.
+        .library(name: "StorybookCoverageScope", targets: ["StorybookCoverageScope"]),
         // A host applies it to its app target, so the catalog badges new and changed pages.
         .plugin(name: "StorybookHistory", targets: ["StorybookHistory"]),
         // A host runs it before a build that needs real badge ages; the coverage map it writes stays untracked.
@@ -46,6 +49,7 @@ let package = Package(
                 ]),
             dependencies: ["storybook-coverage"]),
         .target(name: "StorybookSandbox", dependencies: ["Storybook"]),
+        .target(name: "StorybookCoverageScope"),
         .testTarget(
             name: "StorybookTests",
             dependencies: [
@@ -53,7 +57,8 @@ let package = Package(
                 "StorybookSandbox",
                 "StorybookHistoryKit",
                 .product(name: "StorybookKit", package: "swift-storybook"),
-                .product(name: "UITestingLibrary", package: "apple-ui-testing-library")
+                .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
+                "StorybookCoverageScope"
             ]
         )
     ],

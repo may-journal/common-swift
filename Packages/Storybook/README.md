@@ -48,8 +48,8 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. An app adopts the badges in four steps:
 
 1. Apply the `StorybookHistory` build plugin to the app target, which needs a Copy Bundle Resources phase, as the XcodeGen sample below spells it.
-2. Before each build that needs real ages, run the `StorybookCoverage` command plugin, which writes `docs/requirements/coverage.json` at the repo's root.
-3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage`, since it runs the tests itself.
+2. Run the [coverage step](#coverage-step) before each build that needs real ages; it writes `docs/requirements/coverage.json` at the repo's root, which git must ignore.
+3. In a repo with a `Package.swift`, run `swift package --disable-sandbox --allow-writing-to-package-directory storybook-coverage` instead, since it runs the tests itself.
 4. Build in CI with `-skipPackagePluginValidation`, from a full clone: a shallow clone shows no badges.
 
 ```yaml
@@ -58,9 +58,41 @@ buildToolPlugins:
     package: common-swift
 ```
 
-The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved checkout, `swift run --package-path <checkout> storybook-coverage --scheme <scheme> --destination <destination>`. Git ignores the map, which goes stale, so release and TestFlight builds run the plugin before archiving, as in Xcode Cloud's `ci_post_clone.sh`. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
-
 The ID chip fades with age; the header's flame button adds a panel with its Then line, age scale and commits since. Previews read the header's data length through `PreviewSample` or `\.previewDataLength`.
+
+## Coverage step
+
+The map lists the files each acceptance's test covers, running Swift packages through `swift test` and Xcode schemes through `xcodebuild`. An Xcode-only app runs the tool from its resolved common-swift checkout, so the tool matches the plugin. One `make coverage` does it, and the run, device and archive targets list it first:
+
+```make
+CHECKOUT = $(DERIVED_DATA)/SourcePackages/checkouts/common-swift
+coverage: generate
+	xcodebuild -resolvePackageDependencies -project $(PROJECT) -scheme $(SCHEME) \
+		-derivedDataPath $(DERIVED_DATA) -skipPackagePluginValidation -quiet
+	swift run --package-path $(CHECKOUT) -q storybook-coverage --xcode $(PROJECT) --scheme $(SCHEME) \
+		--destination 'platform=macOS,variant=Designed for iPad' -- -allowProvisioningUpdates
+```
+
+Arguments after `--` go to each `xcodebuild` call, such as `-xcconfig <file>` or `DEVELOPMENT_TEAM=<team>`. The tool skips the run when the map was written for HEAD with the same arguments on a clean tree. An untracked file counts as a change, but an ignored one, such as an xcconfig, does not: delete the map after changing it. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
+
+### One run
+
+Put `.storybookCoverage` on each test target's root suite, from the `StorybookCoverageScope` product, which depends on nothing. The tool then runs each suite once instead of once per test. A target with only XCTest names `StorybookCoverageObserver` as its bundle's `NSPrincipalClass` instead. Both act only in the tool's run, which sets `TEST_RUNNER_STORYBOOK_COVERAGE=1`.
+
+```swift
+import StorybookCoverageScope
+import Testing
+
+@Suite(.serialized, .storybookCoverage) struct DiaryTests {}
+```
+
+Before each test the scope zeroes every loaded image's coverage counters, then attaches the test's raw profile. The tool converts each with `llvm-profdata` and `llvm-cov`, adding the first test's launch profile to every test. A test without a profile runs alone: one outside the trait, one that failed, or every test if the profile internals change. A `static let` counts only for the first test that touches it, and work a test leaves running counts for the next.
+
+### Later commits
+
+On a later commit the tool maps again only the acceptances whose covered files, test files or requirement docs changed. It maps every acceptance when the stamp is missing, as after a run on a dirty tree, or not in HEAD's history. A changed argument, project, package, xcconfig, `Info.plist` or entitlements file does the same. So does a changed code or resource file no row lists.
+
+A change to over 60% of acceptances maps them all too. So does `--full`, which a nightly run uses to clear rows a partial run kept. Go requirement tests run one at a time. In a module with nothing but tests, they map to their own files without a run.
 
 ## Catalog files
 
@@ -78,4 +110,4 @@ Build the host app's Release configuration file by file, not whole module. Whole
 swift test
 ```
 
-The tests prove requirements 0006 to 0008, 0015 and 0016 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0006 to 0008 and 0015 to 0018 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.

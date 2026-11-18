@@ -43,7 +43,7 @@ flowchart TB
     maintainer((9 App maintainer)):::persona
     update(10 Move the app to the new tag<br/>Req 0002, 0009):::action
     adopt(11 Use a package's features in the app<br/>Req 0010, 0011, 0012, 0013, 0014):::action
-    storybook(12 Open the app's Storybook catalog<br/>Req 0006, 0007, 0008, 0015, 0016):::action
+    storybook(12 Open the app's Storybook catalog<br/>Req 0006, 0007, 0008, 0015, 0016, 0017, 0018):::action
 
     contributor --> commit
     commit --> open
