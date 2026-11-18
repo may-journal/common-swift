@@ -73,7 +73,7 @@ coverage: generate
 		--destination 'platform=macOS,variant=Designed for iPad' -- -allowProvisioningUpdates
 ```
 
-Arguments after `--` go to each `xcodebuild` call, such as `-xcconfig <file>` or `DEVELOPMENT_TEAM=<team>`. The tool skips the run when the map was written for HEAD with the same arguments on a clean tree. An untracked file counts as a change, and deleting the map forces a run. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
+Arguments after `--` go to each `xcodebuild` call, such as `-xcconfig <file>` or `DEVELOPMENT_TEAM=<team>`. The tool skips the run when the map was written for HEAD with the same arguments on a clean tree. An untracked file counts as a change, but an ignored one, such as an xcconfig, does not: delete the map after changing it. Without the map, or for an acceptance it misses, the test's file dates the badge; one without a test gets none.
 
 ## Catalog files
 

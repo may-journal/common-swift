@@ -1,4 +1,4 @@
-// cspell:ignore gpgsign pbxproj
+// cspell:ignore gpgsign pbxproj xccov
 #if os(macOS)
     import Foundation
     import Testing
@@ -62,8 +62,8 @@
             let result = try Tool.run(in: repo, ["--scheme", "App", "--"] + extra, path: xcodebuild.folder)
             #expect(result.status == 0, "\(result.log)")
             let calls = try xcodebuild.calls()
-            // It builds for testing, then lists the tests; this scheme runs none of the repo's.
-            #expect(calls.count == 2)
+            // It builds for testing, lists the tests, then runs the repo's one test alone.
+            #expect(calls.count == 3)
             #expect(calls.allSatisfy { Array($0.suffix(extra.count)) == extra })
             #expect(try Tool.map(of: repo).contains("Requirements/DiaryTests.swift"))
         }
@@ -129,25 +129,31 @@
         }
     }
 
-    /// An `xcodebuild` on the PATH that records each call's arguments, one per line, and lists no tests.
+    /// An `xcodebuild` on the PATH that records each call's arguments, one per line, beside an `xcrun` for xccov.
     private struct FakeXcodebuild {
         let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
 
         init() throws {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-            let script = folder.appending(path: "xcodebuild")
-            try """
-            #!/bin/sh
-            printf '%s\\037' "$@" >> "$(dirname "$0")/calls"
-            printf '\\n' >> "$(dirname "$0")/calls"
-            while [ $# -gt 0 ]; do
-              if [ "$1" = -test-enumeration-output-path ]; then
-                mkdir -p "$(dirname "$2")" && printf '{"values":[]}' > "$2"
-              fi
-              shift
-            done
-            """.write(to: script, atomically: true, encoding: .utf8)
-            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: script.path)
+            // The scheme lists the repo's one test, and xccov reports that it covered nothing.
+            let listing = #"{"values":[{"enabledTests":[{"identifier":"AppTests/DiaryTests/test"#
+                + "0001_1()\"}]}]}"
+            let xcodebuild = """
+                #!/bin/sh
+                printf '%s\\037' "$@" >> "$(dirname "$0")/calls"
+                printf '\\n' >> "$(dirname "$0")/calls"
+                while [ $# -gt 0 ]; do
+                  if [ "$1" = -test-enumeration-output-path ]; then
+                    mkdir -p "$(dirname "$2")" && printf '%s' '\(listing)' > "$2"
+                  fi
+                  shift
+                done
+                """
+            for (name, script) in [("xcodebuild", xcodebuild), ("xcrun", "#!/bin/sh\necho '{\"targets\":[]}'\n")] {
+                let file = folder.appending(path: name)
+                try script.write(to: file, atomically: true, encoding: .utf8)
+                try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: file.path)
+            }
         }
 
         /// Each call's arguments, in order.

@@ -94,9 +94,12 @@ guard
 else { Options.fail("\(options.root.path) is not in a git repo") }
 let root = URL(filePath: top).resolvingSymlinksInPath()
 let output = options.output ?? root.appending(path: StorybookHistoryReader.coverage)
-// Only the default map is stamped, so a run writing elsewhere never skips.
-let stamp = options.output == nil
-    ? StorybookCoverageStamp(repo: root, map: output, arguments: Array(CommandLine.arguments.dropFirst())) : nil
+// Only the default map is stamped, so a run writing elsewhere, or rereading result bundles, never skips.
+let settings =
+    [options.xcode?.path(percentEncoded: false) ?? "", options.scheme ?? "", options.destination]
+    + options.excluded + ["--"] + options.xcodebuild
+let stamp = options.output == nil && options.results == nil
+    ? CoverageStamp(repo: root, map: output, settings: settings) : nil
 if let stamp, stamp.isCurrent {
     say("\(StorybookHistoryReader.coverage) is current for HEAD on a clean tree, so it stays")
     exit(0)
@@ -150,5 +153,8 @@ for test in declarations {
 }
 try FileManager.default.createDirectory(at: output.deletingLastPathComponent(), withIntermediateDirectories: true)
 try StorybookCoverageMap.json(map).write(to: output, atomically: true, encoding: .utf8)
-try stamp?.record()
+stamp?.record()
+if let stamp, !stamp.mapIgnored {
+    say("  git does not ignore \(StorybookHistoryReader.coverage), so each run counts it as a change and none skips")
+}
 say("Wrote \(sources([output.path(percentEncoded: false)], root: root).first ?? output.path): \(map.count) acceptances")
