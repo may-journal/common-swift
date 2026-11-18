@@ -11,6 +11,8 @@ struct XcodeCoverage {
     let root: URL
     /// A folder of an earlier run's `<test>.xcresult` bundles, read instead of running the tests.
     var results: URL?
+    /// Arguments each xcodebuild call passes on, such as `-allowProvisioningUpdates` or `-xcconfig <file>`.
+    var arguments: [String] = []
 
     /// Each test's covered repo files, keyed by the test's name. A test the scheme does not run is left out.
     func covered(_ tests: [String]) throws -> [String: [String]] {
@@ -35,7 +37,7 @@ struct XcodeCoverage {
             "-scheme", scheme, "-destination", destination,
             "-derivedDataPath", work.appending(path: "DerivedData").path(percentEncoded: false),
             "-skipPackagePluginValidation", "-skipMacroValidation", "-quiet"
-        ]
+        ] + arguments
         say("Building \(container.lastPathComponent) scheme \(scheme) with coverage")
         try run(["xcodebuild", "build-for-testing", "-enableCodeCoverage", "YES"] + base, in: folder)
         let listing = work.appending(path: "tests.json")

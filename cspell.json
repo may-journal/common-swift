@@ -19,6 +19,7 @@
     "swiftpm",
     "xcrun",
     "xmark",
-    "xcstrings"
+    "xcstrings",
+    "xcconfig"
   ]
 }
