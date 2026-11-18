@@ -50,29 +50,51 @@ struct ScopeProfiles {
     func covered(_ wanted: [String], objects: [URL], root: URL) -> [String: [String]] {
         let names = wanted.filter { tests[$0] != nil }
         guard !names.isEmpty, !objects.isEmpty else { return [:] }
+        // The launch merges once, and each test's merge adds it.
+        let launched = FileManager.default.temporaryDirectory
+            .appending(path: "storybook-coverage-\(UUID().uuidString).profdata")
+        defer { try? FileManager.default.removeItem(at: launched) }
+        let base = (try? merge(launch, into: launched)) != nil ? [launched] : []
         let found = Mutex<[String: [String]]>([:])
-        DispatchQueue.concurrentPerform(iterations: names.count) { index in
-            let name = names[index]
-            guard let files = try? convert((tests[name] ?? []) + launch, objects: objects, root: root) else {
-                say("  \(name)'s profile did not convert")
-                return
+        let queue = OperationQueue()
+        // Each llvm-cov loads every object, so half the cores keep memory in bounds.
+        queue.maxConcurrentOperationCount = max(1, ProcessInfo.processInfo.activeProcessorCount / 2)
+        for name in names {
+            queue.addOperation {
+                guard let files = try? convert((tests[name] ?? []) + base, objects: objects, root: root) else {
+                    say("  \(name)'s profile did not convert")
+                    return
+                }
+                found.withLock { $0[name] = files }
             }
-            found.withLock { $0[name] = files }
         }
+        queue.waitUntilAllOperationsAreFinished()
         return found.withLock { $0 }
+    }
+
+    private func merge(_ profiles: [URL], into merged: URL) throws {
+        guard !profiles.isEmpty else { throw CommandFailure(command: ["llvm-profdata"], log: "no profile") }
+        try run(
+            ["xcrun", "llvm-profdata", "merge", "-sparse", "-o", merged.path(percentEncoded: false)]
+                + profiles.map { $0.path(percentEncoded: false) })
     }
 
     private func convert(_ profiles: [URL], objects: [URL], root: URL) throws -> [String] {
         let merged = FileManager.default.temporaryDirectory
             .appending(path: "storybook-coverage-\(UUID().uuidString).profdata")
         defer { try? FileManager.default.removeItem(at: merged) }
-        try run(
-            ["xcrun", "llvm-profdata", "merge", "-sparse", "-o", merged.path(percentEncoded: false)]
-                + profiles.map { $0.path(percentEncoded: false) })
+        try merge(profiles, into: merged)
         let paths = objects.map { $0.path(percentEncoded: false) }
+        // A universal binary needs the slice named, and the tests ran on this Mac's own.
+        #if arch(arm64)
+            let arch = ["-arch", "arm64"]
+        #else
+            let arch = ["-arch", "x86_64"]
+        #endif
         let export = try run(
-            ["xcrun", "llvm-cov", "export", "-summary-only", "-instr-profile", merged.path(percentEncoded: false),
-             paths[0]] + paths.dropFirst().flatMap { ["-object", $0] })
+            ["xcrun", "llvm-cov", "export", "-summary-only", "-instr-profile", merged.path(percentEncoded: false)]
+                + (objects.contains(where: Self.isUniversal) ? arch : [])
+                + [paths[0]] + paths.dropFirst().flatMap { ["-object", $0] })
         return sources(executedFiles(Data(export.utf8)), root: root)
     }
 
@@ -100,13 +122,27 @@ struct ScopeProfiles {
         return found.filter { !hasApp || !inTests($0) }.sorted { $0.path < $1.path }
     }
 
-    /// Whether a Mach-O file's load commands, at its start, name the coverage mapping section.
+    /// Whether a file holds slices for several architectures.
+    private static func isUniversal(_ file: URL) -> Bool {
+        let head = (try? FileHandle(forReadingFrom: file)).flatMap { try? $0.read(upToCount: 4) }
+        return head.map(Array.init) == [0xCA, 0xFE, 0xBA, 0xBE]
+    }
+
+    /// Whether a Mach-O file's load commands, at the start of it or of a universal file's first
+    /// slice, name the coverage mapping section.
     private static func hasCoverage(_ file: URL) -> Bool {
         guard let handle = try? FileHandle(forReadingFrom: file) else { return false }
         defer { try? handle.close() }
-        guard let head = try? handle.read(upToCount: 64 * 1024), head.count > 4,
-            [0xCF, 0xFA, 0xED, 0xFE] == Array(head.prefix(4))
-        else { return false }
+        guard var head = try? handle.read(upToCount: 64 * 1024), head.count > 20 else { return false }
+        let bytes = Array(head.prefix(20))
+        if bytes.prefix(4) == [0xCA, 0xFE, 0xBA, 0xBE] {
+            // The first architecture's offset, big-endian, after the magic, count, CPU type and subtype.
+            let offset = bytes[16...19].reduce(UInt64(0)) { $0 << 8 | UInt64($1) }
+            guard (try? handle.seek(toOffset: offset)) != nil, let slice = try? handle.read(upToCount: 64 * 1024)
+            else { return false }
+            head = slice
+        }
+        guard Array(head.prefix(4)) == [0xCF, 0xFA, 0xED, 0xFE] else { return false }
         return head.range(of: Data("__llvm_covmap".utf8)) != nil
     }
 }

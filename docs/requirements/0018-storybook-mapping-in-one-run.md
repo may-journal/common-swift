@@ -15,7 +15,7 @@ apps that show Storybook badges
 ## Requirements
 
 - 0018.1
-  - Given App maintainer puts .storybookCoverage on a package's root suite
+  - Given App maintainer puts .storybookCoverage on a package's root suite, and again on a suite inside it
     - When the StorybookCoverage tool maps the repo
       - Then it runs that suite once, and each test's row lists only the files that test covers
 - 0018.2
@@ -27,7 +27,7 @@ apps that show Storybook badges
     - When the StorybookCoverage tool maps that commit
       - Then it runs only those acceptances' tests again, and the others keep their rows
 - 0018.4
-  - Given App maintainer changes the build, adds code no row lists, changes most acceptances, ran last on a dirty tree, or passes --full
+  - Given App maintainer changes the build, adds unmapped code or resources, changes most acceptances, last ran on a dirty tree, or passes --full
     - When the StorybookCoverage tool maps the repo next
       - Then it runs every test again and says why
 - 0018.5

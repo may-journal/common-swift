@@ -58,8 +58,8 @@ struct Options {
 
     private mutating func set(_ option: String, _ value: String) {
         switch option {
-        case "--root": root = URL(filePath: value).absoluteURL
-        case "--xcode": xcode = URL(filePath: value).absoluteURL
+        case "--root": root = URL(filePath: value).absoluteURL.standardizedFileURL
+        case "--xcode": xcode = URL(filePath: value).absoluteURL.standardizedFileURL.resolvingSymlinksInPath()
         case "--scheme": scheme = value
         case "--destination": destination = value
         case "--results": results = URL(filePath: value)
@@ -107,6 +107,11 @@ let settings =
     + options.excluded + ["--"] + options.xcodebuild
 let stamp = options.output == nil && options.results == nil
     ? CoverageStamp(repo: root, map: output, settings: settings) : nil
+// A run that rewrites the default map without a stamp leaves the old stamp vouching for it, so it goes.
+let defaultMap = root.appending(path: StorybookHistoryReader.coverage)
+if stamp == nil, output.standardizedFileURL.path == defaultMap.path {
+    CoverageStamp(repo: root, map: defaultMap, settings: []).clear()
+}
 if let stamp, stamp.isCurrent, !options.full {
     say("\(StorybookHistoryReader.coverage) is current for HEAD on a clean tree, so it stays")
     exit(0)

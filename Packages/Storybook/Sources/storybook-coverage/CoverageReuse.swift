@@ -45,27 +45,40 @@ enum CoverageReuse {
         let ids = Set(declarations.map(\.id))
         var selected = ids.subtracting(kept.keys)
         for file in changed.sorted() {
-            if isBuildSetting(file) { return .full("\(file) changes the build") }
-            if let doc = file.wholeMatch(of: /docs\/requirements\/(\d{4})-[^\/]*\.md/) {
-                selected.formUnion(ids.filter { $0.hasPrefix("\(doc.1).") })
-                continue
+            switch touched(by: file, ids: ids, kept: kept, declarations: declarations) {
+            case .success(let touched): selected.formUnion(touched)
+            case .failure(let reason): return .full(reason.text)
             }
-            let declared = declarations.filter { $0.path == file }.map(\.id)
-            let covering = kept.filter { $0.value.contains(file) }.map(\.key)
-            if declared.isEmpty, covering.isEmpty {
-                // Code no row lists, the catalog's own included, may be what a test now reaches, so
-                // nothing old is trusted.
-                if isCode(file) {
-                    return .full("\(file) is code that no row of the earlier map lists")
-                }
-                continue
-            }
-            selected.formUnion(declared + covering.filter(ids.contains))
         }
         if Double(selected.count) > fullShare * Double(ids.count) {
             return .full("\(selected.count) of \(ids.count) acceptances changed")
         }
         return .only(selected, kept: kept)
+    }
+
+    /// Why a change can touch every acceptance, as a full run reports it.
+    struct Untrusted: Error {
+        let text: String
+    }
+
+    /// The acceptances a changed file touches, or why it can touch any of them.
+    static func touched(
+        by file: String, ids: Set<String>, kept: [String: [String]],
+        declarations: [StorybookRequirementTests.Declaration]
+    ) -> Result<[String], Untrusted> {
+        if isBuildSetting(file) { return .failure(Untrusted(text: "\(file) changes the build")) }
+        if let doc = file.wholeMatch(of: /docs\/requirements\/(\d{4})-[^\/]*\.md/) {
+            return .success(ids.filter { $0.hasPrefix("\(doc.1).") })
+        }
+        let declared = declarations.filter { $0.path == file }.map(\.id)
+        let covering = kept.filter { $0.value.contains(file) }.map(\.key).filter(ids.contains)
+        guard declared.isEmpty, covering.isEmpty else { return .success(declared + covering) }
+        // A test may now reach code no row lists, the catalog's included. A resource can change what it runs.
+        if isCode(file) { return .failure(Untrusted(text: "\(file) is code that no row of the earlier map lists")) }
+        if !isProse(file) {
+            return .failure(Untrusted(text: "\(file) may change what a test runs, and no row lists it"))
+        }
+        return .success([])
     }
 
     /// Project, package, build settings, plist and entitlements files, which can change every test.
@@ -75,6 +88,14 @@ enum CoverageReuse {
         let kinds = [".xcconfig", ".entitlements", ".xctestplan", "Info.plist"]
         return names.contains(name) || kinds.contains { name.hasSuffix($0) }
             || file.contains(".xcodeproj/") || file.contains(".xcworkspace/")
+    }
+
+    /// Files no test reads: prose, and the repo's own housekeeping.
+    static func isProse(_ file: String) -> Bool {
+        let name = file.split(separator: "/").last.map(String.init) ?? file
+        let housekeeping = ["LICENSE", ".gitignore", "cspell.json", "version.txt"]
+        return ["md", "txt"].contains(URL(filePath: file).pathExtension) || housekeeping.contains(name)
+            || [".github/", "changelog/", "docs/"].contains { file.hasPrefix($0) }
     }
 
     /// Source files a coverage profile can list.

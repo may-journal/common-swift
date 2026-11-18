@@ -25,6 +25,11 @@ public struct StorybookCoverageTrait: TestTrait, SuiteTrait, TestScoping {
     public func provideScope(
         for test: Test, testCase: Test.Case?, performing function: @Sendable () async throws -> Void
     ) async throws {
+        // A test the trait reaches twice, from a suite and a suite inside it, records once.
+        guard !Self.recording else {
+            try await function()
+            return
+        }
         await CoverageLock.shared.acquire()
         let failed = Failed()
         do {
@@ -33,7 +38,9 @@ public struct StorybookCoverageTrait: TestTrait, SuiteTrait, TestScoping {
                 if issue.isFailure { failed.value.store(true, ordering: .relaxed) }
                 return issue
             }
-            try await watch.provideScope(for: test, testCase: testCase, performing: function)
+            try await Self.$recording.withValue(true) {
+                try await watch.provideScope(for: test, testCase: testCase, performing: function)
+            }
         } catch {
             await CoverageLock.shared.release()
             throw error
@@ -45,6 +52,8 @@ public struct StorybookCoverageTrait: TestTrait, SuiteTrait, TestScoping {
         }
         await CoverageLock.shared.release()
     }
+
+    @TaskLocal private static var recording = false
 
     private final class Failed: Sendable {
         let value = Atomic(false)

@@ -36,7 +36,11 @@
 
                     @Suite(.storybookCoverage) struct DiaryTests {
                         @Test func test\("0001")_1() { #expect(pages() == 1) }
-                        @Test func test\("0001")_2() { #expect(words() == 2) }
+
+                        // The trait again, inside the root suite's, records the test once.
+                        @Suite(.storybookCoverage) struct Words {
+                            @Test func test\("0001")_2() { #expect(words() == 2) }
+                        }
                     }
 
                     """ + (unscoped ? Self.unscoped : "")
@@ -103,6 +107,9 @@
                 },
                 Change(reason: "since Sources/Diary/Notes.swift is code that no row of the earlier map lists") {
                     try repo.commits(["Sources/Diary/Notes.swift": "public func notes() -> Int { 3 }\n"])
+                },
+                Change(reason: "since Sources/Diary/Words.json may change what a test runs, and no row lists it") {
+                    try repo.commits(["Sources/Diary/Words.json": "[\"diary\"]\n"])
                 },
                 Change(reason: "since 2 of 2 acceptances changed") {
                     try repo.commits([

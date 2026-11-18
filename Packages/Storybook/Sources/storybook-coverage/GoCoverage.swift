@@ -1,10 +1,8 @@
 // cspell:ignore coverprofile
 import Foundation
-import Synchronization
 
-/// Runs the Go requirement tests in the repo's `requirements/` module, each in its own `go test`
-/// with a coverage profile, several at once. Go cannot zero its counters per test beside
-/// `t.Parallel()`, so the processes run side by side instead of one run recording each test.
+/// Runs the Go requirement tests in the repo's `requirements/` module one at a time, each with a
+/// coverage profile. Go cannot zero its counters per test beside `t.Parallel()`, so no run records them all.
 struct GoCoverage {
     let root: URL
 
@@ -32,28 +30,13 @@ struct GoCoverage {
         let manifest = try String(contentsOf: module.appending(path: "go.mod"), encoding: .utf8)
         let name = manifest.split(separator: "\n").first { $0.hasPrefix("module ") }
             .map { String($0.dropFirst("module ".count)).trimmingCharacters(in: .whitespaces) } ?? ""
-        say("  \(tests.count) Go tests, \(Self.width) at a time")
-        let found = Mutex<[String: [String]]>([:])
-        let failure = Mutex<(any Error)?>(nil)
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = Self.width
+        var found: [String: [String]] = [:]
         for test in tests {
-            queue.addOperation {
-                do {
-                    let files = try covered(test, module: name)
-                    found.withLock { $0[test] = files }
-                } catch {
-                    failure.withLock { $0 = $0 ?? error }
-                }
-            }
+            say("  \(test)")
+            found[test] = try covered(test, module: name)
         }
-        queue.waitUntilAllOperationsAreFinished()
-        if let error = failure.withLock({ $0 }) { throw error }
-        return found.withLock { $0 }
+        return found
     }
-
-    /// Half the Mac's cores, leaving the rest to the tests' own work.
-    static var width: Int { max(1, ProcessInfo.processInfo.activeProcessorCount / 2) }
 
     private func covered(_ test: String, module name: String) throws -> [String] {
         let profile = FileManager.default.temporaryDirectory

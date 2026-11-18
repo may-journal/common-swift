@@ -90,9 +90,9 @@ Before each test the scope zeroes every loaded image's coverage counters, then a
 
 ### Later commits
 
-On a later commit the tool maps again only the acceptances whose covered files, test files or requirement docs changed. It maps every acceptance when the stamp is missing, as after a run on a dirty tree, or not in HEAD's history. A changed argument, project, package, xcconfig, `Info.plist` or entitlements file does the same, as does changed code no row lists. So does a change to over 60% of acceptances, or `--full`, as a nightly run uses to clear rows a partial run kept.
+On a later commit the tool maps again only the acceptances whose covered files, test files or requirement docs changed. It maps every acceptance when the stamp is missing, as after a run on a dirty tree, or not in HEAD's history. A changed argument, project, package, xcconfig, `Info.plist` or entitlements file does the same. So does a changed code or resource file no row lists.
 
-Go requirement tests run side by side. In a module with nothing but tests, they map to their own files without a run.
+A change to over 60% of acceptances maps them all too. So does `--full`, which a nightly run uses to clear rows a partial run kept. Go requirement tests run one at a time. In a module with nothing but tests, they map to their own files without a run.
 
 ## Catalog files
 
