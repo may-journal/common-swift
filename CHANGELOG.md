@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/may-journal/common-swift/compare/v1.8.0...v1.9.0) (2026-11-23)
+
+
+### Features
+
+* **storybook:** skip a current coverage map and pass xcodebuild arguments on ([#62](https://github.com/may-journal/common-swift/issues/62)) ([56bd66d](https://github.com/may-journal/common-swift/commit/56bd66dc5ca1f27aa32708abb7fb010f13c8c711))
+
 ## [1.8.0](https://github.com/may-journal/common-swift/compare/v1.7.0...v1.8.0) (2026-11-16)
 
 
