@@ -32,6 +32,7 @@ public struct StorybookCoverageTrait: TestTrait, SuiteTrait, TestScoping {
         }
         await CoverageLock.shared.acquire()
         let failed = Failed()
+        let name = CoverageRecorder.name(of: test.name)
         do {
             for profile in CoverageRecorder.shared.begin() { Attachment.record(profile.data, named: profile.name) }
             let watch = IssueHandlingTrait.compactMapIssues { issue in
@@ -42,11 +43,16 @@ public struct StorybookCoverageTrait: TestTrait, SuiteTrait, TestScoping {
                 try await watch.provideScope(for: test, testCase: testCase, performing: function)
             }
         } catch {
+            // A case that throws fails its test too, though no issue is recorded until it leaves here.
+            Attachment.record(Data(name.utf8), named: CoverageRecorder.failure(of: name))
             await CoverageLock.shared.release()
             throw error
         }
-        if !failed.value.load(ordering: .relaxed) {
-            for profile in CoverageRecorder.shared.end(test: CoverageRecorder.name(of: test.name)) {
+        if failed.value.load(ordering: .relaxed) {
+            // One failed case of a test with arguments voids the profiles of its other cases.
+            Attachment.record(Data(name.utf8), named: CoverageRecorder.failure(of: name))
+        } else {
+            for profile in CoverageRecorder.shared.end(test: name) {
                 Attachment.record(profile.data, named: profile.name)
             }
         }

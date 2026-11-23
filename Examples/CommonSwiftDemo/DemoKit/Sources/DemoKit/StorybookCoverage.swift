@@ -16,7 +16,9 @@ enum StorybookCoveragePage {
             BookPage(title: "0018.2 Unrecorded test alone") { StorybookAcceptanceCard("0018.2") },
             BookPage(title: "0018.3 Changed rows only") { StorybookAcceptanceCard("0018.3") },
             BookPage(title: "0018.4 Full run and why") { StorybookAcceptanceCard("0018.4") },
-            BookPage(title: "0018.5 Go module skipped") { StorybookAcceptanceCard("0018.5") }
+            BookPage(title: "0018.5 Go module skipped") { StorybookAcceptanceCard("0018.5") },
+            BookPage(title: "0018.6 Test with arguments") { StorybookAcceptanceCard("0018.6") },
+            BookPage(title: "0018.7 Failed case") { StorybookAcceptanceCard("0018.7") }
         ]
     }
 }

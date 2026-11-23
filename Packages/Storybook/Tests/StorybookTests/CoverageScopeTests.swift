@@ -9,7 +9,7 @@
     @Suite(.storybookCoverage) struct CoverageScope {
         /// A package on this checkout's scope: two tests under the trait cover a file each, and an `unscoped`
         /// third covers the first. Names are spelled in pieces, so this repo's search for requirement tests skips them.
-        static func diary(unscoped: Bool = false) throws -> Checkout {
+        static func diary(unscoped: Bool = false, adding more: String = "") throws -> Checkout {
             let scope = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
                 .deletingLastPathComponent().appending(path: "Sources/StorybookCoverageScope")
             var files = [
@@ -43,7 +43,7 @@
                         }
                     }
 
-                    """ + (unscoped ? Self.unscoped : "")
+                    """ + (unscoped ? Self.unscoped : "") + more
             ]
             for name in try FileManager.default.contentsOfDirectory(atPath: scope.path) {
                 files["Sources/StorybookCoverageScope/\(name)"] = try String(
@@ -54,6 +54,16 @@
 
         /// A suite without the trait, whose one test covers the same file as the first.
         static let unscoped = "@Suite struct Unscoped {\n  @Test func test\("0001")_3() { #expect(pages() == 1) }\n}\n"
+
+        /// A test with arguments, whose two cases cover a file each.
+        static let parameterized = """
+            @Suite(.storybookCoverage) struct Counting {
+              @Test(arguments: [1, 2]) func test\("0001")_3(count: Int) {
+                #expect((count == 1 ? pages() : words()) == count)
+              }
+            }
+
+            """
 
         static let pages = "Sources/Diary/Pages.swift", words = "Sources/Diary/Words.swift"
 
@@ -155,6 +165,37 @@
             #expect(result.status == 0, "\(result.log)")
             #expect(result.log.contains("requirements/ has no Go code besides its tests"))
             #expect(try Tool.rows(of: repo) == ["0001.1": ["requirements/0001_test.go"]])
+        }
+    }
+
+    extension CoverageScope {
+        @Test func test0018_6() throws {
+            let repo = try Self.diary(adding: Self.parameterized)
+            defer { try? FileManager.default.removeItem(at: repo.folder) }
+            // Xcode names the test `test0001_3(count:)`, labels included.
+            let result = try Tool.run(in: repo, ["--xcode", repo.folder.path])
+            #expect(result.status == 0, "\(result.log)")
+            #expect(result.log.contains("Running 3 tests once"), "\(result.log)")
+            #expect(try Tool.rows(of: repo)["0001.3"] == [Self.pages, Self.words])
+        }
+    }
+
+    extension CoverageScope {
+        @Test func test0018_7() throws {
+            // The second case fails, by an expectation or by throwing, and the first leaves a profile.
+            let expecting = Self.parameterized.replacing("== count)", with: "== 1)")
+            let throwing = expecting.replacing("Int) {", with: "Int) throws {")
+                .replacing("#expect(", with: "try #require(")
+            for failing in [expecting, throwing] {
+                let repo = try Self.diary(adding: failing)
+                defer { try? FileManager.default.removeItem(at: repo.folder) }
+                let result = try Tool.run(in: repo)
+                #expect(result.status != 0, "\(result.log)")
+                #expect(result.log.contains("test\("0001")_3 has no profile from that run, so it runs alone"))
+                #expect(result.log.contains("a requirement test failed"), "\(result.log)")
+                let map = repo.folder.appending(path: "docs/requirements/coverage.json")
+                #expect(!FileManager.default.fileExists(atPath: map.path))
+            }
         }
     }
 

@@ -67,6 +67,11 @@ final class CoverageRecorder: Sendable {
         }
     }
 
+    /// The attachment that marks a failed test, so the tool drops what its passing cases recorded.
+    static func failure(of test: String) -> String {
+        "storybook-coverage-failed-\(getpid())--\(test)--.txt"
+    }
+
     /// A test's function name without its argument labels, as the requirement test search spells it.
     static func name(of function: String) -> String {
         String(function.prefix { $0 != "(" })
