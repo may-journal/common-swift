@@ -34,3 +34,11 @@ apps that show Storybook badges
   - Given App maintainer keeps Go requirement tests in a module with no Go code besides its tests
     - When the StorybookCoverage tool maps the repo
       - Then it runs none of them, and each maps to its own file
+- 0018.6
+  - Given App maintainer has a requirement test with arguments, such as test0001_3(count:), in an Xcode scheme
+    - When the StorybookCoverage tool maps the repo
+      - Then it runs that test in the suite's one run, and its row lists the files its cases cover
+- 0018.7
+  - Given App maintainer has a requirement test with arguments, and one of its cases fails or throws
+    - When the StorybookCoverage tool maps the repo
+      - Then it runs that test alone, says a requirement test failed and writes no map

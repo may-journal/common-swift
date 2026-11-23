@@ -10,6 +10,9 @@ struct ScopeProfiles {
     /// What ran before the first test, such as the app's launch, which every test's profile adds.
     private(set) var launch: [URL] = []
 
+    /// Tests with a failed case, which keep no profile, so the tool runs each alone and reports it.
+    private(set) var failed: Set<String> = []
+
     /// The environment a run passes to its tests, so the scope records them.
     static let environment = ["TEST_RUNNER_STORYBOOK_COVERAGE": "1"]
 
@@ -34,11 +37,14 @@ struct ScopeProfiles {
         }
     }
 
-    /// Files the scope named: `storybook-coverage-test-<process>-<order>-<file>--<test>--.profraw`, or
-    /// `storybook-coverage-launch-<process>-<file>.profraw`. Xcode adds a number and an ID before the
+    /// Files the scope named: `storybook-coverage-test-<process>-<order>-<file>--<test>--.profraw`,
+    /// `storybook-coverage-launch-<process>-<file>.profraw`, or
+    /// `storybook-coverage-failed-<process>--<test>--.txt`. Xcode adds a number and an ID before the
     /// extension, so a name is searched rather than matched whole.
     private mutating func add(_ file: URL, named name: String) {
-        if let match = name.firstMatch(of: /storybook-coverage-test-\d+-\d+-\d+--(\w+?)--/) {
+        if let match = name.firstMatch(of: /storybook-coverage-failed-\d+--(\w+?)--/) {
+            failed.insert(String(match.1))
+        } else if let match = name.firstMatch(of: /storybook-coverage-test-\d+-\d+-\d+--(\w+?)--/) {
             tests[String(match.1), default: []].append(file)
         } else if name.contains(/storybook-coverage-launch-\d+-\d+/) {
             launch.append(file)
@@ -48,7 +54,7 @@ struct ScopeProfiles {
     /// Each recorded test's covered repo files, merging its profiles with the launch's, then reading
     /// them against `objects`. Several convert at once; a test that fails to convert is left out.
     func covered(_ wanted: [String], objects: [URL], root: URL) -> [String: [String]] {
-        let names = wanted.filter { tests[$0] != nil }
+        let names = wanted.filter { tests[$0] != nil && !failed.contains($0) }
         guard !names.isEmpty, !objects.isEmpty else { return [:] }
         // The launch merges once, and each test's merge adds it.
         let launched = FileManager.default.temporaryDirectory

@@ -88,6 +88,8 @@ import Testing
 
 Before each test the scope zeroes every loaded image's coverage counters, then attaches the test's raw profile. The tool converts each with `llvm-profdata` and `llvm-cov`, adding the first test's launch profile to every test. A test without a profile runs alone: one outside the trait, one that failed, or every test if the profile internals change. A `static let` counts only for the first test that touches it, and work a test leaves running counts for the next.
 
+A test with arguments, such as `test0048_5(story:)`, maps to the files all its cases cover. Xcode names it with its argument labels, and the tool matches it by the name before them.
+
 ### Later commits
 
 On a later commit the tool maps again only the acceptances whose covered files, test files or requirement docs changed. It maps every acceptance when the stamp is missing, as after a run on a dirty tree, or not in HEAD's history. A changed argument, project, package, xcconfig, `Info.plist` or entitlements file does the same. So does a changed code or resource file no row lists.

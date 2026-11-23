@@ -64,9 +64,10 @@ struct XcodeCoverage {
         return found
     }
 
-    /// The test's name in an identifier such as `DemoKitTests/Showing/test0012_1()`.
+    /// The test's name in an identifier such as `DemoKitTests/Showing/test0012_1()`, without the
+    /// argument labels a parameterized test adds, as in `test0012_1(page:)`.
     static func name(of identifier: String) -> String {
-        String(identifier.split(separator: "/").last ?? "").replacing("()", with: "")
+        String((identifier.split(separator: "/").last ?? "").prefix { $0 != "(" })
     }
 
     /// Runs every wanted test in one `xcodebuild`, one at a time, and reads the profiles the scope
