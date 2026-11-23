@@ -12,6 +12,8 @@ let package = Package(
         .library(name: "AdaptiveShell", targets: ["AdaptiveShell"]),
         .library(name: "Storybook", targets: ["Storybook"]),
         .library(name: "StorybookSandbox", targets: ["StorybookSandbox"]),
+        // A host's test target puts its trait on the root suite, so the coverage tool runs the suite once.
+        .library(name: "StorybookCoverageScope", targets: ["StorybookCoverageScope"]),
         // A host applies it to its app target, so the catalog badges new and changed pages.
         .plugin(name: "StorybookHistory", targets: ["StorybookHistory"]),
         // A host runs it before a build that needs real badge ages; the coverage map it writes stays untracked.
@@ -63,6 +65,10 @@ let package = Package(
                 ]),
             dependencies: ["storybook-coverage"],
             path: "Packages/Storybook/Plugins/StorybookCoverage"
+        ),
+        .target(
+            name: "StorybookCoverageScope",
+            path: "Packages/Storybook/Sources/StorybookCoverageScope"
         ),
         .target(
             name: "StorybookSandbox",

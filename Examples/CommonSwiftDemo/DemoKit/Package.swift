@@ -31,7 +31,8 @@ let package = Package(
             name: "DemoKitTests",
             dependencies: [
                 "DemoKit",
-                .product(name: "UITestingLibrary", package: "apple-ui-testing-library")
+                .product(name: "UITestingLibrary", package: "apple-ui-testing-library"),
+                .product(name: "StorybookCoverageScope", package: "common-swift")
             ]
         )
     ],
