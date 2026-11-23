@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/may-journal/common-swift/compare/v1.10.0...v1.10.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* **storybook:** map a requirement test with arguments to the code its cases cover ([#66](https://github.com/may-journal/common-swift/issues/66)) ([f6109e0](https://github.com/may-journal/common-swift/commit/f6109e069812663c47f3a2efde4e81e936cdf463))
+
 ## [1.10.0](https://github.com/may-journal/common-swift/compare/v1.9.0...v1.10.0) (2026-11-23)
 
 
