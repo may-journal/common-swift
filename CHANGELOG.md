@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/may-journal/common-swift/compare/v1.9.0...v1.10.0) (2026-11-23)
+
+
+### Features
+
+* **storybook:** map Storybook coverage from one test run ([#65](https://github.com/may-journal/common-swift/issues/65)) ([36ee486](https://github.com/may-journal/common-swift/commit/36ee4865c50e5da3003cb36d4825a85dab280af0))
+
 ## [1.9.0](https://github.com/may-journal/common-swift/compare/v1.8.0...v1.9.0) (2026-11-23)
 
 
