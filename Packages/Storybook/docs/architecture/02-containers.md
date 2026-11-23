@@ -1,6 +1,6 @@
 # Containers
 
-The package runs inside the host app's process; its two products are the containers an app links.
+The package runs inside the host app's process; its libraries are the containers an app links.
 
 ```mermaid
 C4Container
@@ -11,6 +11,7 @@ C4Container
     System_Boundary(package, "2 Storybook package") {
         Container(core, "3 Storybook", "Swift library", "Gate, unlock, entry, Settings section and catalog")
         Container(sandbox, "4 StorybookSandbox", "Swift library", "The TestFlight gate over StoreKit")
+        Container(scope, "7 StorybookCoverageScope", "Swift library", "Records each test's coverage in one run")
     }
 
     System_Ext(kit, "5 swift-storybook")
@@ -21,10 +22,12 @@ C4Container
     Rel(sandbox, core, "C")
     Rel(core, kit, "D")
     Rel(sandbox, store, "E")
+    Rel(maintainer, scope, "F")
 
     UpdateElementStyle(maintainer, $bgColor="#334155", $borderColor="#1e293b", $fontColor="#ffffff")
     UpdateElementStyle(core, $bgColor="#0f766e", $borderColor="#115e59", $fontColor="#ffffff")
     UpdateElementStyle(sandbox, $bgColor="#0f766e", $borderColor="#115e59", $fontColor="#ffffff")
+    UpdateElementStyle(scope, $bgColor="#0f766e", $borderColor="#115e59", $fontColor="#ffffff")
     UpdateElementStyle(kit, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
     UpdateElementStyle(store, $bgColor="#64748b", $borderColor="#475569", $fontColor="#ffffff")
 ```
@@ -54,8 +57,10 @@ Numbers on nodes and letters on arrows match the callout table.
 | 4   | The library that adds `.debugOrSandbox`. | Only an app that wants the TestFlight rule links StoreKit. |
 | 5   | eure's preview finder and page types. | The catalog builds on it. |
 | 6   | Apple's framework that reads the App Store's signature. | It answers which build this is. |
+| 7   | The library a test target links for `.storybookCoverage`, depending on nothing. | The coverage tool runs a suite once instead of once per test. |
 | A   | Links the library and injects `.debugOnly` or its own gate. | The default never ships the catalog. |
 | B   | Links the sandbox library for TestFlight builds. | The choice is explicit. |
 | C   | Builds a gate the core library accepts. | One gate type for every rule. |
 | D   | Reads every `#Preview` and launch request. | The parsing lives upstream. |
 | E   | Asks for the app transaction's environment. | A thrown answer is asked again. |
+| F   | Puts the trait on the test target's root suite. | It acts only in the coverage tool's run. |

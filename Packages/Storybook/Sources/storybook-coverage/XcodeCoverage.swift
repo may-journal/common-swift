@@ -1,8 +1,8 @@
-// cspell:ignore xccov xcresult xctest xcworkspace xcodeproj
+// cspell:ignore xccov xcresult xctest xcworkspace xcodeproj xcresulttool
 import Foundation
 
-/// Runs an Xcode scheme's requirement tests one at a time with code coverage, reading each result
-/// bundle with `xccov`. UI tests count too, since Xcode gathers the app's coverage while they run.
+/// Runs an Xcode scheme's requirement tests with coverage: once for those the scope records, then
+/// alone for the rest, read with `xccov`. UI tests count, since Xcode gathers the app's coverage then.
 struct XcodeCoverage {
     /// An `.xcodeproj`, an `.xcworkspace`, or a folder holding a `Package.swift`.
     let container: URL
@@ -33,9 +33,11 @@ struct XcodeCoverage {
             .appending(path: root.path(percentEncoded: false).replacing("/", with: "_"))
         try? FileManager.default.removeItem(at: work.appending(path: "results"))
         let scheme = try self.scheme ?? onlyScheme()
+        // Each scheme builds into its own folder, so the profiles never read another scheme's binaries.
+        let derivedData = work.appending(path: "DerivedData").appending(path: scheme)
         let base = location + [
             "-scheme", scheme, "-destination", destination,
-            "-derivedDataPath", work.appending(path: "DerivedData").path(percentEncoded: false),
+            "-derivedDataPath", derivedData.path(percentEncoded: false),
             "-skipPackagePluginValidation", "-skipMacroValidation", "-quiet"
         ] + arguments
         say("Building \(container.lastPathComponent) scheme \(scheme) with coverage")
@@ -47,10 +49,11 @@ struct XcodeCoverage {
             ["xcodebuild", "test-without-building", "-enumerate-tests", "-test-enumeration-style", "flat",
              "-test-enumeration-format", "json", "-test-enumeration-output-path",
              listing.path(percentEncoded: false)] + base, in: folder)
-        var found: [String: [String]] = [:]
-        for identifier in try identifiers(listing) {
-            let test = String(identifier.split(separator: "/").last ?? "").replacing("()", with: "")
-            guard tests.contains(test) else { continue }
+        let wanted = try identifiers(listing).filter { tests.contains(Self.name(of: $0)) }
+        var found = try once(wanted, base: base, work: work, products: derivedData.appending(path: "Build/Products"))
+        for identifier in wanted {
+            let test = Self.name(of: identifier)
+            guard found[test] == nil else { continue }
             say("  \(test)")
             let bundle = work.appending(path: "results/\(test).xcresult")
             try run(
@@ -58,6 +61,36 @@ struct XcodeCoverage {
                  "-resultBundlePath", bundle.path(percentEncoded: false)] + base, in: folder)
             found[test, default: []] += try files(bundle)
         }
+        return found
+    }
+
+    /// The test's name in an identifier such as `DemoKitTests/Showing/test0012_1()`.
+    static func name(of identifier: String) -> String {
+        String(identifier.split(separator: "/").last ?? "").replacing("()", with: "")
+    }
+
+    /// Runs every wanted test in one `xcodebuild`, one at a time, and reads the profiles the scope
+    /// attached against the binaries built. A failed test leaves none, so it runs alone after.
+    private func once(
+        _ identifiers: [String], base: [String], work: URL, products: URL
+    ) throws -> [String: [String]] {
+        guard !identifiers.isEmpty else { return [:] }
+        let bundle = work.appending(path: "results/all.xcresult")
+        let export = work.appending(path: "results/attachments")
+        try? FileManager.default.createDirectory(at: export, withIntermediateDirectories: true)
+        say("Running \(identifiers.count) \(identifiers.count == 1 ? "test" : "tests") once")
+        try run(
+            ["xcodebuild", "test-without-building", "-enableCodeCoverage", "YES",
+             "-parallel-testing-enabled", "NO", "-resultBundlePath", bundle.path(percentEncoded: false)]
+                + identifiers.map { "-only-testing:\($0)" } + base,
+            in: folder, environment: ScopeProfiles.environment, check: false)
+        _ = try? run(
+            ["xcrun", "xcresulttool", "export", "attachments", "--path", bundle.path(percentEncoded: false),
+             "--output-path", export.path(percentEncoded: false)])
+        let objects = ScopeProfiles.objects(in: products)
+        let tests = identifiers.map(Self.name(of:))
+        let found = ScopeProfiles(export: export).covered(tests, objects: objects, root: root)
+        tests.filter { found[$0] == nil }.forEach { say("  \($0) has no profile from that run, so it runs alone") }
         return found
     }
 

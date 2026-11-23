@@ -33,6 +33,16 @@ struct CoverageStamp {
         return (try? String(contentsOf: file, encoding: .utf8)) == state
     }
 
+    /// The commit and settings of the last run that finished on a clean tree, read before this run
+    /// clears the stamp. A run on a dirty tree leaves none, so the next run maps every test.
+    var recorded: (commit: String, settings: [String])? {
+        guard let file, let text = try? String(contentsOf: file, encoding: .utf8) else { return nil }
+        var lines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        if lines.last == "" { lines.removeLast() }
+        guard let commit = lines.first, !commit.isEmpty else { return nil }
+        return (commit, Array(lines.dropFirst()))
+    }
+
     /// Whether git ignores the map; a map it sees dirties the tree, so no run skips.
     var mapIgnored: Bool {
         (try? run(["git", "check-ignore", "-q", map.path(percentEncoded: false)], in: repo)) != nil
