@@ -61,6 +61,18 @@
         }
       }
     },
+    "sentence.familyDay" : {
+      "comment" : "One line on what the FamilyDay package gives an app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One day's rows, each opening its app."
+          }
+        }
+      }
+    },
     "sentence.inPane" : {
       "comment" : "AdaptiveShell's detail when it shows in a wide window's pane",
       "extractionState" : "manual",
@@ -69,6 +81,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This pane sits beside the sidebar."
+          }
+        }
+      }
+    },
+    "sentence.nothingOpened" : {
+      "comment" : "FamilyDay's sample before a row or the chip opens an app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing opened yet."
+          }
+        }
+      }
+    },
+    "sentence.opened" : {
+      "comment" : "FamilyDay's sample after a tap: the app that opened and the day it opened at",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ opened at %2$@."
           }
         }
       }

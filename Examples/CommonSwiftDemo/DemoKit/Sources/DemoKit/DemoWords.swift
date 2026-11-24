@@ -38,10 +38,30 @@ enum DemoWords {
             bundle: .module, comment: "One line on what the AdaptiveShell package gives an app")
     }
 
+    static var familyDaySummary: String {
+        String(
+            localized: "sentence.familyDay", defaultValue: "One day's rows, each opening its app.",
+            bundle: .module, comment: "One line on what the FamilyDay package gives an app")
+    }
+
     static var storybookSummary: String {
         String(
             localized: "sentence.storybook", defaultValue: "The catalog of every preview.",
             bundle: .module, comment: "One line on what the Storybook package gives an app")
+    }
+
+    static var nothingOpened: String {
+        String(
+            localized: "sentence.nothingOpened", defaultValue: "Nothing opened yet.",
+            bundle: .module, comment: "FamilyDay's sample before a row or the chip opens an app")
+    }
+
+    /// "Captions opened at 2026-12-12.": the app a row or the chip opened, and the day.
+    static func opened(_ app: String, at day: String) -> String {
+        let format = String(
+            localized: "sentence.opened", defaultValue: "%1$@ opened at %2$@.", bundle: .module,
+            comment: "FamilyDay's sample after a tap: the app that opened and the day it opened at")
+        return String.localizedStringWithFormat(format, app, day)
     }
 
     static var inPane: String {

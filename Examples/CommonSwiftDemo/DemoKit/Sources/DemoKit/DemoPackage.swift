@@ -1,6 +1,7 @@
 /// A package under `Packages/` that the demo shows, in the sidebar's order.
 public enum DemoPackage: String, CaseIterable, Identifiable, Hashable, Sendable {
     case adaptiveShell = "AdaptiveShell"
+    case familyDay = "FamilyDay"
     case storybook = "Storybook"
 
     public var id: String { rawValue }
@@ -15,6 +16,7 @@ public enum DemoPackage: String, CaseIterable, Identifiable, Hashable, Sendable 
     public var summary: String {
         switch self {
         case .adaptiveShell: DemoWords.adaptiveShellSummary
+        case .familyDay: DemoWords.familyDaySummary
         case .storybook: DemoWords.storybookSummary
         }
     }

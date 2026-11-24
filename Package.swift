@@ -10,6 +10,7 @@ let package = Package(
     platforms: [.iOS("27.0"), .macOS("27.0")],
     products: [
         .library(name: "AdaptiveShell", targets: ["AdaptiveShell"]),
+        .library(name: "FamilyDay", targets: ["FamilyDay"]),
         .library(name: "Storybook", targets: ["Storybook"]),
         .library(name: "StorybookSandbox", targets: ["StorybookSandbox"]),
         // A host's test target puts its trait on the root suite, so the coverage tool runs the suite once.
@@ -26,6 +27,12 @@ let package = Package(
         .target(
             name: "AdaptiveShell",
             path: "Packages/AdaptiveShell/Sources/AdaptiveShell",
+            resources: [.process("Resources")]
+        ),
+        .target(
+            name: "FamilyDay",
+            dependencies: ["AdaptiveShell"],
+            path: "Packages/FamilyDay/Sources/FamilyDay",
             resources: [.process("Resources")]
         ),
         .target(

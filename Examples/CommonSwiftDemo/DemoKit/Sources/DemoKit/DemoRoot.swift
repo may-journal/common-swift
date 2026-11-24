@@ -111,6 +111,8 @@ struct PackageDetail: View {
             switch package {
             case .adaptiveShell:
                 Text(layout == .split ? DemoWords.inPane : DemoWords.onStack)
+            case .familyDay:
+                FamilyDaySample(rows: FamilyDayPage.rows)
             case .storybook:
                 Button(DemoWords.openSettings, action: openSettings)
             }

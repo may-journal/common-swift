@@ -22,6 +22,7 @@ let package = Package(
             name: "DemoKit",
             dependencies: [
                 .product(name: "AdaptiveShell", package: "common-swift"),
+                .product(name: "FamilyDay", package: "common-swift"),
                 .product(name: "Storybook", package: "common-swift"),
                 .product(name: "StorybookKit", package: "swift-storybook")
             ],
