@@ -29,7 +29,7 @@ struct StorybookGridView: View {
             .padding(StorybookLayout.gap)
         }
         .accessibilityIdentifier("storybook.grid.\(group.id)")
-        .navigationTitle(Text(group.id))
+        .navigationTitle(Text(group.title))
         .storybookInlineTitle()
         .toolbar {
             ToolbarItem(placement: .principal) { header }
@@ -41,7 +41,7 @@ struct StorybookGridView: View {
 
     private var header: some View {
         VStack(spacing: 0) {
-            Text(group.id)
+            Text(group.title)
                 .font(.headline)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)

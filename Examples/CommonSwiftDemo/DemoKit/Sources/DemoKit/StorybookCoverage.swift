@@ -2,7 +2,7 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// The StorybookCoverage tool's pages, listed under this file's name. The tool maps a repo with no
+/// The StorybookCoverage tool's pages, listed under their requirements. The tool maps a repo with no
 /// screen, so each page shows its acceptance's card.
 enum StorybookCoveragePage {
     @MainActor static var pages: [BookPage] {

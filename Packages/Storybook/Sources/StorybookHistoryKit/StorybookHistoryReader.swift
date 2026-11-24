@@ -23,14 +23,17 @@
             else { return nil }
             let commits = mainline.split(separator: "\n").compactMap(Commit.init)
             guard let head = commits.first else { return nil }
-            let thens = thenLines(in: repo)
+            let docs = requirementDocs(in: repo)
+            let thens = thenLines(in: docs)
             var acceptances: [String: StorybookHistory.Acceptance] = [:]
             for (id, change) in changes(of: files(in: repo), in: repo, mainline: commits) {
                 guard let then = thens[id] else { continue }
                 acceptances[id] = StorybookHistory.Acceptance(
                     changed: change.commit.date, changedIn: change.commit.hash, commitsAgo: change.ago, then: then)
             }
-            return StorybookHistory(commit: head.hash, buildDate: head.date, acceptances: acceptances)
+            return StorybookHistory(
+                commit: head.hash, buildDate: head.date, acceptances: acceptances,
+                requirements: StorybookRequirementDoc.titles(in: docs))
         }
 
         /// One mainline commit: its hash and author date, from a `%H %aI` line.
@@ -91,14 +94,18 @@
             return found
         }
 
-        /// Each acceptance's Then line, from the requirement docs at HEAD, leaving out the template.
-        static func thenLines(in repo: URL) -> [String: String] {
+        /// Every requirement doc at HEAD, one after another, leaving out the template.
+        static func requirementDocs(in repo: URL) -> String {
             let files = (git(["ls-tree", "--name-only", "HEAD", "\(docs)/"], in: repo) ?? "")
                 .split(separator: "\n")
                 .filter { $0.hasSuffix(".md") && !$0.hasSuffix("/template.md") }
-            guard !files.isEmpty else { return [:] }
+            guard !files.isEmpty else { return "" }
             // One call shows every doc; each starts with its title, which ends the doc before it.
-            let bodies = git(["show"] + files.map { "HEAD:\($0)" }, in: repo) ?? ""
+            return git(["show"] + files.map { "HEAD:\($0)" }, in: repo) ?? ""
+        }
+
+        /// Each acceptance's Then line, from the requirement docs' bodies.
+        static func thenLines(in bodies: String) -> [String: String] {
             var thens: [String: String] = [:]
             for block in StorybookRequirementDoc.acceptances(in: bodies) where thens[block.id] == nil {
                 thens[block.id] = block.then

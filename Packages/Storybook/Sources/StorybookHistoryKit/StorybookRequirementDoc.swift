@@ -1,8 +1,19 @@
 import Foundation
 
-/// Reads the acceptances out of requirement docs, as `docs/requirements` writes them:
-/// a `- 0006.3` line, then its indented Given, When and Then lines.
+/// Reads titles and acceptances out of requirement docs: a `# 0006 Title` line, then each
+/// `- 0006.3` line with its indented Given, When and Then lines.
 enum StorybookRequirementDoc {
+    /// Each doc's title by its number, from its `# 0006 Seeing the Storybook row` line.
+    static func titles(in body: String) -> [String: String] {
+        var titles: [String: String] = [:]
+        for line in body.split(separator: "\n") {
+            guard let match = line.wholeMatch(of: /# ([0-9]{4}) +(.+?)\s*/), titles[String(match.output.1)] == nil
+            else { continue }
+            titles[String(match.output.1)] = String(match.output.2)
+        }
+        return titles
+    }
+
     /// One acceptance: its ID and its Then line without "Then".
     struct Block: Equatable {
         let id: String

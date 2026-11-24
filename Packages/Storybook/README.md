@@ -43,9 +43,15 @@ Where the gate allows the build, seven taps or clicks on Version turn on a hidde
 
 `StorybookConfiguration` takes the host's words, accessibility identifiers, version string, launch arguments, history and pages of its own. Every field has a default. The words default to this package's String Catalog, so a host passes its own only to match its catalog. Hand-written pages are `BookPage` values, named like previews.
 
+## Catalog
+
+The sidebar holds one group per requirement, titled by its doc's number and title, such as `0006 Seeing the Storybook row`. Its pages sit in acceptance order, so `0002.10` follows `0002.9`, whichever files declare them. The groups sort by number. The `StorybookHistory` plugin bundles the titles; a build without them titles each group by its number alone.
+
+A page named by no acceptance sits under its name before ": ", else its Swift file's name, after every requirement. Search matches a group's title, or a page's name or file. `--storybook` with a group's number or title opens its pages side by side.
+
 ## Badges
 
-Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The catalog lists a page under its Swift file's name, with the ID beside its label. An app adopts the badges in four steps:
+Name each page by the requirement acceptance it shows, such as `#Preview("0006.3 unlocked")`. The `swift-storybook-requirements` Fitness check fails a page named any other way. The [catalog](#catalog) lists the page under its requirement, with the ID beside its label. An app adopts the badges in four steps:
 
 1. Apply the `StorybookHistory` build plugin to the app target, which needs a Copy Bundle Resources phase, as the XcodeGen sample below spells it.
 2. Run the [coverage step](#coverage-step) before each build that needs real ages; it writes `docs/requirements/coverage.json` at the repo's root, which git must ignore.
@@ -112,4 +118,4 @@ Build the host app's Release configuration file by file, not whole module. Whole
 swift test
 ```
 
-The tests prove requirements 0006 to 0008 and 0015 to 0018 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.
+The tests prove requirements 0006 to 0008, 0015 to 0018 and 0020 in the repo's root [docs/requirements](../../docs/requirements), where Fitness reads them. [docs/architecture](docs/architecture) holds this package's own C4 views.

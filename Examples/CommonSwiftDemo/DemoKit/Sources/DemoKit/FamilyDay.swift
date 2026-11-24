@@ -4,7 +4,7 @@ import Foundation
 import StorybookKit
 import SwiftUI
 
-/// FamilyDay's catalog pages, which this file's name lists them under. Each sample routes the
+/// FamilyDay's catalog pages, listed under their requirements. Each sample routes the
 /// links its rows and chip open to every app's `PendingOpen`, and says which app opened.
 enum FamilyDayPage {
     /// Saturday 12 December 2026, the day every sample shows.

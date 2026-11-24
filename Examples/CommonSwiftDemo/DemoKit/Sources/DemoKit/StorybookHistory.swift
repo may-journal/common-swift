@@ -2,7 +2,7 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// The StorybookHistory tool's pages, listed under this file's name. The tool runs at build
+/// The StorybookHistory tool's pages, listed under their requirements. The tool runs at build
 /// time with no screen, so each page shows its acceptance's card.
 enum StorybookHistoryPage {
     @MainActor static var pages: [BookPage] {

@@ -56,7 +56,7 @@ struct StorybookNavigator: View {
                             .accessibilityAction { open(.page(page.id)) }
                     }
                 } header: {
-                    Text(group.id)
+                    Text(group.title)
                 }
             }
         }
@@ -86,7 +86,7 @@ struct StorybookNavigator: View {
             .accessibilityIdentifier("storybook.close")
     }
 
-    /// The component's pages side by side, as many across as the device has room for.
+    /// The group's pages side by side, as many across as the device has room for.
     private func groupRow(_ group: StorybookCatalog.Group) -> some View {
         Label {
             Text(StorybookWords.allPages)
@@ -116,7 +116,7 @@ struct StorybookNavigator: View {
         }
     }
 
-    /// The component whose pages the sidebar's All Pages row chose, if any.
+    /// The group whose pages the sidebar's All Pages row chose, if any.
     private var selectedGroup: StorybookCatalog.Group? {
         guard case .group(let id) = selection else { return nil }
         return catalog.groups.first { $0.id == id }
@@ -132,13 +132,16 @@ struct StorybookNavigator: View {
         ContentUnavailableView(title, systemImage: symbol, description: Text(detail))
     }
 
-    /// The groups whose component or page names contain the search text.
+    /// The groups whose titles contain the search text, and the pages whose names or files do.
     private var visibleGroups: [StorybookCatalog.Group] {
         guard query.isEmpty == false else { return catalog.groups }
         return catalog.groups.compactMap { group in
-            if group.id.localizedStandardContains(query) { return group }
-            let pages = group.pages.filter { $0.title.localizedStandardContains(query) }
-            return pages.isEmpty ? nil : .init(id: group.id, pages: pages)
+            if group.title.localizedStandardContains(query) { return group }
+            let pages = group.pages.filter {
+                $0.title.localizedStandardContains(query)
+                    || StorybookCatalog.component(of: $0).localizedStandardContains(query)
+            }
+            return pages.isEmpty ? nil : .init(id: group.id, title: group.title, pages: pages)
         }
     }
 }
