@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/may-journal/common-swift/compare/v1.10.1...v1.11.0) (2026-11-24)
+
+
+### Features
+
+* **storybook:** group catalog pages by requirement ([#80](https://github.com/may-journal/common-swift/issues/80)) ([98f4e01](https://github.com/may-journal/common-swift/commit/98f4e01628f50c075d3f45f84e161d90550378bd))
+
 ## [1.10.1](https://github.com/may-journal/common-swift/compare/v1.10.0...v1.10.1) (2026-11-23)
 
 
