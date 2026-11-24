@@ -2,7 +2,7 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// The release acceptances, listed under this file's name. A release has no screen, so each
+/// The release acceptances, listed under their requirements. A release has no screen, so each
 /// page shows its acceptance's card.
 enum ReleasePage {
     @MainActor static var pages: [BookPage] {

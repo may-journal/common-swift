@@ -2,7 +2,7 @@ import AdaptiveShell
 import StorybookKit
 import SwiftUI
 
-/// AdaptiveShell's catalog page, which this file's name lists it under: a pane with nothing
+/// AdaptiveShell's catalog page, listed under its requirement: a pane with nothing
 /// picked, showing its prompt.
 enum AdaptiveShellPage {
     @MainActor static var page: BookPage {

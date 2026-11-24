@@ -78,7 +78,7 @@ public struct DemoRoot: View {
     }
 }
 
-/// The demo's own pages, listed under this file's name. They show a package's detail, the way
+/// The demo's own pages, listed under their requirements. They show a package's detail, the way
 /// to Settings, and a pick a second tap clears.
 enum DemoRootPage {
     @MainActor static var pages: [BookPage] {
@@ -111,6 +111,8 @@ struct PackageDetail: View {
             switch package {
             case .adaptiveShell:
                 Text(layout == .split ? DemoWords.inPane : DemoWords.onStack)
+            case .familyDay:
+                FamilyDaySample(rows: FamilyDayPage.rows)
             case .storybook:
                 Button(DemoWords.openSettings, action: openSettings)
             }

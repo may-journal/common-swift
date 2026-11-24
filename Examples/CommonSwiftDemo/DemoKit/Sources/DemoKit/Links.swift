@@ -3,7 +3,7 @@ import Foundation
 import StorybookKit
 import SwiftUI
 
-/// AdaptiveShell's links, listed under this file's name. Each page hands `PendingOpen` a link
+/// AdaptiveShell's links, listed under their requirements. Each page hands `PendingOpen` a link
 /// before its pane shows, as a cold launch does, then the pane opens whatever it held.
 enum LinksPage {
     @MainActor static var pages: [BookPage] {

@@ -8,11 +8,17 @@ public struct StorybookHistory: Codable, Equatable, Sendable {
     public var buildDate: Date
     /// Each acceptance's last change, by its ID, such as "0006.3".
     public var acceptances: [String: Acceptance]
+    /// Each requirement doc's title by its number, such as "Seeing the Storybook row" for "0006".
+    /// A history written before titles were bundled has none.
+    public var requirements: [String: String]?
 
-    public init(commit: String, buildDate: Date, acceptances: [String: Acceptance]) {
+    public init(
+        commit: String, buildDate: Date, acceptances: [String: Acceptance], requirements: [String: String]? = nil
+    ) {
         self.commit = commit
         self.buildDate = buildDate
         self.acceptances = acceptances
+        self.requirements = requirements
     }
 
     /// The newest mainline change to the source files an acceptance's test covers, and its

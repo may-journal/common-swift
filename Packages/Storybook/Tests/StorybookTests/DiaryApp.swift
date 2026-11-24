@@ -67,10 +67,10 @@ struct DiaryApp: View {
         ]
     }
 
-    /// The file StorybookKit's unnamed demo preview sits in, which would name its component.
+    /// The file StorybookKit's unnamed demo preview sits in.
     static let demoComponent = "StorybookDisplayRootView"
 
-    /// The diary card's file, which names its component, and its page's name.
+    /// The diary card's file and its page's name.
     static let cardComponent = "DiaryCard"
     static let cardPage = "0008.2 sample"
 
@@ -93,11 +93,11 @@ struct Launch {
     /// Opens the app; a relaunch keeps the switch the launch before turned on.
     init(
         _ build: Build, arguments: [String] = [], relaunch: Bool = false, ownsVersion: Bool = false,
-        history: StorybookHistory? = nil
+        history: StorybookHistory? = nil, pages: @escaping @MainActor () -> [BookPage] = { DiaryApp.pages }
     ) throws {
         if !relaunch { Self.forgetsSettings() }
         let configuration = StorybookConfiguration(
-            version: "1.0 (7)", pages: { DiaryApp.pages }, arguments: arguments, history: history)
+            version: "1.0 (7)", pages: pages, arguments: arguments, history: history)
         storybook = StorybookAvailability(
             gate: build.gate, configuration: configuration,
             defaults: UserDefaults(suiteName: Self.suite) ?? .standard)

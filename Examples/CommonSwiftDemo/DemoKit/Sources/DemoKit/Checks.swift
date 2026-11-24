@@ -2,8 +2,8 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// The pull request check, the commit hook and the requirements check, listed under this
-/// file's name. Checks have no screen, so each page shows its acceptance's card.
+/// The pull request check, the commit hook and the requirements check, listed under their
+/// requirements. Checks have no screen, so each page shows its acceptance's card.
 enum ChecksPage {
     @MainActor static var pages: [BookPage] {
         [

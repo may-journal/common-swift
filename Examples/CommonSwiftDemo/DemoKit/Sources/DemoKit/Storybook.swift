@@ -2,7 +2,7 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// Storybook's catalog page, which this file's name lists it under: a sample the header's data
+/// Storybook's catalog page, listed under its requirement: a sample the header's data
 /// length steps.
 enum StorybookPage {
     @MainActor static var page: BookPage {

@@ -2,7 +2,7 @@ import Storybook
 import StorybookKit
 import SwiftUI
 
-/// Storybook's Settings rows and launch settings, listed under this file's name. Each Settings
+/// Storybook's Settings rows and launch settings, listed under their requirements. Each Settings
 /// page draws the real section for one kind of build, with a switch of its own.
 enum StorybookSettingsPage {
     @MainActor static var pages: [BookPage] {
@@ -24,14 +24,19 @@ enum StorybookSettingsPage {
             BookPage(title: "0007.1 Done") { SettingsSample("0007.1", gate: .debug) },
             BookPage(title: "0007.2 Mac shortcut") { StorybookAcceptanceCard("0007.2") },
             BookPage(title: "0007.3 Launch a page") { StorybookAcceptanceCard("0007.3") },
-            BookPage(title: "0007.4 Listed by file") { StorybookAcceptanceCard("0007.4") },
+            BookPage(title: "0007.4 Listed by requirement") { StorybookAcceptanceCard("0007.4") },
             BookPage(title: "0008.1 Duo frame") {
                 Text(verbatim: StorybookDevice.duo.label(StorybookDevice.duo.defaultOrientation))
                     .font(.body.monospacedDigit())
                     .padding()
             },
             BookPage(title: "0008.3 No freshness panel") { StorybookAcceptanceCard("0008.3") },
-            BookPage(title: "0008.4 Freshness panel kept") { StorybookAcceptanceCard("0008.4") }
+            BookPage(title: "0008.4 Freshness panel kept") { StorybookAcceptanceCard("0008.4") },
+            BookPage(title: "0020.1 One group per requirement") { StorybookAcceptanceCard("0020.1") },
+            BookPage(title: "0020.2 Acceptance order") { StorybookAcceptanceCard("0020.2") },
+            BookPage(title: "0020.3 Launch a group") { StorybookAcceptanceCard("0020.3") },
+            BookPage(title: "0020.4 Number alone") { StorybookAcceptanceCard("0020.4") },
+            BookPage(title: "0020.5 Titles recorded") { StorybookAcceptanceCard("0020.5") }
         ]
     }
 }

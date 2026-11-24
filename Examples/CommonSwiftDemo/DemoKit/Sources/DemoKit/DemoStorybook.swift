@@ -18,7 +18,7 @@ public enum DemoStorybook {
     @MainActor
     public static var pages: [BookPage] {
         DemoPackage.allCases.map(page) + StorybookBadgePage.pages + DemoRootPage.pages
-            + ShellPage.pages + ShellRowPage.pages + LinksPage.pages
+            + ShellPage.pages + ShellRowPage.pages + LinksPage.pages + FamilyDayPage.pages
             + StorybookSettingsPage.pages + StorybookHistoryPage.pages + StorybookCoveragePage.pages
             + ReleasePage.pages + ChecksPage.pages + ManifestPage.pages
     }
@@ -27,6 +27,7 @@ public enum DemoStorybook {
     static func page(_ package: DemoPackage) -> BookPage {
         switch package {
         case .adaptiveShell: AdaptiveShellPage.page
+        case .familyDay: FamilyDayPage.page
         case .storybook: StorybookPage.page
         }
     }
@@ -35,6 +36,7 @@ public enum DemoStorybook {
     public static func sample(of package: DemoPackage) -> String {
         switch package {
         case .adaptiveShell: "Empty pane"
+        case .familyDay: "Saturday's rows"
         case .storybook: "Data length"
         }
     }

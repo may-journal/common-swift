@@ -2,7 +2,7 @@ import AdaptiveShell
 import StorybookKit
 import SwiftUI
 
-/// AdaptiveShell fitting and sharing the screen, listed under this file's name. Each page draws
+/// AdaptiveShell fitting and sharing the screen, listed under their requirements. Each page draws
 /// a small shell from the package's own pieces, sized by its `ShellConfiguration`.
 enum ShellPage {
     @MainActor static var pages: [BookPage] {

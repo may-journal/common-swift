@@ -37,7 +37,7 @@ extension StorybookTests {
         @Test func test0007_4() async throws {
             let launch = try Launch(.debug)
             try await launch.opensStorybook()
-            try await launch.user.sees(.text(DiaryApp.cardComponent))
+            try await launch.user.sees(.text("0008"))
             try await launch.user.sees(.text("sample"))
             try launch.quits()
         }
@@ -45,8 +45,9 @@ extension StorybookTests {
         @Test func test0007_5() async throws {
             let launch = try Launch(.debug)
             try await launch.opensStorybook()
-            try await launch.user.sees(.text(DiaryApp.cardComponent))
-            try await launch.user.doesNotSee(.text(DiaryApp.demoComponent))
+            try await launch.user.sees(.text("0008"))
+            // The demo page is named 0007.5, so it would sit under 0007.
+            try await launch.user.doesNotSee(.text("0007"))
             try launch.quits()
         }
     }

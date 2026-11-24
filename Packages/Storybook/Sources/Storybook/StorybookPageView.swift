@@ -1,7 +1,7 @@
 import StorybookKit
 import SwiftUI
 
-/// One preview in the detail column, under a header naming its page and component, with
+/// One preview in the detail column, under a header naming its page and group, with
 /// previous and next along the bottom. The preview fills the header's device frame, or the
 /// whole pane on Auto.
 struct StorybookPageView: View {
@@ -42,7 +42,7 @@ struct StorybookPageView: View {
                 .font(.headline)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
-            Text(StorybookCatalog.component(of: page))
+            Text(catalog.group(of: page))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -101,7 +101,7 @@ private struct StorybookStepper: View {
         Menu {
             Picker(selection: $selection) {
                 ForEach(catalog.groups) { group in
-                    Section(group.id) {
+                    Section(group.title) {
                         ForEach(group.pages) { page in
                             Text(StorybookCatalog.shortTitle(of: page))
                                 .tag(Optional(StorybookSelection.page(page.id)))

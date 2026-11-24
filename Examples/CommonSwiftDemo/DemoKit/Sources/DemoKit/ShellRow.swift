@@ -2,7 +2,7 @@ import AdaptiveShell
 import StorybookKit
 import SwiftUI
 
-/// AdaptiveShell's toggling sidebar rows, listed under this file's name. Each page opens a
+/// AdaptiveShell's toggling sidebar rows, listed under their requirements. Each page opens a
 /// shell in the state its acceptance starts from; tap the row or Back to see what follows.
 enum ShellRowPage {
     @MainActor static var pages: [BookPage] {

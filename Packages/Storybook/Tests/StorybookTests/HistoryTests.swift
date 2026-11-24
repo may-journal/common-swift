@@ -4,7 +4,8 @@
     import StorybookHistoryKit
     import Testing
 
-    /// Requirement 0015: the StorybookHistory tool dates each acceptance from the code its test covers.
+    /// Requirements 0015 and 0020: the StorybookHistory tool dates each acceptance from the code its
+    /// test covers, and records each doc's title.
     @Suite struct History {
         /// A requirement doc whose two acceptances end with these Then lines.
         static func doc(_ then: String) -> String {
@@ -100,6 +101,18 @@
             let bare = try #require(StorybookHistoryReader.read(unmapped.folder))
             #expect(bare.badge(for: "0001.3") == .new)
             #expect(bare.acceptances.keys.sorted() == ["0001.3"])
+        }
+
+        @Test func test0020_5() throws {
+            let repo = try Repo()
+            try repo.commits(
+                [
+                    "docs/requirements/0001-diary.md": Self.doc("it shows the date"),
+                    "docs/requirements/0012-night-mode.md": "# 0012 Reading the diary at night\n",
+                    "docs/requirements/template.md": "# NNNN Title\n"
+                ], at: "2026-10-01T09:00:00Z")
+            let history = try #require(StorybookHistoryReader.read(repo.folder))
+            #expect(history.requirements == ["0001": "Diary", "0012": "Reading the diary at night"])
         }
 
         @Test func test0015_7() throws {
