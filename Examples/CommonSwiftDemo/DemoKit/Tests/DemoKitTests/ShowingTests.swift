@@ -31,11 +31,10 @@ extension DemoKitTests {
         @Test func test0012_4() async throws {
             let launch = try Launch(.pad)
             try await launch.opensStorybook()
-            // One page per package, and one package per folder under Packages/. A page for every
-            // other acceptance lists between them, so each package is searched for.
+            // One page with a row per package, and one package per folder under Packages/.
+            try await launch.searchesCatalog("0012.4")
             for package in DemoPackage.allCases {
-                try await launch.searchesCatalog(package.name)
-                try await launch.user.sees(.text(DemoStorybook.sample(of: package)))
+                try await launch.user.sees(.text("\(package.name): \(DemoStorybook.sample(of: package))"))
             }
             // Storybook also lists its badge pages, down to the row without history.
             try await launch.user.sees(.text("No history"))

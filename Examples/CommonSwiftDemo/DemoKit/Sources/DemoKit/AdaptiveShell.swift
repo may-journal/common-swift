@@ -2,14 +2,11 @@ import AdaptiveShell
 import StorybookKit
 import SwiftUI
 
-/// AdaptiveShell's catalog page, listed under its requirement: a pane with nothing
-/// picked, showing its prompt.
+/// AdaptiveShell's sample for the packages page: a pane with nothing picked, showing its prompt.
 enum AdaptiveShellPage {
-    @MainActor static var page: BookPage {
-        BookPage(title: "0012.4 Empty pane") {
-            ShellPane(selection: String?.none) { Text(verbatim: $0) } empty: {
-                Text(DemoWords.prompt)
-            }
+    @MainActor @ViewBuilder static var sample: some View {
+        ShellPane(selection: String?.none) { Text(verbatim: $0) } empty: {
+            Text(DemoWords.prompt)
         }
     }
 }

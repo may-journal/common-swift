@@ -9,22 +9,22 @@ import UITestingLibrary
 extension StorybookTests {
     @MainActor
     @Suite struct Grouping {
-        /// Two of requirement 0015's pages, declared in two files, then the diary card's page.
-        /// 0015.8's file sorts first, so only acceptance order puts 0015.2 first.
+        /// Two of requirement 0020's pages, declared in two files, then the diary card's page.
+        /// 0020.2's file sorts first, so only acceptance order puts 0020.1 first.
         static var pages: [BookPage] {
             [
-                BookPage("StorybookTests/DiaryCard.swift", 9, title: "0015.8 full") { Text("Eight entries") },
-                BookPage("StorybookTests/DiaryList.swift", 5, title: "0015.2 empty") { Text("No entries") }
+                BookPage("StorybookTests/DiaryCard.swift", 9, title: "0020.2 full") { Text("Eight entries") },
+                BookPage("StorybookTests/DiaryList.swift", 5, title: "0020.1 empty") { Text("No entries") }
             ] + DiaryApp.pages
         }
 
-        static let changed = "0015 Seeing what changed"
+        static let changed = "0020 Finding a requirement's pages"
 
         /// A build's history that holds no acceptance yet, only its docs' titles.
         static var titled: StorybookHistory {
             StorybookHistory(
                 commit: "build", buildDate: .now, acceptances: [:],
-                requirements: ["0008": "Launch settings", "0015": "Seeing what changed"])
+                requirements: ["0008": "Launch settings", "0020": "Finding a requirement's pages"])
         }
 
         /// A grid card, which reads its page's label, ID and badge as one button.
@@ -41,14 +41,14 @@ extension StorybookTests {
             let launch = try Launch(.debug, history: Self.titled, pages: { Self.pages })
             try await launch.opensStorybook()
             try await launch.user.sees(.text(Self.changed))
-            try await launch.user.taps(.identifier("storybook.group.0015"))
-            try await launch.user.sees(Self.card("empty", "0015.2"))
-            try await launch.user.sees(Self.card("full", "0015.8"))
+            try await launch.user.taps(.identifier("storybook.group.0020"))
+            try await launch.user.sees(Self.card("empty", "0020.1"))
+            try await launch.user.sees(Self.card("full", "0020.2"))
             try launch.quits()
         }
 
         @Test func test0020_2() async throws {
-            let launch = try Launch(.debug, arguments: ["--storybook", "0015.2 empty"], pages: { Self.pages })
+            let launch = try Launch(.debug, arguments: ["--storybook", "0020.1 empty"], pages: { Self.pages })
             try await launch.user.sees(.text("No entries"))
             try await Self.choosesNext(launch)
             try await launch.user.sees(.text("Eight entries"))
@@ -58,8 +58,8 @@ extension StorybookTests {
         @Test func test0020_3() async throws {
             let launch = try Launch(
                 .debug, arguments: ["--storybook", Self.changed], history: Self.titled, pages: { Self.pages })
-            try await launch.user.sees(Self.card("empty", "0015.2"))
-            try await launch.user.sees(Self.card("full", "0015.8"))
+            try await launch.user.sees(Self.card("empty", "0020.1"))
+            try await launch.user.sees(Self.card("full", "0020.2"))
             try launch.quits()
         }
 
@@ -67,7 +67,7 @@ extension StorybookTests {
             let launch = try Launch(.debug, pages: { Self.pages })
             try await launch.opensStorybook()
             try await launch.user.sees(.text("0008"))
-            try await launch.user.sees(.text("0015"))
+            try await launch.user.sees(.text("0020"))
             try await launch.user.doesNotSee(.text(Self.changed))
             try launch.quits()
         }
