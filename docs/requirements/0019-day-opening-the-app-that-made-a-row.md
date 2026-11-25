@@ -32,5 +32,5 @@ day rows and chips
       - Then nothing opens
 - 0019.5
   - Given App maintainer runs a Debug build of the demo
-    - When I search the catalog for FamilyDay
+    - When I open the catalog page of FamilyDay rows
       - Then a row shows for each sender app
