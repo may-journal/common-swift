@@ -13,9 +13,8 @@ enum FamilyDayPage {
     /// One row for each sender app, as each would write it into Saturday.
     static let rows: [DayRow] = FamilyApp.allCases.map(row)
 
-    @MainActor static var page: BookPage {
-        BookPage(title: "0012.4 Saturday's rows") { FamilyDaySample(rows: rows) }
-    }
+    /// The sample for the packages page: Saturday's rows.
+    @MainActor @ViewBuilder static var sample: some View { FamilyDaySample(rows: rows) }
 
     @MainActor static var pages: [BookPage] {
         [
@@ -26,12 +25,14 @@ enum FamilyDayPage {
                 FamilyDaySample(
                     rows: [], listening: [.captions], arrived: DayLink(.listTotal, day: saturday).url)
             },
-            BookPage(title: "0019.5 May Calendar row") { DayRowView(row(.mayCalendar)).padding() },
-            BookPage(title: "0019.5 List Total row") { DayRowView(row(.listTotal)).padding() },
-            BookPage(title: "0019.5 Captions row") { DayRowView(row(.captions)).padding() },
-            BookPage(title: "0019.5 Out of a Hat row") { DayRowView(row(.outOfAHat)).padding() },
-            BookPage(title: "0019.5 May Journals row") { DayRowView(row(.mayJournals)).padding() },
-            BookPage(title: "0019.5 PhotoPortal row") { DayRowView(row(.photoPortal)).padding() }
+            BookPage(title: "0019.5 Row for each app") {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(FamilyApp.allCases, id: \.self) { app in
+                        LabeledSample(label: "\(app.name) row") { DayRowView(row(app)) }
+                    }
+                }
+                .padding()
+            }
         ]
     }
 

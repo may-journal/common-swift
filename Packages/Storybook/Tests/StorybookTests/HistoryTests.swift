@@ -115,6 +115,45 @@
             #expect(history.requirements == ["0001": "Diary", "0012": "Reading the diary at night"])
         }
 
+        /// The diary doc as a Gherkin block, its night acceptance's THEN extended by an AND line.
+        static let gherkinDoc = """
+            # 0001 Diary
+
+            ## Requirements
+
+            ```gherkin
+            SCENARIO: 0001.1
+              GIVEN Tester opens the diary
+              WHEN the card shows
+              THEN it shows the date
+
+            SCENARIO: 0001.3 Night
+              GIVEN Tester opens the diary at night
+                AND the room is dark
+              WHEN the card shows
+              THEN it dims
+                AND it warms its colors
+            ```
+
+            """
+
+        @Test func test0020_6() throws {
+            let repo = try Repo()
+            try repo.commits(
+                ["docs/requirements/0001-diary.md": Self.gherkinDoc,
+                 "Tests/NightTests.swift": Self.nightTest("")], at: "2026-10-01T09:00:00Z")
+            let history = try #require(StorybookHistoryReader.read(repo.folder))
+            #expect(history.acceptances["0001.3"]?.then == "it dims and it warms its colors")
+            let crlf = Self.gherkinDoc.replacingOccurrences(of: "\n", with: "\r\n")
+                .replacingOccurrences(of: "```gherkin", with: "```Gherkin title")
+            let windows = try Repo()
+            try windows.commits(
+                ["docs/requirements/0001-diary.md": crlf, "Tests/NightTests.swift": Self.nightTest("")],
+                at: "2026-10-01T09:00:00Z")
+            let again = try #require(StorybookHistoryReader.read(windows.folder))
+            #expect(again.acceptances["0001.3"]?.then == "it dims and it warms its colors")
+        }
+
         @Test func test0015_7() throws {
             let origin = try Repo()
             try origin.commits(

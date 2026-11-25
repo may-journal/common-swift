@@ -9,9 +9,7 @@ extension DemoKitTests {
     @MainActor
     @Suite struct DayRows {
         @Test func test0019_5() async throws {
-            let launch = try Launch(.pad)
-            try await launch.opensStorybook()
-            try await launch.searchesCatalog(DemoPackage.familyDay.name)
+            let launch = try Launch(.pad, arguments: ["--storybook", "0019.5 Row for each app"])
             for app in FamilyApp.allCases {
                 try await launch.user.sees(.text("\(app.name) row"))
             }

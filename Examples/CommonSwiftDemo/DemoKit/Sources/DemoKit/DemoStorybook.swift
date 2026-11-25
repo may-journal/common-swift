@@ -17,18 +17,31 @@ public enum DemoStorybook {
     /// it under.
     @MainActor
     public static var pages: [BookPage] {
-        DemoPackage.allCases.map(page) + StorybookBadgePage.pages + DemoRootPage.pages
+        [packagesPage] + StorybookBadgePage.pages + DemoRootPage.pages
             + ShellPage.pages + ShellRowPage.pages + LinksPage.pages + FamilyDayPage.pages
             + StorybookSettingsPage.pages + StorybookHistoryPage.pages + StorybookCoveragePage.pages
             + ReleasePage.pages + ChecksPage.pages + ManifestPage.pages
     }
 
+    /// One page with a labeled row for each package.
     @MainActor
-    static func page(_ package: DemoPackage) -> BookPage {
+    static var packagesPage: BookPage {
+        BookPage(title: "0012.4 Packages") {
+            VStack(alignment: .leading, spacing: 24) {
+                ForEach(DemoPackage.allCases) { package in
+                    LabeledSample(label: "\(package.name): \(sample(of: package))") { packageSample(package) }
+                }
+            }
+            .padding()
+        }
+    }
+
+    @MainActor @ViewBuilder
+    private static func packageSample(_ package: DemoPackage) -> some View {
         switch package {
-        case .adaptiveShell: AdaptiveShellPage.page
-        case .familyDay: FamilyDayPage.page
-        case .storybook: StorybookPage.page
+        case .adaptiveShell: AdaptiveShellPage.sample
+        case .familyDay: FamilyDayPage.sample
+        case .storybook: StorybookPage.sample
         }
     }
 
@@ -45,5 +58,18 @@ public enum DemoStorybook {
     @MainActor
     public static func availability() -> StorybookAvailability {
         StorybookAvailability(gate: .debugOnly, configuration: configuration())
+    }
+}
+
+/// A sample under a small label, one row of a page that draws every variant of an acceptance.
+struct LabeledSample<Content: View>: View {
+    let label: String
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(verbatim: label).font(.caption).foregroundStyle(.secondary)
+            content
+        }
     }
 }

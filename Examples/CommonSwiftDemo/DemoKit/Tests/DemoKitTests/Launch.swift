@@ -13,10 +13,10 @@ struct Launch {
     /// The user defaults suite the Storybook switch lives in, emptied by each launch.
     static let suite = "demo.tests"
 
-    init(_ size: ScreenSize) throws {
+    init(_ size: ScreenSize, arguments: [String] = []) throws {
         UserDefaults.standard.removePersistentDomain(forName: Self.suite)
         let storybook = StorybookAvailability(
-            gate: .debugOnly, configuration: DemoStorybook.configuration(arguments: []),
+            gate: .debugOnly, configuration: DemoStorybook.configuration(arguments: arguments),
             defaults: UserDefaults(suiteName: Self.suite) ?? .standard)
         screen = try Screen.render(size: size) {
             DemoRoot(storybook: storybook)

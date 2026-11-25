@@ -32,11 +32,15 @@ enum ShellPage {
                 ShellSample(.split, configuration: ShellConfiguration(sidebarMaxFraction: 0.6), sidebar: \.max)
             },
             BookPage(title: "0013.6 One-pixel line") { ShellSample(.split) },
-            BookPage(title: "0013.7 No line") {
-                ShellSample(.split, configuration: ShellConfiguration(sidebarBorder: .hidden))
-            },
-            BookPage(title: "0013.7 Two-point line") {
-                ShellSample(.split, configuration: ShellConfiguration(sidebarBorder: SidebarBorder(width: 2)))
+            BookPage(title: "0013.7 Lines") {
+                VStack(spacing: 16) {
+                    LabeledSample(label: "No line") {
+                        ShellSample(.split, configuration: ShellConfiguration(sidebarBorder: .hidden))
+                    }
+                    LabeledSample(label: "Two-point line") {
+                        ShellSample(.split, configuration: ShellConfiguration(sidebarBorder: SidebarBorder(width: 2)))
+                    }
+                }
             },
             BookPage(title: "0013.8 Middle of the whole screen") {
                 // The Duo's inner screen, 669 points with its side rail, and a wider Mac window.

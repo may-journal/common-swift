@@ -32,11 +32,10 @@ enum StorybookSettingsPage {
             },
             BookPage(title: "0008.3 No freshness panel") { StorybookAcceptanceCard("0008.3") },
             BookPage(title: "0008.4 Freshness panel kept") { StorybookAcceptanceCard("0008.4") },
-            BookPage(title: "0020.1 One group per requirement") { StorybookAcceptanceCard("0020.1") },
-            BookPage(title: "0020.2 Acceptance order") { StorybookAcceptanceCard("0020.2") },
             BookPage(title: "0020.3 Launch a group") { StorybookAcceptanceCard("0020.3") },
             BookPage(title: "0020.4 Number alone") { StorybookAcceptanceCard("0020.4") },
-            BookPage(title: "0020.5 Titles recorded") { StorybookAcceptanceCard("0020.5") }
+            BookPage(title: "0020.5 Titles recorded") { StorybookAcceptanceCard("0020.5") },
+            BookPage(title: "0020.6 Gherkin Then lines") { StorybookAcceptanceCard("0020.6") }
         ]
     }
 }
