@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/may-journal/common-swift/compare/v1.11.0...v1.12.0) (2026-11-25)
+
+
+### Features
+
+* **storybook:** read Then lines from gherkin requirement blocks ([#84](https://github.com/may-journal/common-swift/issues/84)) ([b42ff1f](https://github.com/may-journal/common-swift/commit/b42ff1f9fe8207a429a8d54108bceebbbb057cf2))
+
 ## [1.11.0](https://github.com/may-journal/common-swift/compare/v1.10.1...v1.11.0) (2026-11-24)
 
 
