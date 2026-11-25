@@ -29,10 +29,10 @@ enum StorybookRequirementDoc {
             blocks.append(Block(id: id, then: then(in: lines)))
         }
         var inGherkin = false
-        for line in body.split(separator: "\n", omittingEmptySubsequences: false) {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
+        for line in body.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline) {
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             if inGherkin {
-                if trimmed == "```" {
+                if trimmed.hasPrefix("```") {
                     finish()
                     id = nil
                     inGherkin = false
@@ -43,7 +43,7 @@ enum StorybookRequirementDoc {
                 } else {
                     lines.append(line)
                 }
-            } else if trimmed == "```gherkin" {
+            } else if trimmed.lowercased().hasPrefix("```gherkin") {
                 finish()
                 id = nil
                 inGherkin = true
@@ -68,7 +68,7 @@ enum StorybookRequirementDoc {
     private static func then(in lines: [Substring]) -> String {
         var then: String?
         for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             if let found = then {
                 guard let match = trimmed.wholeMatch(of: /(AND|BUT) (.+)/) else { break }
                 then = found + " \(match.output.1.lowercased()) \(match.output.2)"

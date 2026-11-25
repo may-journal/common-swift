@@ -144,6 +144,14 @@
                  "Tests/NightTests.swift": Self.nightTest("")], at: "2026-10-01T09:00:00Z")
             let history = try #require(StorybookHistoryReader.read(repo.folder))
             #expect(history.acceptances["0001.3"]?.then == "it dims and it warms its colors")
+            let crlf = Self.gherkinDoc.replacingOccurrences(of: "\n", with: "\r\n")
+                .replacingOccurrences(of: "```gherkin", with: "```Gherkin title")
+            let windows = try Repo()
+            try windows.commits(
+                ["docs/requirements/0001-diary.md": crlf, "Tests/NightTests.swift": Self.nightTest("")],
+                at: "2026-10-01T09:00:00Z")
+            let again = try #require(StorybookHistoryReader.read(windows.folder))
+            #expect(again.acceptances["0001.3"]?.then == "it dims and it warms its colors")
         }
 
         @Test func test0015_7() throws {

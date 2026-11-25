@@ -35,6 +35,6 @@ requirements with pages in the catalog
     - When the StorybookHistory tool reads it
       - Then it records each doc's title by its number
 - 0020.6
-  - Given App maintainer has a requirement doc whose acceptances are SCENARIOs in a fenced Gherkin block
+  - Given App maintainer has a requirement doc whose acceptances are SCENARIOs in a fenced Gherkin block, with CRLF line endings or not
     - When the StorybookHistory tool reads it
       - Then each acceptance records its THEN line joined with the AND lines under it
