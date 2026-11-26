@@ -58,8 +58,10 @@ extension AdaptiveShellTests {
         @Test func test0013_7() {
             let hidden = ShellConfiguration(sidebarBorder: .hidden).sidebarBorder
             #expect(hidden.drawnWidth(displayScale: 3) == nil, "a hidden border still draws")
+            #expect(hidden.drawnWidth(displayScale: 1) == nil, "a hidden border draws on a one-pixel screen")
             let wide = ShellConfiguration(sidebarBorder: SidebarBorder(width: 2)).sidebarBorder
             #expect(wide.drawnWidth(displayScale: 3) == 2, "the border ignored the app's width")
+            #expect(wide.drawnWidth(displayScale: 2) == 2, "the two-point border changed with the screen")
         }
 
         @Test func test0013_2() async throws {

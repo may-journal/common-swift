@@ -14,27 +14,29 @@ requirements with pages in the catalog
 
 ## Requirements
 
-- 0020.1
-  - Given App maintainer ships a build with pages for one requirement's acceptances declared in two files
-    - When I open that requirement's group
-      - Then it shows both pages, under the requirement's number and title
-- 0020.2
-  - Given App maintainer ships a build whose later acceptance's page sits in a file that sorts first
-    - When I open the earlier acceptance's page and choose Next
-      - Then the later acceptance's page shows
-- 0020.3
-  - Given App maintainer ships a Debug build with a requirement's pages
-    - When I launch it with `--storybook` and that requirement group's title
-      - Then the group's pages show side by side
-- 0020.4
-  - Given App maintainer ships a build without git history
-    - When I look over the catalog's groups
-      - Then each requirement's group is titled by its number alone
-- 0020.5
-  - Given App maintainer has a repo of requirement docs
-    - When the StorybookHistory tool reads it
-      - Then it records each doc's title by its number
-- 0020.6
-  - Given App maintainer has a requirement doc whose acceptances are SCENARIOs in a fenced Gherkin block, with CRLF line endings or not
-    - When the StorybookHistory tool reads it
-      - Then each acceptance records its THEN line joined with the AND lines under it
+1. A group joins pages from two files
+   1. GIVEN App maintainer ships a build with pages for one requirement's acceptances declared in two files
+      1. WHEN I open that requirement's group
+         1. THEN it shows both pages
+         2. THEN under the requirement's number and title
+2. Next follows acceptance order
+   1. GIVEN App maintainer ships a build whose later acceptance's page sits in a file that sorts first
+      1. WHEN I open the earlier acceptance's page and choose Next
+         1. THEN the later acceptance's page shows
+3. A launch argument opens a group
+   1. GIVEN App maintainer ships a Debug build with a requirement's pages
+      1. WHEN I launch it with `--storybook` and that requirement group's title
+         1. THEN the group's pages show side by side
+4. A build without history titles groups by number
+   1. GIVEN App maintainer ships a build without git history
+      1. WHEN I look over the catalog's groups
+         1. THEN each requirement's group is titled by its number alone
+5. The history tool records doc titles
+   1. GIVEN App maintainer has a repo of requirement docs
+      1. WHEN the StorybookHistory tool reads it
+         1. THEN it records each doc's title by its number
+6. The history tool reads Gherkin blocks
+   1. GIVEN App maintainer has a requirement doc whose acceptances are SCENARIOs in a fenced Gherkin block
+   2. GIVEN with CRLF line endings or not
+      1. WHEN the StorybookHistory tool reads it
+         1. THEN each acceptance records its THEN line joined with the AND lines under it

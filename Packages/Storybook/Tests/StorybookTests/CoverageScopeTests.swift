@@ -112,37 +112,46 @@
             #expect(try Tool.run(in: repo).status == 0)
             let package = try String(contentsOf: repo.folder.appending(path: "Package.swift"), encoding: .utf8)
             let changes = [
-                Change(reason: "since Package.swift changes the build") {
+                Change(step: "the build changes", reason: "since Package.swift changes the build") {
                     try repo.commits(["Package.swift": package + "// Built with coverage.\n"])
                 },
-                Change(reason: "since Sources/Diary/Notes.swift is code that no row of the earlier map lists") {
+                Change(
+                    step: "files go unmapped",
+                    reason: "since Sources/Diary/Notes.swift is code that no row of the earlier map lists"
+                ) {
                     try repo.commits(["Sources/Diary/Notes.swift": "public func notes() -> Int { 3 }\n"])
                 },
-                Change(reason: "since Sources/Diary/Words.json may change what a test runs, and no row lists it") {
+                Change(
+                    step: "files go unmapped",
+                    reason: "since Sources/Diary/Words.json may change what a test runs, and no row lists it"
+                ) {
                     try repo.commits(["Sources/Diary/Words.json": "[\"diary\"]\n"])
                 },
-                Change(reason: "since 2 of 2 acceptances changed") {
+                Change(step: "most rows change", reason: "since 2 of 2 acceptances changed") {
                     try repo.commits([
                         Self.pages: "// Counts the pages.\npublic func pages() -> Int { 1 }\n",
                         Self.words: "// Counts the words.\npublic func words() -> Int { 2 }\n"
                     ])
                 },
                 // A run on a dirty tree leaves no stamp, so the run after it maps every acceptance.
-                Change(reason: "") {
+                Change(step: "a dirty run happened", reason: "") {
                     try repo.writes([Self.words: "// Words, unsaved.\npublic func words() -> Int { 2 }\n"])
                 },
-                Change(reason: "since no earlier map was stamped on a clean tree") { try repo.commits([:]) },
-                Change(reason: "since --full asks for it", arguments: ["--full"]) {}
+                Change(
+                    step: "a dirty run happened", reason: "since no earlier map was stamped on a clean tree"
+                ) { try repo.commits([:]) },
+                Change(step: "I pass --full", reason: "since --full asks for it", arguments: ["--full"]) {}
             ]
             for change in changes {
                 try change.edit()
                 let result = try Tool.run(in: repo, change.arguments)
-                #expect(result.status == 0, "\(result.log)")
+                #expect(result.status == 0, "\(change.step): \(result.log)")
                 if !change.reason.isEmpty {
-                    #expect(result.log.contains("Mapping every acceptance, \(change.reason)"), "\(result.log)")
+                    let mapped = result.log.contains("Mapping every acceptance, \(change.reason)")
+                    #expect(mapped, "\(change.step): \(result.log)")
                     #expect(result.log.contains("Running 2 tests once"))
                 }
-                #expect(try Tool.rows(of: repo) == Self.rows)
+                #expect(try Tool.rows(of: repo) == Self.rows, "\(change.step) changed the map")
             }
         }
 
@@ -201,6 +210,7 @@
 
     /// One step of requirement 0018.4: an edit to the repo, then the reason a full run gives, if any.
     private struct Change {
+        let step: String
         let reason: String
         var arguments: [String] = []
         let edit: () throws -> Void

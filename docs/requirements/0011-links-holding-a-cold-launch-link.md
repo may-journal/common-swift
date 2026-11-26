@@ -14,11 +14,11 @@ links the app reads
 
 ## Requirements
 
-- 0011.1
-  - Given App maintainer reads the app's own links
-    - When a link arrives before the first screen shows
-      - Then the screen opens what the link names
-- 0011.2
-  - Given App maintainer reads the app's own links
-    - When a link of another app arrives
-      - Then nothing opens
+1. A cold launch link opens its screen
+   1. GIVEN App maintainer reads the app's own links
+      1. WHEN a link arrives before the first screen shows
+         1. THEN the screen opens what the link names
+2. A foreign link opens nothing
+   1. GIVEN App maintainer reads the app's own links
+      1. WHEN a link of another app arrives
+         1. THEN nothing opens

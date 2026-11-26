@@ -14,7 +14,7 @@ acceptances
 
 ## Requirements
 
-- 0005.1
-  - Given Contributor adds an acceptance with no test
-    - When fitness runs the requirements check
-      - Then it fails naming the missing test
+1. A missing test fails
+   1. GIVEN Contributor adds an acceptance with no test
+      1. WHEN fitness runs the requirements check
+         1. THEN it fails naming the missing test
