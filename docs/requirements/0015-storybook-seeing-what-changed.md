@@ -14,35 +14,44 @@ testers who open the catalog
 
 ## Requirements
 
-- 0015.1
-  - Given App maintainer ships a build whose commit changed a file a page's acceptance test covers
-    - When I open the catalog
-      - Then that page's row says New in this build
-- 0015.2
-  - Given App maintainer ships a build with a page whose covered code changed 2 days before the build's commit
-    - When I open the catalog
-      - Then its row says the day it changed and its age, 2 days, counted to the build's commit
-- 0015.3
-  - Given App maintainer ships a build made weeks before today
-    - When I open the catalog
-      - Then each row's age is counted to the build's commit, so it reads the same on any day
-- 0015.4
-  - Given App maintainer ships a build with a page named by an acceptance
-    - When I open that page with Freshness on
-      - Then a panel above it shows its acceptance's ID, Then line, and the day its code changed
-- 0015.5
-  - Given App maintainer ships a build without git history
-    - When I open the catalog
-      - Then no row shows a badge
-- 0015.6
-  - Given App maintainer has a repo whose untracked coverage map lists some acceptances' covered files, changed in rebased commits, and misses others
-    - When the StorybookHistory tool reads it
-      - Then each acceptance takes the newest change among its files, or else its test's file; one without a test gets none
-- 0015.7
-  - Given App maintainer builds from a shallow clone
-    - When the StorybookHistory tool reads it
-      - Then it records no history, so no page shows New
-- 0015.8
-  - Given App maintainer ships a build with a page whose code last changed 3 commits before the build's
-    - When I open that page with Freshness on
-      - Then its panel says 3 commits ago
+1. New pages
+   1. GIVEN App maintainer ships a build whose commit changed a file a page's acceptance test covers
+      1. WHEN I open the catalog
+         1. THEN that page's row says New in this build
+2. Row dates
+   1. GIVEN App maintainer ships a build with a page whose covered code changed 2 days before the build's commit
+      1. WHEN I open the catalog
+         1. THEN its row says the day it changed and its age
+         2. THEN 2 days
+         3. THEN counted to the build's commit
+3. Build ages
+   1. GIVEN App maintainer ships a build made weeks before today
+      1. WHEN I open the catalog
+         1. THEN each row's age is counted to the build's commit
+         2. THEN so it reads the same on any day
+4. Freshness panel
+   1. GIVEN App maintainer ships a build with a page named by an acceptance
+      1. WHEN I open that page with Freshness on
+         1. THEN a panel above it shows its acceptance's ID
+         2. THEN Then line
+         3. THEN the day its code changed
+5. No history
+   1. GIVEN App maintainer ships a build without git history
+      1. WHEN I open the catalog
+         1. THEN no row shows a badge
+6. Coverage dates
+   1. GIVEN App maintainer has a repo whose untracked coverage map lists some acceptances' covered files
+   2. GIVEN changed in rebased commits
+   3. GIVEN misses others
+      1. WHEN the StorybookHistory tool reads it
+         1. THEN each acceptance takes the newest change among its files
+         2. THEN or else its test's file; one without a test gets none
+7. Shallow clone
+   1. GIVEN App maintainer builds from a shallow clone
+      1. WHEN the StorybookHistory tool reads it
+         1. THEN it records no history
+         2. THEN so no page shows New
+8. Commit count
+   1. GIVEN App maintainer ships a build with a page whose code last changed 3 commits before the build's
+      1. WHEN I open that page with Freshness on
+         1. THEN its panel says 3 commits ago

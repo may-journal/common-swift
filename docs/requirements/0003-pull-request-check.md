@@ -14,15 +14,16 @@ merged pull requests
 
 ## Requirements
 
-- 0003.1
-  - Given Contributor opens a pull request whose title is not a conventional commit
-    - When pr-check judges it
-      - Then it fails naming the title
-- 0003.2
-  - Given Contributor opens a pull request whose description does not link its entry
-    - When pr-check judges it
-      - Then it fails asking for the link
-- 0003.3
-  - Given Contributor sees the release pull request, which changes `CHANGELOG.md` and adds no entry
-    - When pr-check judges it
-      - Then it passes
+1. Titles must be conventional commits
+   1. GIVEN Contributor opens a pull request whose title is not a conventional commit
+      1. WHEN pr-check judges it
+         1. THEN it fails naming the title
+2. Descriptions must link their entry
+   1. GIVEN Contributor opens a pull request whose description does not link its entry
+      1. WHEN pr-check judges it
+         1. THEN it fails asking for the link
+3. The release pull request needs no entry
+   1. GIVEN Contributor sees the release pull request
+   2. GIVEN which changes `CHANGELOG.md` and adds no entry
+      1. WHEN pr-check judges it
+         1. THEN it passes

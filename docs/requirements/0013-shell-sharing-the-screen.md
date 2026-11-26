@@ -14,35 +14,40 @@ screen sizes where the shell splits
 
 ## Requirements
 
-- 0013.1
-  - Given App maintainer runs the shell on the Duo's inner screen
-    - When I look at the sidebar
-      - Then it sits beside the pane
-- 0013.2
-  - Given App maintainer gives the empty pane only its title, symbol and message
-    - When I look at the pane with nothing picked
-      - Then the pane shows those words
-- 0013.3
-  - Given App maintainer runs the shell on the Duo's inner screen
-    - When I drag the sidebar's edge narrower
-      - Then the sidebar narrows
-- 0013.4
-  - Given App maintainer keeps the shell's default widths on the Duo's inner screen
-    - When I drag the sidebar's edge as far right as it goes
-      - Then the sidebar stops at half the screen
-- 0013.5
-  - Given App maintainer lets the sidebar take six tenths of the split
-    - When I drag the sidebar's edge as far right as it goes
-      - Then the sidebar stops at six tenths of the screen
-- 0013.6
-  - Given App maintainer keeps the shell's default border
-    - When I look between the sidebar and the pane on a screen of three pixels a point
-      - Then a line one pixel wide shows there
-- 0013.7
-  - Given App maintainer turns the border off, or gives it two points
-    - When I look between the sidebar and the pane
-      - Then no line shows, or the line is two points wide
-- 0013.8
-  - Given App maintainer runs the shell on the Duo's inner screen, side rail included, with a wider window open too
-    - When the shell works out how far the sidebar may go
-      - Then it allows the middle of its own whole screen
+1. Sidebar beside pane
+   1. GIVEN App maintainer runs the shell on the Duo's inner screen
+      1. WHEN I look at the sidebar
+         1. THEN it sits beside the pane
+2. Empty pane words
+   1. GIVEN App maintainer gives the empty pane only its title
+   2. GIVEN symbol and message
+      1. WHEN I look at the pane with nothing picked
+         1. THEN the pane shows those words
+3. Narrowing drag
+   1. GIVEN App maintainer runs the shell on the Duo's inner screen
+      1. WHEN I drag the sidebar's edge narrower
+         1. THEN the sidebar narrows
+4. Half screen stop
+   1. GIVEN App maintainer keeps the shell's default widths on the Duo's inner screen
+      1. WHEN I drag the sidebar's edge as far right as it goes
+         1. THEN the sidebar stops at half the screen
+5. Six tenths stop
+   1. GIVEN App maintainer lets the sidebar take six tenths of the split
+      1. WHEN I drag the sidebar's edge as far right as it goes
+         1. THEN the sidebar stops at six tenths of the screen
+6. Default border
+   1. GIVEN App maintainer keeps the shell's default border
+      1. WHEN I look between the sidebar and the pane on a screen of three pixels a point
+         1. THEN a line one pixel wide shows there
+7. Border settings
+   1. GIVEN App maintainer keeps the shell's sidebar border
+      1. WHEN I turn the border off
+         1. THEN no line shows between the sidebar and the pane
+      2. WHEN I give the border two points
+         1. THEN the line between them is two points wide
+8. Whole screen
+   1. GIVEN App maintainer runs the shell on the Duo's inner screen
+   2. GIVEN side rail included
+   3. GIVEN with a wider window open too
+      1. WHEN the shell works out how far the sidebar may go
+         1. THEN it allows the middle of its own whole screen

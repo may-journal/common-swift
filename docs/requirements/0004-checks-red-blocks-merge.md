@@ -14,19 +14,19 @@ changes merged
 
 ## Requirements
 
-- 0004.1
-  - Given Contributor commits with a subject that is not a conventional commit
-    - When the commit hook runs
-      - Then the commit is refused
-- 0004.2
-  - Given Contributor commits a change with no `changelog/` entry file
-    - When the commit hook runs
-      - Then the commit is refused
-- 0004.3
-  - Given Contributor commits a change with a broken link
-    - When the commit hook runs
-      - Then the commit is refused
-- 0004.4
-  - Given Contributor opens a pull request with a broken link
-    - When the Fitness suite runs on it
-      - Then the run fails
+1. Commit subjects must be conventional
+   1. GIVEN Contributor commits with a subject that is not a conventional commit
+      1. WHEN the commit hook runs
+         1. THEN the commit is refused
+2. Commits need a changelog entry
+   1. GIVEN Contributor commits a change with no `changelog/` entry file
+      1. WHEN the commit hook runs
+         1. THEN the commit is refused
+3. Commits refuse broken links
+   1. GIVEN Contributor commits a change with a broken link
+      1. WHEN the commit hook runs
+         1. THEN the commit is refused
+4. Pull requests refuse broken links
+   1. GIVEN Contributor opens a pull request with a broken link
+      1. WHEN the Fitness suite runs on it
+         1. THEN the run fails

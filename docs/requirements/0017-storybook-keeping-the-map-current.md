@@ -14,15 +14,20 @@ apps that show Storybook badges
 
 ## Requirements
 
-- 0017.1
-  - Given App maintainer has a repo whose coverage map the StorybookCoverage tool wrote for HEAD on a clean tree
-    - When the tool runs again with the same arguments
-      - Then it skips, leaving the map as it was
-- 0017.2
-  - Given App maintainer has a repo with an edit or an untracked test file since the map was written
-    - When the StorybookCoverage tool runs
-      - Then it writes the map again, and again on each run until the tree is clean
-- 0017.3
-  - Given App maintainer passes xcodebuild arguments after --, such as -allowProvisioningUpdates
-    - When the StorybookCoverage tool maps an Xcode scheme
-      - Then its build, its test listing, its one run of the suite and each test's own run pass them on
+1. A current map is skipped
+   1. GIVEN App maintainer has a repo whose coverage map the StorybookCoverage tool wrote for HEAD on a clean tree
+      1. WHEN the tool runs again with the same arguments
+         1. THEN it skips
+         2. THEN leaving the map as it was
+2. A stale map is written again
+   1. GIVEN App maintainer has a repo with an edit or an untracked test file since the map was written
+      1. WHEN the StorybookCoverage tool runs
+         1. THEN it writes the map again
+         2. THEN again on each run until the tree is clean
+3. Xcodebuild arguments pass through
+   1. GIVEN App maintainer passes xcodebuild arguments after --
+   2. GIVEN such as -allowProvisioningUpdates
+      1. WHEN the StorybookCoverage tool maps an Xcode scheme
+         1. THEN its build
+         2. THEN its test listing
+         3. THEN its one run of the suite and each test's own run pass them on

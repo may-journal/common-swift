@@ -14,11 +14,11 @@ apps that depend on common-swift
 
 ## Requirements
 
-- 0009.1
-  - Given App maintainer adds common-swift by its URL and a version tag
-    - When the app imports Storybook and builds
-      - Then the build succeeds
-- 0009.2
-  - Given App maintainer picks only the Storybook product
-    - When the app builds
-      - Then the app's own library links no StoreKit
+1. The package builds from its URL
+   1. GIVEN App maintainer adds common-swift by its URL and a version tag
+      1. WHEN the app imports Storybook and builds
+         1. THEN the build succeeds
+2. Storybook alone links no StoreKit
+   1. GIVEN App maintainer picks only the Storybook product
+      1. WHEN the app builds
+         1. THEN the app's own library links no StoreKit

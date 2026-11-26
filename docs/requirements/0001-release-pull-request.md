@@ -14,7 +14,8 @@ merges to main
 
 ## Requirements
 
-- 0001.1
-  - Given Contributor merges a pull request into main
-    - When GitHub starts the workflows for that push
-      - Then only Release Please runs, through the shared workflow
+1. Only Release Please runs
+   1. GIVEN Contributor merges a pull request into main
+      1. WHEN GitHub starts the workflows for that push
+         1. THEN only Release Please runs
+         2. THEN through the shared workflow

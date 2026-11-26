@@ -14,35 +14,41 @@ sidebar rows
 
 ## Requirements
 
-- 0014.1
-  - Given App maintainer has Settings open in the pane, beside the sidebar
-    - When I tap Settings in the sidebar
-      - Then Settings closes and the pane shows its prompt
-- 0014.2
-  - Given App maintainer has Settings open with another page pushed above it
-    - When I tap Settings in the sidebar
-      - Then both pages close and the pane shows its prompt
-- 0014.3
-  - Given App maintainer has About open in the pane
-    - When I tap Settings in the sidebar, then Back
-      - Then Settings replaced About and Back shows the prompt
-- 0014.4
-  - Given App maintainer has picked an entry
-    - When I tap that entry again
-      - Then the pick clears and the pane shows its prompt
-- 0014.5
-  - Given App maintainer has Settings open in the pane
-    - When I look at the sidebar
-      - Then the Settings row is marked as selected
-- 0014.6
-  - Given App maintainer has picked an entry
-    - When I look at the sidebar
-      - Then that entry's row is marked as selected
-- 0014.7
-  - Given App maintainer runs the shell on a phone, with Settings open
-    - When I go Back
-      - Then the sidebar shows again
-- 0014.8
-  - Given App maintainer has Settings open with the sidebar hidden
-    - When I go Back
-      - Then the pane shows its prompt
+1. Tapping Settings closes it
+   1. GIVEN App maintainer has Settings open in the pane
+   2. GIVEN beside the sidebar
+      1. WHEN I tap Settings in the sidebar
+         1. THEN Settings closes
+         2. THEN the pane shows its prompt
+2. Tapping Settings closes pushed pages too
+   1. GIVEN App maintainer has Settings open with another page pushed above it
+      1. WHEN I tap Settings in the sidebar
+         1. THEN both pages close
+         2. THEN the pane shows its prompt
+3. Settings replaces About
+   1. GIVEN App maintainer has About open in the pane
+      1. WHEN I tap Settings in the sidebar and then Back
+         1. THEN Settings replaced About
+         2. THEN Back shows the prompt
+4. Tapping a pick again clears it
+   1. GIVEN App maintainer has picked an entry
+      1. WHEN I tap that entry again
+         1. THEN the pick clears
+         2. THEN the pane shows its prompt
+5. Settings is marked as selected
+   1. GIVEN App maintainer has Settings open in the pane
+      1. WHEN I look at the sidebar
+         1. THEN the Settings row is marked as selected
+6. A picked entry is marked as selected
+   1. GIVEN App maintainer has picked an entry
+      1. WHEN I look at the sidebar
+         1. THEN that entry's row is marked as selected
+7. Back shows the sidebar on a phone
+   1. GIVEN App maintainer runs the shell on a phone
+   2. GIVEN with Settings open
+      1. WHEN I go Back
+         1. THEN the sidebar shows again
+8. Back shows the prompt when the sidebar is hidden
+   1. GIVEN App maintainer has Settings open with the sidebar hidden
+      1. WHEN I go Back
+         1. THEN the pane shows its prompt

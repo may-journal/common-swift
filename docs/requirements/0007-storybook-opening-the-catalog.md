@@ -14,23 +14,24 @@ ways in a build allows
 
 ## Requirements
 
-- 0007.1
-  - Given App maintainer runs a Debug build
-    - When I tap Storybook in Settings, then Done
-      - Then the catalog closes back to Settings
-- 0007.2
-  - Given App maintainer runs a Debug build on the Mac
-    - When I press Option, Command, Shift and D
-      - Then the catalog opens
-- 0007.3
-  - Given App maintainer launches a Debug build with `--storybook` and a page name
-    - When the app opens
-      - Then that page shows
-- 0007.4
-  - Given App maintainer adds a page of the app's own
-    - When I open the catalog
-      - Then the page is listed under its requirement's number
-- 0007.5
-  - Given App maintainer links StorybookKit, which ships a demo preview of its own
-    - When I open the catalog
-      - Then it lists only the app's pages
+1. Done closes the catalog
+   1. GIVEN App maintainer runs a Debug build
+      1. WHEN I tap Storybook in Settings and then Done
+         1. THEN the catalog closes back to Settings
+2. A Mac shortcut opens the catalog
+   1. GIVEN App maintainer runs a Debug build on the Mac
+      1. WHEN I press Option and Command and Shift and D
+         1. THEN the catalog opens
+3. A launch argument opens a page
+   1. GIVEN App maintainer launches a Debug build with `--storybook` and a page name
+      1. WHEN the app opens
+         1. THEN that page shows
+4. The app's own pages list under their requirement
+   1. GIVEN App maintainer adds a page of the app's own
+      1. WHEN I open the catalog
+         1. THEN the page is listed under its requirement's number
+5. The demo preview stays out
+   1. GIVEN App maintainer links StorybookKit
+   2. GIVEN which ships a demo preview of its own
+      1. WHEN I open the catalog
+         1. THEN it lists only the app's pages
