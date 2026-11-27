@@ -24,11 +24,14 @@ packages under Packages/
          1. THEN its page covers the list of packages
 3. The demo opens the catalog
    1. GIVEN App maintainer runs a Debug build of the demo
-      1. WHEN I pick Storybook and then open Settings and its Storybook row
+   2. GIVEN which has picked Storybook
+   3. GIVEN which has opened Settings
+      1. WHEN I open its Storybook row
          1. THEN the catalog opens
 4. One page lists a row for each package
    1. GIVEN App maintainer runs a Debug build of the demo
-      1. WHEN I open the catalog page of packages and search it for Storybook
+   2. GIVEN which has the catalog page of packages open
+      1. WHEN I search it for Storybook
          1. THEN one page lists a labeled row for each package
          2. THEN Storybook has one page per badge
 5. Picking a package again shows the prompt

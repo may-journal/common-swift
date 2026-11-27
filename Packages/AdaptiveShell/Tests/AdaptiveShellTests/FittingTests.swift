@@ -35,6 +35,7 @@ extension AdaptiveShellTests {
             try await launch.opensSettings()
             try await launch.user.doesNotSee(.text(DiaryApp.entry))
             try await launch.user.taps(.button(DiaryApp.done))
+            try await launch.user.doesNotSee(.button(DiaryApp.done))
             try await launch.user.sees(.text(DiaryApp.entry))
             try launch.quits()
         }

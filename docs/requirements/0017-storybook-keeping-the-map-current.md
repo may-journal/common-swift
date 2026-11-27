@@ -28,6 +28,7 @@ apps that show Storybook badges
    1. GIVEN App maintainer passes xcodebuild arguments after --
    2. GIVEN such as -allowProvisioningUpdates
       1. WHEN the StorybookCoverage tool maps an Xcode scheme
-         1. THEN its build
-         2. THEN its test listing
-         3. THEN its one run of the suite and each test's own run pass them on
+         1. THEN its build passes them on
+         2. THEN its test listing passes them on
+         3. THEN its one run of the suite passes them on
+         4. THEN each test's own run passes them on

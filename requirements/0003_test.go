@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -26,8 +27,22 @@ func Test0003_2(t *testing.T) {
 func Test0003_3(t *testing.T) {
 	t.Parallel()
 	repo := checkout(t)
-	out, code := prCheck(t, repo, releasePR(t, repo))
+	release := releasePR(t, repo)
+	changesChangelog, addsEntry := changes(release.files)
+	if !changesChangelog || addsEntry {
+		t.Fatalf("the release pull request must change CHANGELOG.md and add no entry: %+v", release.files)
+	}
+	out, code := prCheck(t, repo, release)
 	sees(t, out, code, 0, "Passed.")
+}
+
+// changes reports whether files include CHANGELOG.md and whether any is an entry file.
+func changes(files []changedFile) (changesChangelog, addsEntry bool) {
+	for _, file := range files {
+		changesChangelog = changesChangelog || file.Filename == "CHANGELOG.md"
+		addsEntry = addsEntry || strings.HasPrefix(file.Filename, "changelog/")
+	}
+	return changesChangelog, addsEntry
 }
 
 // trackingIssue is the issue the release pull request closes. The shared

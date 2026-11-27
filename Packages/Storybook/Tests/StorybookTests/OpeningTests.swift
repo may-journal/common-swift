@@ -19,6 +19,7 @@ extension StorybookTests {
         @Test func test0007_2() async throws {
             let launch = try Launch(.debug)
             try await launch.user.sees(.button(StorybookWords.name))
+            try await launch.user.doesNotSee(.identifier("storybook.close"))
             #if os(macOS)
                 try await launch.user.presses("d", with: [.command, .option, .shift])
             #else

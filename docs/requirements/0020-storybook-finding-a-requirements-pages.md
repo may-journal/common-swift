@@ -18,14 +18,16 @@ requirements with pages in the catalog
    1. GIVEN App maintainer ships a build with pages for one requirement's acceptances declared in two files
       1. WHEN I open that requirement's group
          1. THEN it shows both pages
-         2. THEN under the requirement's number and title
+         2. THEN it shows them under the requirement's number
+         3. THEN it shows them under the requirement's title
 2. Next follows acceptance order
    1. GIVEN App maintainer ships a build whose later acceptance's page sits in a file that sorts first
-      1. WHEN I open the earlier acceptance's page and choose Next
+   2. GIVEN which has the earlier acceptance's page open
+      1. WHEN I choose Next
          1. THEN the later acceptance's page shows
 3. A launch argument opens a group
    1. GIVEN App maintainer ships a Debug build with a requirement's pages
-      1. WHEN I launch it with `--storybook` and that requirement group's title
+      1. WHEN I launch it with `--storybook` naming that requirement group's title
          1. THEN the group's pages show side by side
 4. A build without history titles groups by number
    1. GIVEN App maintainer ships a build without git history

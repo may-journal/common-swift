@@ -1,4 +1,5 @@
 @testable import DemoKit
+import Storybook
 import Testing
 import UITestingLibrary
 
@@ -24,7 +25,12 @@ extension DemoKitTests {
 
         @Test func test0012_3() async throws {
             let launch = try Launch(.pad)
-            try await launch.opensStorybook()
+            try await launch.picks(.storybook)
+            try await launch.user.doesNotSee(.identifier("storybook.close"))
+            try await launch.user.taps(.button(DemoWords.openSettings))
+            try await launch.user.doesNotSee(.identifier("storybook.close"))
+            try await launch.user.taps(.identifier(StorybookIdentifiers().storybookRow))
+            try await launch.user.sees(.identifier("storybook.close"))
             try launch.quits()
         }
 

@@ -146,7 +146,9 @@
                 try change.edit()
                 let result = try Tool.run(in: repo, change.arguments)
                 #expect(result.status == 0, "\(change.step): \(result.log)")
-                if !change.reason.isEmpty {
+                if change.reason.isEmpty {
+                    #expect(!result.log.contains("Mapping every acceptance"), "\(change.step): \(result.log)")
+                } else {
                     let mapped = result.log.contains("Mapping every acceptance, \(change.reason)")
                     #expect(mapped, "\(change.step): \(result.log)")
                     #expect(result.log.contains("Running 2 tests once"))
@@ -155,7 +157,7 @@
             }
         }
 
-        @Test func test0018_5() throws {
+        @Test func test0021_1() throws {
             // A Go test that fails if it runs, so a clean run proves that none ran.
             let repo = try Checkout([
                 ".gitignore": "docs/requirements/coverage.json\n",

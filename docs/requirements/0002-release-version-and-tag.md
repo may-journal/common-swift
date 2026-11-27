@@ -15,13 +15,14 @@ releases
 ## Requirements
 
 1. Disagreeing version files fail
-   1. GIVEN Contributor has a release pull request whose manifest and `version.txt` disagree
+   1. GIVEN Contributor has a release pull request whose manifest disagrees with `version.txt`
       1. WHEN fitness checks the release files
          1. THEN it fails naming `version.txt`
 2. Merging writes the changelog and tag
    1. GIVEN Contributor merges the release pull request
       1. WHEN Release Please reads its config
-         1. THEN it writes `CHANGELOG.md` and a plain `vX.Y.Z` tag
+         1. THEN it writes `CHANGELOG.md`
+         2. THEN it writes a plain `vX.Y.Z` tag
 3. Other workflows leave main alone
    1. GIVEN Contributor has every other workflow in the repo
       1. WHEN GitHub runs one

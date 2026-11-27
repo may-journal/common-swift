@@ -20,7 +20,8 @@ screen sizes where the shell splits
          1. THEN it sits beside the pane
 2. Empty pane words
    1. GIVEN App maintainer gives the empty pane only its title
-   2. GIVEN symbol and message
+   2. GIVEN which gives it a symbol
+   3. GIVEN which gives it a message
       1. WHEN I look at the pane with nothing picked
          1. THEN the pane shows those words
 3. Narrowing drag
@@ -37,12 +38,12 @@ screen sizes where the shell splits
          1. THEN the sidebar stops at six tenths of the screen
 6. Default border
    1. GIVEN App maintainer keeps the shell's default border
-      1. WHEN I look between the sidebar and the pane on a screen of three pixels a point
+      1. WHEN I look where the sidebar meets the pane on a screen of three pixels a point
          1. THEN a line one pixel wide shows there
 7. Border settings
    1. GIVEN App maintainer keeps the shell's sidebar border
       1. WHEN I turn the border off
-         1. THEN no line shows between the sidebar and the pane
+         1. THEN no line shows where the sidebar meets the pane
       2. WHEN I give the border two points
          1. THEN the line between them is two points wide
 8. Whole screen

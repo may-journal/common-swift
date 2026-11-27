@@ -50,6 +50,7 @@ extension StorybookTests {
         @Test func test0020_2() async throws {
             let launch = try Launch(.debug, arguments: ["--storybook", "0020.1 empty"], pages: { Self.pages })
             try await launch.user.sees(.text("No entries"))
+            try await launch.user.doesNotSee(.text("Eight entries"))
             try await Self.choosesNext(launch)
             try await launch.user.sees(.text("Eight entries"))
             try launch.quits()

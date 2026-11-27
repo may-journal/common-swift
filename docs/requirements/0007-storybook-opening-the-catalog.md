@@ -16,14 +16,15 @@ ways in a build allows
 
 1. Done closes the catalog
    1. GIVEN App maintainer runs a Debug build
-      1. WHEN I tap Storybook in Settings and then Done
+   2. GIVEN which opened the catalog from Storybook in Settings
+      1. WHEN I tap Done
          1. THEN the catalog closes back to Settings
 2. A Mac shortcut opens the catalog
    1. GIVEN App maintainer runs a Debug build on the Mac
-      1. WHEN I press Option and Command and Shift and D
+      1. WHEN I press Option-Command-Shift-D
          1. THEN the catalog opens
 3. A launch argument opens a page
-   1. GIVEN App maintainer launches a Debug build with `--storybook` and a page name
+   1. GIVEN App maintainer launches a Debug build with `--storybook` naming a page
       1. WHEN the app opens
          1. THEN that page shows
 4. The app's own pages list under their requirement

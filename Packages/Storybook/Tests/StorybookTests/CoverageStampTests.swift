@@ -66,7 +66,17 @@
             // It builds, lists the tests and runs them once; the fake records no profile, so the test
             // runs alone.
             #expect(calls.count == 4)
-            #expect(calls.allSatisfy { Array($0.suffix(extra.count)) == extra })
+            func passesThemOn(_ call: [String]?) -> Bool {
+                call.map { Array($0.suffix(extra.count)) == extra } ?? false
+            }
+            let flag = { (name: String) in calls.first { $0.contains(name) } }
+            #expect(passesThemOn(flag("build-for-testing")), "the build dropped the arguments")
+            #expect(passesThemOn(flag("-enumerate-tests")), "the test listing dropped the arguments")
+            #expect(passesThemOn(flag("-parallel-testing-enabled")), "the suite's one run dropped the arguments")
+            #expect(
+                passesThemOn(calls.last { $0.contains("-only-testing:AppTests/DiaryTests/test0001_1()") }),
+                "the test's own run dropped the arguments")
+            #expect(calls.last?.contains("-parallel-testing-enabled") == false, "the last call was not a test run")
             #expect(try Tool.map(of: repo).contains("Requirements/DiaryTests.swift"))
         }
     }
