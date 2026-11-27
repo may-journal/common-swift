@@ -30,7 +30,8 @@ screen sizes the app runs on
          1. THEN the page opens beside the sidebar
 4. The sidebar comes back after a narrow page
    1. GIVEN App maintainer sets a width below which a page hides the sidebar
-      1. WHEN I open a page on a narrower screen and then close it
+   2. GIVEN which has a page open on a narrower screen
+      1. WHEN I close it
          1. THEN the sidebar comes back
 5. The stack shell covers the first screen
    1. GIVEN App maintainer picks the stack-only shell

@@ -24,6 +24,7 @@ merged pull requests
          1. THEN it fails asking for the link
 3. The release pull request needs no entry
    1. GIVEN Contributor sees the release pull request
-   2. GIVEN which changes `CHANGELOG.md` and adds no entry
+   2. GIVEN which changes `CHANGELOG.md`
+   3. GIVEN which adds no entry
       1. WHEN pr-check judges it
          1. THEN it passes

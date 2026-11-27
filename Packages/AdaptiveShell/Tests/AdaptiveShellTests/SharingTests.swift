@@ -53,6 +53,7 @@ extension AdaptiveShellTests {
         @Test func test0013_6() {
             let border = ShellConfiguration().sidebarBorder
             #expect(border.drawnWidth(displayScale: 3) == 1.0 / 3, "the default line is not one pixel")
+            #expect(border.drawnWidth(displayScale: 2) == 1.0 / 2, "the default line is not one pixel at two")
         }
 
         @Test func test0013_7() {

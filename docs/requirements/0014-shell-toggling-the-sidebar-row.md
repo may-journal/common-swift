@@ -27,9 +27,10 @@ sidebar rows
          2. THEN the pane shows its prompt
 3. Settings replaces About
    1. GIVEN App maintainer has About open in the pane
-      1. WHEN I tap Settings in the sidebar and then Back
+      1. WHEN I tap Settings in the sidebar
          1. THEN Settings replaced About
-         2. THEN Back shows the prompt
+      2. WHEN I go Back
+         1. THEN Back shows the prompt
 4. Tapping a pick again clears it
    1. GIVEN App maintainer has picked an entry
       1. WHEN I tap that entry again

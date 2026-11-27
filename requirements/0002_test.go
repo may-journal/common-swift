@@ -13,7 +13,7 @@ func Test0002_1(t *testing.T) {
 	repo := checkout(t)
 	write(t, repo, map[string]string{".release-please-manifest.json": `{".": "1.1.0"}` + "\n", "version.txt": "1.0.0\n"})
 	out, code := run(t, repo, standIns(t, nil), fitnessBinary(t), "release-changelog")
-	sees(t, out, code, 1, "release-changelog", "version.txt")
+	sees(t, out, code, 1, "release-changelog", "version.txt", ".release-please-manifest.json", `"1.1.0"`)
 }
 
 // releaseConfig is the root package of release-please-config.json, the part
@@ -52,8 +52,11 @@ func Test0002_2(t *testing.T) {
 	t.Parallel()
 	released := packages(t, checkout(t))
 	root := released["."]
-	if len(released) != 1 || !root.writesChangelog() {
-		t.Errorf("merging the release PR writes no root CHANGELOG.md: packages %v", released)
+	if len(released) != 1 {
+		t.Errorf("release-please-config.json releases %d packages, want only the root: %v", len(released), released)
+	}
+	if !root.writesChangelog() {
+		t.Errorf("merging the release PR writes no root CHANGELOG.md: %+v", root)
 	}
 	if !root.plainTag() {
 		t.Errorf("the release tag is not a plain vX.Y.Z from version.txt: %+v", root)

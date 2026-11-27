@@ -15,10 +15,13 @@ acceptances in the coverage map
 ## Requirements
 
 1. The map leaves out catalog folders
-   1. GIVEN App maintainer keeps catalog pages and a helper in one folder
-   2. GIVEN beside screens holding their own page or a #Preview
+   1. GIVEN App maintainer keeps catalog pages in one folder
+   2. GIVEN which also holds a helper
+   3. GIVEN beside screens holding their own page or a #Preview
       1. WHEN the StorybookCoverage tool maps the repo
-         1. THEN it leaves out that folder and keeps both screens and the package's own code
+         1. THEN it leaves out that folder
+         2. THEN it keeps both screens
+         3. THEN it keeps the package's own code
 2. An exclude names a folder
    1. GIVEN App maintainer keeps a catalog helper where the rule misses it
       1. WHEN the StorybookCoverage tool maps the repo with --exclude naming its folder

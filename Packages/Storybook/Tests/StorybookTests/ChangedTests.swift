@@ -52,6 +52,7 @@ extension StorybookTests {
         @Test func test0015_4() async throws {
             let history = try Self.history(changed: "2026-10-30T12:00:00Z")
             let launch = try Launch(.debug, arguments: Self.cardPage, history: history)
+            try await launch.user.sees(.text("2 days before the build"))
             try await launch.user.sees(.text("it shows its long sample"))
             try await launch.user.sees(.text("Changed Oct 30, 2026"))
             try launch.quits()

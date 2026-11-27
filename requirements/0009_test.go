@@ -51,7 +51,7 @@ func storybookApp(t *testing.T) (string, string, int) {
 func Test0009_1(t *testing.T) {
 	t.Parallel()
 	_, out, code := storybookApp(t)
-	sees(t, out, code, 0, "Build complete")
+	sees(t, out, code, 0, "Build complete", "common-swift at 1.0.0")
 }
 
 func Test0009_2(t *testing.T) {

@@ -81,8 +81,10 @@
                     == ["src/Storybook/0001-Diary.swift", "src/Storybook/AppStorybook.swift",
                         "src/Storybook/PageHost.swift"])
             // Screens stay, and so does the package's own code, which never imports its own module.
-            let kept = ["src/App/RootView.swift", "src/UI/DiaryView.swift", "Sources/Storybook/StorybookCatalog.swift"]
-            #expect(kept.allSatisfy { !catalog.contains($0) })
+            let screens = ["src/App/RootView.swift", "src/UI/DiaryView.swift"]
+            #expect(screens.allSatisfy { !catalog.contains($0) }, "the map left out a screen")
+            #expect(
+                !catalog.contains("Sources/Storybook/StorybookCatalog.swift"), "the map left out the package code")
         }
 
         @Test func test0016_2() throws {

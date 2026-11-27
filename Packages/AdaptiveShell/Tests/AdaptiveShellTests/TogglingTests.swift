@@ -36,6 +36,7 @@ extension AdaptiveShellTests {
             try await launch.user.sees(.button(DiaryApp.back))
             try await launch.user.goesBack()
             try await launch.user.sees(.text(DiaryApp.prompt))
+            try await launch.user.doesNotSee(.text(DiaryApp.aboutPage))
             try launch.quits()
         }
 

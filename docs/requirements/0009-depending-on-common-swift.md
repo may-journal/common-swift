@@ -15,8 +15,10 @@ apps that depend on common-swift
 ## Requirements
 
 1. The package builds from its URL
-   1. GIVEN App maintainer adds common-swift by its URL and a version tag
-      1. WHEN the app imports Storybook and builds
+   1. GIVEN App maintainer adds common-swift by its URL
+   2. GIVEN which pins a version tag
+   3. GIVEN the app imports Storybook
+      1. WHEN the app builds
          1. THEN the build succeeds
 2. Storybook alone links no StoreKit
    1. GIVEN App maintainer picks only the Storybook product

@@ -34,20 +34,16 @@ apps that show Storybook badges
 4. Full rerun
    1. GIVEN App maintainer has a clean map
       1. WHEN the build changes
-         1. THEN all rerun saying why
+         1. THEN all rerun saying the build changed
       2. WHEN files go unmapped
-         1. THEN all rerun
+         1. THEN all rerun saying files no row lists changed
       3. WHEN most rows change
-         1. THEN all rerun
+         1. THEN all rerun saying most acceptances changed
       4. WHEN a dirty run happened
-         1. THEN all rerun
+         1. THEN all rerun saying no earlier map was stamped on a clean tree
       5. WHEN I pass --full
-         1. THEN all rerun
-5. Go
-   1. GIVEN App maintainer keeps Go requirement tests in a module with no Go code besides its tests
-      1. WHEN the StorybookCoverage tool maps the repo
-         1. THEN it runs none of them
-         2. THEN each maps to its own file
+         1. THEN all rerun saying --full asks for it
+5. Removed in 2026.11.27.0900: moved to 0021.1
 6. Argument tests
    1. GIVEN App maintainer has a requirement test with arguments
    2. GIVEN such as test0001_3(count:)
@@ -60,4 +56,5 @@ apps that show Storybook badges
    2. GIVEN one of its cases fails or throws
       1. WHEN the StorybookCoverage tool maps the repo
          1. THEN it runs that test alone
-         2. THEN says a requirement test failed and writes no map
+         2. THEN it says a requirement test failed
+         3. THEN it writes no map
