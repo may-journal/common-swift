@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/may-journal/common-swift/compare/v1.12.0...v1.12.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* **requirements:** pass the newest Gherkin rules ([#91](https://github.com/may-journal/common-swift/issues/91)) ([59ec587](https://github.com/may-journal/common-swift/commit/59ec5875a2363565cb423050ee9f6e8cd77971d5))
+
 ## [1.12.0](https://github.com/may-journal/common-swift/compare/v1.11.0...v1.12.0) (2026-11-25)
 
 
